@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:otzaria/theme/theme_exports.dart';
 import 'package:otzaria/widgets/inputs/app_input_tokens.dart';
+import 'package:otzaria/widgets/rtl_icon.dart';
 
 // ═══════════════════════════════════════════════════════════════════════════
 // AppMenuEntry — נתוני פריט בתפריט
@@ -274,19 +275,23 @@ Widget _buildAppMenuRowContent(
   AppMenuMetrics metrics, {
   required String label,
   IconData? icon,
+  Widget? leading,
   Widget? trailing,
   bool isSelected = false,
   bool isDestructive = false,
+  bool enabled = true,
 }) {
   final colorScheme = Theme.of(context).colorScheme;
   // M3: selectedContainer = primaryContainer (ללא גבול, ממלא שורה שלמה)
   final selectedBackground =
       colorScheme.primaryContainer.withValues(alpha: 0.95);
-  final foregroundColor = isDestructive
-      ? colorScheme.error
-      : isSelected
-          ? colorScheme.onPrimaryContainer
-          : colorScheme.onSurface;
+  final foregroundColor = !enabled
+      ? colorScheme.onSurface.withValues(alpha: 0.38)
+      : isDestructive
+          ? colorScheme.error
+          : isSelected
+              ? colorScheme.onPrimaryContainer
+              : colorScheme.onSurface;
 
   return Container(
     constraints: BoxConstraints(
@@ -300,6 +305,16 @@ Widget _buildAppMenuRowContent(
     child: Row(
       mainAxisSize: MainAxisSize.max,
       children: [
+        if (leading != null) ...[
+          IconTheme.merge(
+            data: IconThemeData(
+              size: metrics.iconSize,
+              color: foregroundColor,
+            ),
+            child: leading,
+          ),
+          const SizedBox(width: 8),
+        ],
         if (icon != null) ...[
           Icon(icon, size: metrics.iconSize, color: foregroundColor),
           const SizedBox(width: 8),
@@ -362,14 +377,18 @@ PopupMenuEntry<T> buildAppPopupMenuItem<T>(
     // padding: EdgeInsets.zero — הריפוד מנוהל ב-_buildAppMenuRowContent
     // כדי שהצבע הנבחר יכסה שורה שלמה
     padding: EdgeInsets.zero,
-    child: _buildAppMenuRowContent(
-      context,
-      metrics,
-      label: entry.label,
-      icon: entry.icon,
-      trailing: entry.trailing,
-      isSelected: isSelected,
-      isDestructive: entry.isDestructive,
+    child: MouseRegion(
+      onEnter: (_) => _globalSubmenuTracker.closeActive(),
+      child: _buildAppMenuRowContent(
+        context,
+        metrics,
+        label: entry.label,
+        icon: entry.icon,
+        trailing: entry.trailing,
+        isSelected: isSelected,
+        isDestructive: entry.isDestructive,
+        enabled: entry.enabled,
+      ),
     ),
   );
 }
@@ -404,7 +423,7 @@ ButtonStyle buildAppSubmenuItemStyle(
 ) {
   final colorScheme = Theme.of(context).colorScheme;
   return ButtonStyle(
-    padding: WidgetStatePropertyAll(metrics.itemPadding),
+    padding: const WidgetStatePropertyAll(EdgeInsets.zero),
     minimumSize:
         WidgetStatePropertyAll(Size(metrics.menuMinWidth, metrics.itemHeight)),
     visualDensity: metrics.visualDensity,
@@ -446,6 +465,12 @@ ButtonStyle buildAppSubmenuItemStyle(
   );
 }
 
+MenuStyle buildAppSubmenuMenuStyle(BuildContext context) {
+  return MenuStyle(
+    alignment: const AlignmentDirectional(1.0, -1.0),
+  );
+}
+
 // ═══════════════════════════════════════════════════════════════════════════
 // buildAppSubmenuPopupMenuItem
 // ═══════════════════════════════════════════════════════════════════════════
@@ -457,20 +482,33 @@ PopupMenuEntry<T> buildAppSubmenuPopupMenuItem<T>({
   IconData? icon,
   required List<Widget> menuChildren,
 }) {
+  final controller = MenuController();
+
   return buildAppCustomPopupMenuItem<T>(
     context: context,
     metrics: metrics,
-    child: SubmenuButton(
-      menuChildren: menuChildren,
-      style: buildAppSubmenuItemStyle(context, metrics),
-      menuStyle: const MenuStyle(
-        alignment: AlignmentDirectional(-1.0, -1.0),
-      ),
-      child: _buildAppMenuRowContent(
-        context,
-        metrics,
-        label: label,
-        icon: icon,
+    child: MouseRegion(
+      onEnter: (_) {
+        if (!_globalSubmenuTracker.isActive(controller)) {
+          _globalSubmenuTracker.closeActive();
+        }
+      },
+      child: SubmenuButton(
+        controller: controller,
+        leadingIcon: const SizedBox.shrink(),
+        trailingIcon: const SizedBox.shrink(),
+        menuChildren: menuChildren,
+        style: buildAppSubmenuItemStyle(context, metrics),
+        menuStyle: buildAppSubmenuMenuStyle(context),
+        onOpen: () => _globalSubmenuTracker.setActive(controller),
+        onClose: () => _globalSubmenuTracker.clearActive(controller),
+        child: _buildAppMenuRowContent(
+          context,
+          metrics,
+          label: label,
+          icon: icon,
+          trailing: const RtlIcon(FluentIcons.chevron_left_24_regular),
+        ),
       ),
     ),
   );
@@ -532,7 +570,6 @@ class AppContextMenuRegion extends StatelessWidget {
       behavior: HitTestBehavior.translucent,
       onPointerDown: (event) {
         if (event.buttons == 2) {
-          // Secondary mouse button (right-click)
           _showContextMenu(context, event.position);
         }
       },
@@ -549,13 +586,16 @@ class AppContextMenuRegion extends StatelessWidget {
         AppMenuMetrics.create(compactMenus: false);
     final overlay = Overlay.of(context).context.findRenderObject() as RenderBox;
 
+    // מעקב אחר ה-submenu הפתוח כרגע — לסגירה בעת ריחוף על שורה אחרת
+    final submenuTracker = _SubmenuTracker();
+
     await showMenu<_ContextMenuAction>(
       context: context,
       position: RelativeRect.fromRect(
         globalPosition & const Size(1, 1),
         Offset.zero & overlay.size,
       ),
-      items: _buildMenuItems(context, entries, metrics),
+      items: _buildMenuItems(context, entries, metrics, submenuTracker),
     ).then((action) => action?.call());
   }
 
@@ -563,17 +603,17 @@ class AppContextMenuRegion extends StatelessWidget {
     BuildContext context,
     List<AppContextMenuEntry> entries,
     AppMenuMetrics metrics,
+    _SubmenuTracker submenuTracker,
   ) {
-    // סינון: לא להתחיל/לסיים בהפרד, ולא שני מפרידים רצופים
     final normalized = _normalizeEntries(entries);
     return normalized.map((entry) {
       if (entry.isDivider) {
         return const PopupMenuDivider();
       }
       if (entry.children != null && entry.children!.isNotEmpty) {
-        return _buildSubmenuItem(context, entry, metrics);
+        return _buildSubmenuItem(context, entry, metrics, submenuTracker);
       }
-      return _buildMenuItem(context, entry, metrics);
+      return _buildMenuItem(context, entry, metrics, submenuTracker);
     }).toList();
   }
 
@@ -598,18 +638,24 @@ class AppContextMenuRegion extends StatelessWidget {
     BuildContext context,
     AppContextMenuEntry entry,
     AppMenuMetrics metrics,
+    _SubmenuTracker submenuTracker,
   ) {
     return PopupMenuItem<_ContextMenuAction>(
       value: entry.onTap,
       enabled: entry.enabled,
       height: metrics.itemHeight,
       padding: EdgeInsets.zero,
-      child: _buildAppMenuRowContent(
-        context,
-        metrics,
-        label: entry.label ?? '',
-        icon: entry.icon,
-        isDestructive: entry.isDestructive,
+      // ריחוף על שורה רגילה — סוגר כל submenu פתוח
+      child: MouseRegion(
+        onEnter: (_) => submenuTracker.closeActive(),
+        child: _buildAppMenuRowContent(
+          context,
+          metrics,
+          label: entry.label ?? '',
+          icon: entry.icon,
+          isDestructive: entry.isDestructive,
+          enabled: entry.enabled,
+        ),
       ),
     );
   }
@@ -618,41 +664,133 @@ class AppContextMenuRegion extends StatelessWidget {
     BuildContext context,
     AppContextMenuEntry entry,
     AppMenuMetrics metrics,
+    _SubmenuTracker submenuTracker,
   ) {
+    final controller = MenuController();
     final subChildren = entry.children!
         .where((c) => !c.isDivider)
-        .map((child) => MenuItemButton(
-              leadingIcon: child.icon != null
-                  ? Icon(child.icon, size: metrics.iconSize)
-                  : null,
-              style: buildAppSubmenuItemStyle(context, metrics),
-              onPressed: child.enabled ? child.onTap : null,
-              child: Text(
-                child.label ?? '',
-                textDirection: TextDirection.rtl,
-              ),
-            ))
+        .map(
+          (child) => _buildContextSubmenuChildButton(
+            context: context,
+            metrics: metrics,
+            entry: child,
+          ),
+        )
         .toList();
 
     return buildAppCustomPopupMenuItem<_ContextMenuAction>(
       context: context,
       metrics: metrics,
       height: metrics.itemHeight,
-      child: SubmenuButton(
-        menuChildren: subChildren,
-        style: buildAppSubmenuItemStyle(context, metrics),
-        menuStyle: const MenuStyle(
-          // פתיחה בצד — לא מעל התפריט הראשי
-          alignment: AlignmentDirectional(-1.0, -1.0),
-        ),
-        child: _buildAppMenuRowContent(
-          context,
-          metrics,
-          label: entry.label ?? '',
-          icon: entry.icon,
+      child: MouseRegion(
+        onEnter: (_) {
+          if (!submenuTracker.isActive(controller)) {
+            submenuTracker.closeActive();
+          }
+        },
+        child: SubmenuButton(
+          controller: controller,
+          leadingIcon: const SizedBox.shrink(),
+          trailingIcon: const SizedBox.shrink(),
+          menuChildren: subChildren,
+          style: buildAppSubmenuItemStyle(context, metrics),
+          menuStyle: buildAppSubmenuMenuStyle(context),
+          onOpen: () => submenuTracker.setActive(controller),
+          onClose: () => submenuTracker.clearActive(controller),
+          child: _buildAppMenuRowContent(
+            context,
+            metrics,
+            label: entry.label ?? '',
+            icon: entry.icon,
+            trailing: const RtlIcon(FluentIcons.chevron_left_24_regular),
+            enabled: entry.enabled,
+          ),
         ),
       ),
     );
+  }
+}
+
+MenuItemButton _buildContextSubmenuChildButton({
+  required BuildContext context,
+  required AppMenuMetrics metrics,
+  required AppContextMenuEntry entry,
+}) {
+  return MenuItemButton(
+    style: ButtonStyle(
+      padding: const WidgetStatePropertyAll(EdgeInsets.zero),
+      minimumSize: WidgetStatePropertyAll(
+          Size(metrics.menuMinWidth, metrics.itemHeight)),
+      alignment: Alignment.centerRight,
+      visualDensity: metrics.visualDensity,
+      shape: const WidgetStatePropertyAll(
+        RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+      ),
+      foregroundColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.disabled)) {
+          return Theme.of(context)
+              .colorScheme
+              .onSurface
+              .withValues(alpha: 0.38);
+        }
+        return Theme.of(context).colorScheme.onSurface;
+      }),
+      iconColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.disabled)) {
+          return Theme.of(context)
+              .colorScheme
+              .onSurface
+              .withValues(alpha: 0.38);
+        }
+        return Theme.of(context).colorScheme.onSurface;
+      }),
+      overlayColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.hovered) ||
+            states.contains(WidgetState.focused)) {
+          return Theme.of(context)
+              .colorScheme
+              .onSurface
+              .withValues(alpha: 0.08);
+        }
+        if (states.contains(WidgetState.pressed)) {
+          return Theme.of(context)
+              .colorScheme
+              .onSurface
+              .withValues(alpha: 0.12);
+        }
+        return null;
+      }),
+    ),
+    onPressed: entry.enabled ? entry.onTap : null,
+    child: _buildAppMenuRowContent(
+      context,
+      metrics,
+      label: entry.label ?? '',
+      icon: entry.icon,
+      enabled: entry.enabled,
+      isDestructive: entry.isDestructive,
+    ),
+  );
+}
+
+final _globalSubmenuTracker = _SubmenuTracker();
+
+/// מעקב אחר ה-SubmenuButton הפתוח כרגע — מאפשר סגירה ב-hover על שורה אחרת.
+class _SubmenuTracker {
+  MenuController? _active;
+
+  void setActive(MenuController c) => _active = c;
+
+  void clearActive(MenuController c) {
+    if (_active == c) _active = null;
+  }
+
+  bool isActive(MenuController c) => _active == c;
+
+  void closeActive() {
+    _active?.close();
+    _active = null;
+    FocusManager.instance.primaryFocus?.unfocus();
   }
 }
 
