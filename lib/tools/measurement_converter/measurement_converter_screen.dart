@@ -514,35 +514,43 @@ class _MeasurementConverterScreenState
                                     decoration: _barFieldDecoration(cs,
                                             isCompact: isCompact)
                                         .copyWith(
-                                      isDense: true,
-                                      contentPadding:
-                                          const EdgeInsets.symmetric(
-                                              horizontal: 12),
-                                      suffixIcon: _inputController
-                                              .text.isNotEmpty
-                                          ? IconButton(
-                                              icon: Icon(
-                                                  FluentIcons
-                                                      .dismiss_24_regular,
-                                                  size: 15,
-                                                  color: cs.onSurfaceVariant),
-                                              onPressed: () {
-                                                setState(() {
-                                                  _inputController.clear();
-                                                  _resultController.clear();
-                                                  _rememberedInputValues.remove(
-                                                      _selectedCategory);
-                                                });
-                                                WidgetsBinding.instance
-                                                    .addPostFrameCallback((_) =>
-                                                        _screenFocusNode
-                                                            .requestFocus());
-                                              },
-                                              padding: EdgeInsets.zero,
-                                              visualDensity:
-                                                  VisualDensity.compact,
-                                            )
-                                          : null,
+                                      hintText: 'הכנס ערך להמרה...',
+                                      hintStyle: TextStyle(
+                                        fontSize: fieldFontSize,
+                                        color: cs.onSurfaceVariant,
+                                      ),
+                                      constraints: BoxConstraints(
+                                        minHeight: fieldHeight,
+                                      ),
+                                      suffixIcon: Opacity(
+                                        opacity: _inputController.text.isNotEmpty
+                                            ? 1.0
+                                            : 0.0,
+                                        child: IconButton(
+                                          icon: Icon(
+                                              FluentIcons.dismiss_24_regular,
+                                              size: 15,
+                                              color: cs.onSurfaceVariant),
+                                          onPressed: _inputController
+                                                  .text.isNotEmpty
+                                              ? () {
+                                                  setState(() {
+                                                    _inputController.clear();
+                                                    _resultController.clear();
+                                                    _rememberedInputValues
+                                                        .remove(
+                                                            _selectedCategory);
+                                                  });
+                                                  WidgetsBinding.instance
+                                                      .addPostFrameCallback(
+                                                          (_) => _screenFocusNode
+                                                              .requestFocus());
+                                                }
+                                              : null,
+                                          padding: EdgeInsets.zero,
+                                          visualDensity: VisualDensity.compact,
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ),
