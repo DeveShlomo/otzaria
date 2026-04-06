@@ -234,15 +234,14 @@ class MoreScreenState extends State<MoreScreen>
       backgroundColor: bgColor,
       appBar: AppBar(
         backgroundColor: bgColor,
-        surfaceTintColor: Colors.transparent,
         elevation: 0,
         title: const Text('כלים'),
       ),
       body: ListView(
-        padding: const EdgeInsets.all(AppTokens.spaceMD),
+        padding: const EdgeInsets.all(12),
         children: [
           for (final group in _mobileGroups) ...[
-            _MobileGroupCard(
+            SettingsCard(
               title: group.label,
               children: [
                 for (final idx in group.indices)
@@ -260,7 +259,7 @@ class MoreScreenState extends State<MoreScreen>
                   ),
               ],
             ),
-            const SizedBox(height: AppTokens.spaceSM),
+            const SizedBox(height: 8),
           ],
         ],
       ),
@@ -278,7 +277,6 @@ class MoreScreenState extends State<MoreScreen>
         backgroundColor: bgColor,
         appBar: AppBar(
           backgroundColor: bgColor,
-          surfaceTintColor: Colors.transparent,
           elevation: 0,
           title: Text(_tabs[_selectedIndex].label),
           leading: Tooltip(
@@ -420,59 +418,15 @@ class MoreScreenState extends State<MoreScreen>
                 content = _buildDesktop(bgColor);
               }
 
-              return AnimatedSwitcher(
-                duration: AppTokens.animNormal,
-                transitionBuilder: (child, animation) => FadeTransition(
-                  opacity: CurvedAnimation(
-                    parent: animation,
-                    curve: Curves.easeInOut,
-                  ),
-                  child: child,
-                ),
-                child: KeyedSubtree(
-                  key: ValueKey(isMobile
-                      ? 'mobile-${_showMobileMenu ? "menu" : "content-$_selectedIndex"}'
-                      : 'desktop'),
-                  child: content,
-                ),
+              return KeyedSubtree(
+                key: ValueKey(isMobile
+                    ? 'mobile-${_showMobileMenu ? "menu" : "content-$_selectedIndex"}'
+                    : 'desktop'),
+                child: content,
               );
             },
           ),
         ),
-      ),
-    );
-  }
-}
-
-class _MobileGroupCard extends StatelessWidget {
-  final String title;
-  final List<Widget> children;
-
-  const _MobileGroupCard({
-    required this.title,
-    required this.children,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      color: Theme.of(context).colorScheme.surface,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-            child: Text(
-              title,
-              textDirection: TextDirection.rtl,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-            ),
-          ),
-          ...children,
-        ],
       ),
     );
   }
