@@ -753,8 +753,7 @@ class _MeasurementConverterScreenState
               Expanded(child: fromCard),
               Padding(
                 padding: const EdgeInsets.symmetric(
-                    horizontal: AppTokens.spaceSM,
-                    vertical: AppTokens.spaceMD),
+                    horizontal: AppTokens.spaceSM, vertical: AppTokens.spaceMD),
                 child: swapButton,
               ),
               Expanded(child: toCard),
@@ -790,72 +789,65 @@ class _MeasurementConverterScreenState
         MeasurementConverterLogic.getModernUnitsForCategory(_selectedCategory);
     final ancientUnits = units.where((u) => !modernUnits.contains(u)).toList();
 
-    return Container(
-      // ✅ לבן/surface
-      decoration: BoxDecoration(
-        color: cs.surface,
-        borderRadius: BorderRadius.circular(AppTokens.radiusMD),
-        border: Border.all(color: cs.outline.withValues(alpha: 0.2)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // כותרת הכרטיס
-          Padding(
-            padding: const EdgeInsets.symmetric(
-                horizontal: AppTokens.spaceMD, vertical: AppTokens.spaceSM),
-            child: Row(
-              children: [
-                Icon(icon, size: 16, color: cs.primary),
-                const SizedBox(width: 6),
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: AppTokens.fontMD,
-                    fontWeight: FontWeight.w600,
-                    color: cs.primary,
-                  ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(bottom: AppTokens.spaceXS),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(icon, size: 16, color: cs.primary),
+              const SizedBox(width: 6),
+              Text(
+                title,
+                style: TextStyle(
+                  fontSize: AppTokens.fontMD,
+                  fontWeight: FontWeight.w600,
+                  color: cs.primary,
+                ),
+              ),
+            ],
+          ),
+        ),
+        Container(
+          decoration: BoxDecoration(
+            color: cs.surface,
+            borderRadius: BorderRadius.circular(AppTokens.radiusMD),
+          ),
+          padding: const EdgeInsets.all(AppTokens.spaceSM),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (ancientUnits.isNotEmpty) ...[
+                _sectionLabel('חז"ל'),
+                const SizedBox(height: 4),
+                Wrap(
+                  spacing: 4,
+                  runSpacing: 4,
+                  children: ancientUnits
+                      .map((u) => _buildChip(u, selectedValue == u, onChanged))
+                      .toList(),
+                ),
+                const SizedBox(height: AppTokens.spaceSM),
+              ],
+              if (modernUnits.isNotEmpty) ...[
+                _sectionLabel('מודרני'),
+                const SizedBox(height: 4),
+                Wrap(
+                  spacing: 4,
+                  runSpacing: 4,
+                  children: modernUnits
+                      .map((u) => _buildChip(u, selectedValue == u, onChanged))
+                      .toList(),
                 ),
               ],
-            ),
+            ],
           ),
-          const Divider(height: 1),
-          Padding(
-            padding: const EdgeInsets.all(AppTokens.spaceSM),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                if (ancientUnits.isNotEmpty) ...[
-                  _sectionLabel('חז"ל'),
-                  const SizedBox(height: 4),
-                  Wrap(
-                    spacing: 4,
-                    runSpacing: 4,
-                    children: ancientUnits
-                        .map(
-                            (u) => _buildChip(u, selectedValue == u, onChanged))
-                        .toList(),
-                  ),
-                  const SizedBox(height: AppTokens.spaceSM),
-                ],
-                if (modernUnits.isNotEmpty) ...[
-                  _sectionLabel('מודרני'),
-                  const SizedBox(height: 4),
-                  Wrap(
-                    spacing: 4,
-                    runSpacing: 4,
-                    children: modernUnits
-                        .map(
-                            (u) => _buildChip(u, selectedValue == u, onChanged))
-                        .toList(),
-                  ),
-                ],
-              ],
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -885,52 +877,63 @@ class _MeasurementConverterScreenState
       required String? selectedValue,
       required ValueChanged<String?> onChanged,
     }) {
-      return Container(
-        decoration: BoxDecoration(
-          color: cs.surface,
-          borderRadius: BorderRadius.circular(AppTokens.radiusMD),
-          border: Border.all(color: cs.outline.withValues(alpha: 0.2)),
-        ),
-        padding: const EdgeInsets.all(AppTokens.spaceSM),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Row(
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(bottom: AppTokens.spaceXS),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(icon, size: 16, color: cs.primary),
                 const SizedBox(width: 6),
-                Text(title,
-                    style: TextStyle(
-                      fontSize: AppTokens.fontMD,
-                      fontWeight: FontWeight.w600,
-                      color: cs.primary,
-                    )),
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: AppTokens.fontMD,
+                    fontWeight: FontWeight.w600,
+                    color: cs.primary,
+                  ),
+                ),
               ],
             ),
-            const SizedBox(height: AppTokens.spaceSM),
-            if (ancientUnits.isNotEmpty) ...[
-              _sectionLabel('חז"ל'),
-              const SizedBox(height: 4),
-              Wrap(
-                  spacing: 6,
-                  runSpacing: 6,
-                  children: ancientUnits
-                      .map((u) => _buildChip(u, selectedValue == u, onChanged))
-                      .toList()),
-              const SizedBox(height: AppTokens.spaceSM),
-            ],
-            if (modernUnits.isNotEmpty) ...[
-              _sectionLabel('מודרני'),
-              const SizedBox(height: 4),
-              Wrap(
-                  spacing: 6,
-                  runSpacing: 6,
-                  children: modernUnits
-                      .map((u) => _buildChip(u, selectedValue == u, onChanged))
-                      .toList()),
-            ],
-          ],
-        ),
+          ),
+          Container(
+            decoration: BoxDecoration(
+              color: cs.surface,
+              borderRadius: BorderRadius.circular(AppTokens.radiusMD),
+            ),
+            padding: const EdgeInsets.all(AppTokens.spaceSM),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                if (ancientUnits.isNotEmpty) ...[
+                  _sectionLabel('חז"ל'),
+                  const SizedBox(height: 4),
+                  Wrap(
+                      spacing: 6,
+                      runSpacing: 6,
+                      children: ancientUnits
+                          .map((u) =>
+                              _buildChip(u, selectedValue == u, onChanged))
+                          .toList()),
+                  const SizedBox(height: AppTokens.spaceSM),
+                ],
+                if (modernUnits.isNotEmpty) ...[
+                  _sectionLabel('מודרני'),
+                  const SizedBox(height: 4),
+                  Wrap(
+                      spacing: 6,
+                      runSpacing: 6,
+                      children: modernUnits
+                          .map((u) =>
+                              _buildChip(u, selectedValue == u, onChanged))
+                          .toList()),
+                ],
+              ],
+            ),
+          ),
+        ],
       );
     }
 
