@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
@@ -203,10 +204,8 @@ class CalendarCubit extends Cubit<CalendarState> {
     updated[timeId] = ZmanAlertPreference(
         minutesBefore: minutesBefore, displayName: displayName);
     emit(state.copyWith(zmanAlerts: updated));
-    await _settingsRepository.updateCalendarZmanAlertsJson(
-        jsonEncode(updated.map((k, v) => MapEntry(k, v.toJson()))));
-    await _rescheduleZmanAlerts();
     UiSnack.show('התראה הופעלה עבור $displayName');
+    unawaited(_persistAndRescheduleZmanAlerts(updated));
   }
 
   Future<void> cancelZmanAlertPreference({required String timeId}) async {
@@ -216,17 +215,35 @@ class CalendarCubit extends Cubit<CalendarState> {
     final updated = Map<String, ZmanAlertPreference>.from(state.zmanAlerts);
     updated.remove(timeId);
     emit(state.copyWith(zmanAlerts: updated));
+    UiSnack.show('ההתראה בוטלה עבור ${existing.displayName}');
+    unawaited(_persistAndCancelZmanAlert(updated, timeId));
+  }
+
+  Future<void> _persistAndRescheduleZmanAlerts(
+    Map<String, ZmanAlertPreference> alerts,
+  ) async {
     await _settingsRepository.updateCalendarZmanAlertsJson(
-        jsonEncode(updated.map((k, v) => MapEntry(k, v.toJson()))));
+      jsonEncode(alerts.map((k, v) => MapEntry(k, v.toJson()))),
+    );
+    await _rescheduleZmanAlerts();
+  }
+
+  Future<void> _persistAndCancelZmanAlert(
+    Map<String, ZmanAlertPreference> alerts,
+    String timeId,
+  ) async {
+    await _settingsRepository.updateCalendarZmanAlertsJson(
+      jsonEncode(alerts.map((k, v) => MapEntry(k, v.toJson()))),
+    );
 
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     for (int i = 0; i <= _zmanScheduleDaysAhead; i++) {
       final d = today.add(Duration(days: i));
-      await _notificationService
-          .cancelNotification(_zmanNotificationId(timeId, d));
+      await _notificationService.cancelNotification(
+        _zmanNotificationId(timeId, d),
+      );
     }
-    UiSnack.show('ההתראה בוטלה עבור ${existing.displayName}');
   }
 
   Future<void> _rescheduleZmanAlerts() async {
