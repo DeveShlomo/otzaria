@@ -53,6 +53,9 @@ final GlobalKey<State<LibraryBrowser>> libraryBrowserKey =
 
 class MainWindowScreenState extends State<MainWindowScreen>
     with TickerProviderStateMixin {
+  static const double _desktopNavWidth = 75;
+  static const double _mobileNavHeight = 80;
+
   late final PageController pageController;
   late final CalendarCubit _calendarCubit;
   late final SettingsScreenController _settingsScreenController;
@@ -202,6 +205,7 @@ class MainWindowScreenState extends State<MainWindowScreen>
     _initializeBackgroundSync();
     _startFileSync();
   }
+
   void _setupFullscreenSync() {
     if (kIsWeb ||
         (!Platform.isWindows && !Platform.isLinux && !Platform.isMacOS)) {
@@ -408,19 +412,116 @@ class MainWindowScreenState extends State<MainWindowScreen>
     return [
       for (final item in _navData)
         NavigationDestination(
-          tooltip: '',
-          icon: Tooltip(
-            preferBelow: false,
-            message: fmt(
-              Settings.getValue<String>(item.shortcutKey) ??
-                  item.shortcutDefault,
-            ),
-            child: Icon(item.icon),
+          tooltip: fmt(
+            Settings.getValue<String>(item.shortcutKey) ?? item.shortcutDefault,
           ),
+          icon: Icon(item.icon),
           selectedIcon: Icon(item.iconFilled),
           label: item.label,
         ),
     ];
+  }
+
+  ThemeData _navigationSurfaceTheme(BuildContext context) {
+    final backgroundColor = AppSurfaces.panelBackground(context);
+    return Theme.of(context).copyWith(
+      scaffoldBackgroundColor: backgroundColor,
+      canvasColor: backgroundColor,
+      navigationBarTheme: NavigationBarThemeData(
+        backgroundColor: backgroundColor,
+        surfaceTintColor: Colors.transparent,
+      ),
+    );
+  }
+
+  Widget _wrapNavigationSurface(BuildContext context, Widget child) {
+    final backgroundColor = AppSurfaces.panelBackground(context);
+    return Theme(
+      data: _navigationSurfaceTheme(context),
+      child: ColoredBox(
+        color: backgroundColor,
+        child: Material(
+          color: backgroundColor,
+          surfaceTintColor: Colors.transparent,
+          child: child,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDesktopNavigation(BuildContext context, NavigationState state) {
+    return _wrapNavigationSurface(
+      context,
+      Row(
+        children: [
+          SizedBox(
+            width: _desktopNavWidth - 1,
+            child: Padding(
+              padding: const EdgeInsets.only(top: 8, bottom: 16),
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  const buttonHeight = 68.0;
+                  final totalButtonsHeight = _navData.length * buttonHeight;
+                  final needsScroll =
+                      totalButtonsHeight + 20.0 > constraints.maxHeight;
+
+                  if (needsScroll) {
+                    return SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          for (int i = 0; i < _navData.length; i++)
+                            _buildNavRailItem(context, i, state.currentScreen),
+                        ],
+                      ),
+                    );
+                  }
+
+                  final topCount = _navData.length > 5 ? 5 : _navData.length;
+                  return Column(
+                    children: [
+                      for (int i = 0; i < topCount; i++)
+                        _buildNavRailItem(context, i, state.currentScreen),
+                      const Spacer(),
+                      const SizedBox(height: 12),
+                      for (int i = topCount; i < _navData.length; i++)
+                        _buildNavRailItem(context, i, state.currentScreen),
+                    ],
+                  );
+                },
+              ),
+            ),
+          ),
+          VerticalDivider(
+            thickness: 1,
+            width: 1,
+            color: Theme.of(context).colorScheme.outlineVariant,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMobileNavigation(BuildContext context, NavigationState state) {
+    final backgroundColor = AppSurfaces.panelBackground(context);
+    return _wrapNavigationSurface(
+      context,
+      NavigationBar(
+        backgroundColor: backgroundColor,
+        surfaceTintColor: Colors.transparent,
+        destinations: _buildNavigationDestinations(),
+        selectedIndex: _getSelectedIndex(state.currentScreen),
+        onDestinationSelected: (index) async {
+          final currentIndex = _getSelectedIndex(state.currentScreen);
+          if (index == currentIndex &&
+              index != Screen.search.index &&
+              index != Screen.find.index) {
+            await _syncPageWithState();
+            return;
+          }
+          _onNavTap(context, index, state.currentScreen);
+        },
+      ),
+    );
   }
 
   // ── Build ──────────────────────────────────────────────────────────────────
@@ -533,127 +634,90 @@ class MainWindowScreenState extends State<MainWindowScreen>
                         child: OrientationBuilder(
                           builder: (context, orientation) {
                             _handleOrientationChange(context, orientation);
+                            final isLandscape =
+                                orientation == Orientation.landscape;
 
                             final pageView = PageView(
                               controller: pageController,
                               scrollDirection:
-                                  orientation == Orientation.landscape
-                                      ? Axis.vertical
-                                      : Axis.horizontal,
+                                  isLandscape ? Axis.vertical : Axis.horizontal,
                               physics: const NeverScrollableScrollPhysics(),
                               children: _pages,
                             );
 
-                            // ── Desktop: NavRail ──────────────────────
-                            if (orientation == Orientation.landscape) {
-                              return Row(
-                                children: [
-                                  ColoredBox(
-                                    color: AppSurfaces.panelBackground(context),
-                                    child: SizedBox.fromSize(
-                                      size: const Size.fromWidth(74),
-                                      child: Column(
-                                        children: [
-                                          Expanded(
-                                            child: Material(
-                                              color:
-                                                  AppSurfaces.panelBackground(
-                                                      context),
-                                              surfaceTintColor:
-                                                  Colors.transparent,
-                                              child: LayoutBuilder(
-                                                builder:
-                                                    (context, constraints) {
-                                                  const buttonHeight = 60.0;
-                                                  final totalButtonsHeight =
-                                                      _navData.length *
-                                                          buttonHeight;
-                                                  final needsScroll =
-                                                      totalButtonsHeight +
-                                                              20.0 >
-                                                          constraints.maxHeight;
+                            return Stack(
+                              children: [
+                                AnimatedPadding(
+                                  duration: const Duration(milliseconds: 280),
+                                  curve: Curves.easeInOutCubicEmphasized,
+                                  padding: EdgeInsetsDirectional.only(
+                                    start: isLandscape ? _desktopNavWidth : 0,
+                                    bottom: isLandscape ? 0 : _mobileNavHeight,
+                                  ),
+                                  child: pageView,
+                                ),
+                                AnimatedPositionedDirectional(
+                                  duration: const Duration(milliseconds: 280),
+                                  curve: Curves.easeInOutCubicEmphasized,
+                                  start: 0,
+                                  top: isLandscape ? 0 : null,
+                                  bottom: 0,
+                                  end: isLandscape ? null : 0,
+                                  height: isLandscape ? null : _mobileNavHeight,
+                                  width: isLandscape ? _desktopNavWidth : null,
+                                  child: AnimatedSwitcher(
+                                    duration: const Duration(milliseconds: 220),
+                                    switchInCurve: Curves.easeOutCubic,
+                                    switchOutCurve: Curves.easeInCubic,
+                                    transitionBuilder: (child, animation) {
+                                      final offsetAnimation = Tween<Offset>(
+                                        begin: isLandscape
+                                            ? const Offset(-0.08, 0)
+                                            : const Offset(0, 0.08),
+                                        end: Offset.zero,
+                                      ).animate(
+                                        CurvedAnimation(
+                                          parent: animation,
+                                          curve:
+                                              Curves.easeInOutCubicEmphasized,
+                                        ),
+                                      );
 
-                                                  if (needsScroll) {
-                                                    return SingleChildScrollView(
-                                                      child: Column(
-                                                        children: [
-                                                          for (int i = 0;
-                                                              i <
-                                                                  _navData
-                                                                      .length;
-                                                              i++)
-                                                            _buildNavRailItem(
-                                                                context,
-                                                                i,
-                                                                state
-                                                                    .currentScreen),
-                                                        ],
-                                                      ),
-                                                    );
-                                                  } else {
-                                                    final topCount =
-                                                        _navData.length > 5
-                                                            ? 5
-                                                            : _navData.length;
-                                                    return Column(
-                                                      children: [
-                                                        for (int i = 0;
-                                                            i < topCount;
-                                                            i++)
-                                                          _buildNavRailItem(
-                                                              context,
-                                                              i,
-                                                              state
-                                                                  .currentScreen),
-                                                        const Spacer(),
-                                                        for (int i = topCount;
-                                                            i < _navData.length;
-                                                            i++)
-                                                          _buildNavRailItem(
-                                                              context,
-                                                              i,
-                                                              state
-                                                                  .currentScreen),
-                                                      ],
-                                                    );
-                                                  }
-                                                },
+                                      return FadeTransition(
+                                        opacity: animation,
+                                        child: SlideTransition(
+                                          position: offsetAnimation,
+                                          child: ScaleTransition(
+                                            scale: Tween<double>(
+                                              begin: 0.98,
+                                              end: 1.0,
+                                            ).animate(
+                                              CurvedAnimation(
+                                                parent: animation,
+                                                curve: Curves
+                                                    .easeInOutCubicEmphasized,
                                               ),
                                             ),
+                                            child: child,
                                           ),
-                                        ],
-                                      ),
+                                        ),
+                                      );
+                                    },
+                                    child: KeyedSubtree(
+                                      key: ValueKey(isLandscape
+                                          ? 'desktop-nav'
+                                          : 'mobile-nav'),
+                                      child: isLandscape
+                                          ? _buildDesktopNavigation(
+                                              context,
+                                              state,
+                                            )
+                                          : _buildMobileNavigation(
+                                              context,
+                                              state,
+                                            ),
                                     ),
                                   ),
-                                  const VerticalDivider(thickness: 1, width: 1),
-                                  Expanded(child: pageView),
-                                ],
-                              );
-                            }
-
-                            // ── Mobile: NavigationBar ─────────────────
-                            return Column(
-                              children: [
-                                Expanded(child: pageView),
-                                NavigationBar(
-                                  backgroundColor:
-                                      AppSurfaces.panelBackground(context),
-                                  surfaceTintColor: Colors.transparent,
-                                  destinations: _buildNavigationDestinations(),
-                                  selectedIndex:
-                                      _getSelectedIndex(state.currentScreen),
-                                  onDestinationSelected: (index) async {
-                                    final currentIndex =
-                                        _getSelectedIndex(state.currentScreen);
-                                    if (index == currentIndex &&
-                                        index != Screen.search.index &&
-                                        index != Screen.find.index) {
-                                      await _syncPageWithState();
-                                      return;
-                                    }
-                                    _onNavTap(
-                                        context, index, state.currentScreen);
-                                  },
                                 ),
                               ],
                             );
