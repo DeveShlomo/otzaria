@@ -274,6 +274,8 @@ class CalendarCubit extends Cubit<CalendarState> {
       final pref = entry.value;
 
       for (int i = 0; i <= _zmanScheduleDaysAhead; i++) {
+        // yield לאירוע loop — מאפשר ל-UI לרנדר פריים בין כל חישוב
+        await Future.delayed(Duration.zero);
         final d = today.add(Duration(days: i));
         final times = calculateDailyTimes(d, state.selectedCity);
         final timeStr = times[timeId];
