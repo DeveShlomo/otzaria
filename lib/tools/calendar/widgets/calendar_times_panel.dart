@@ -648,18 +648,16 @@ class _ZmanCard extends StatelessWidget {
     required String text,
     required Color textColor,
     required CrossAxisAlignment textAlignment,
-    required bool iconAtOuterEdge,
+    required bool alignToStart,
     required ZmanAlertPreference? existingAlert,
     required VoidCallback onPressed,
   }) {
     final hasAlert = existingAlert != null;
-    final segmentAlignment = iconAtOuterEdge
-        ? AlignmentDirectional.centerEnd
-        : AlignmentDirectional.centerStart;
+    final segmentAlignment = alignToStart
+        ? AlignmentDirectional.centerStart
+        : AlignmentDirectional.centerEnd;
     final control = Align(
-      alignment: iconAtOuterEdge
-          ? AlignmentDirectional.centerEnd
-          : AlignmentDirectional.centerStart,
+      alignment: segmentAlignment,
       child: _AlertControl(
         hasAlert: hasAlert,
         existingAlert: existingAlert,
@@ -674,21 +672,23 @@ class _ZmanCard extends StatelessWidget {
       ),
     );
 
+    final labelValue = _CompositeLabelValue(
+      text: text,
+      textColor: textColor,
+      crossAxisAlignment: textAlignment,
+    );
+
     return Align(
       alignment: segmentAlignment,
       child: Row(
-        textDirection: iconAtOuterEdge ? TextDirection.rtl : TextDirection.ltr,
+        textDirection: TextDirection.rtl,
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          control,
-          const SizedBox(width: 6),
-          _CompositeLabelValue(
-            text: text,
-            textColor: textColor,
-            crossAxisAlignment: textAlignment,
-          ),
-        ],
+        // alignToStart=true (90 דק') → אייקון ימין, טקסט שמאל
+        // alignToStart=false (72 דק') → טקסט ימין, אייקון שמאל (ללא שינוי)
+        children: alignToStart
+            ? [control, const SizedBox(width: 6), labelValue]
+            : [labelValue, const SizedBox(width: 6), control],
       ),
     );
   }
@@ -776,7 +776,7 @@ class _ZmanCard extends StatelessWidget {
                           text: timeData.trailingLabel!,
                           textColor: secondaryTextColor,
                           textAlignment: CrossAxisAlignment.end,
-                          iconAtOuterEdge: true,
+                          alignToStart: true,
                           existingAlert:
                               zmanAlerts[timeData.alertOptions[0].id],
                           onPressed: () => _openAlertDialogForOption(
@@ -796,7 +796,7 @@ class _ZmanCard extends StatelessWidget {
                           text: timeData.leadingLabel!,
                           textColor: secondaryTextColor,
                           textAlignment: CrossAxisAlignment.start,
-                          iconAtOuterEdge: false,
+                          alignToStart: false,
                           existingAlert:
                               zmanAlerts[timeData.alertOptions[1].id],
                           onPressed: () => _openAlertDialogForOption(
