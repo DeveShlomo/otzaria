@@ -418,12 +418,7 @@ class MoreScreenState extends State<MoreScreen>
                 content = _buildDesktop(bgColor);
               }
 
-              return KeyedSubtree(
-                key: ValueKey(isMobile
-                    ? 'mobile-${_showMobileMenu ? "menu" : "content-$_selectedIndex"}'
-                    : 'desktop'),
-                child: content,
-              );
+              return content;
             },
           ),
         ),
