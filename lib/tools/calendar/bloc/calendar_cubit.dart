@@ -243,6 +243,8 @@ class CalendarCubit extends Cubit<CalendarState> {
       await _notificationService.cancelNotification(
         _zmanNotificationId(timeId, d),
       );
+      // yield לאירוע loop — מאפשר ל-UI לרנדר פריים אחרי כל ביטול
+      await Future.delayed(Duration.zero);
     }
   }
 
