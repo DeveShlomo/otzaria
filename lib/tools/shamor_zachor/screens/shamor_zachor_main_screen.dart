@@ -334,77 +334,83 @@ class ShamorZachorMainScreenState extends State<ShamorZachorMainScreen>
                       builder: (context, settingsState) => LayoutBuilder(
                         builder: (context, constraints) {
                           final useSecondaryRow = constraints.maxWidth < 900;
+                          final navigationButton = IconButton(
+                            tooltip:
+                                _isSidebarVisible ? 'הסתר ניווט' : 'הצג ניווט',
+                            onPressed: () {
+                              setState(() {
+                                _isSidebarVisible = !_isSidebarVisible;
+                              });
+                            },
+                            icon: AnimatedSwitcher(
+                              duration: AppTokens.animFast,
+                              transitionBuilder: (child, animation) =>
+                                  RotationTransition(
+                                turns: Tween<double>(
+                                  begin: 0.5,
+                                  end: 0.0,
+                                ).animate(animation),
+                                child: FadeTransition(
+                                  opacity: animation,
+                                  child: child,
+                                ),
+                              ),
+                              child: Icon(
+                                _isSidebarVisible
+                                    ? FluentIcons
+                                        .panel_right_contract_24_regular
+                                    : FluentIcons.panel_right_24_regular,
+                                key: ValueKey(_isSidebarVisible),
+                                size: 24,
+                              ),
+                            ),
+                            visualDensity: VisualDensity.standard,
+                            splashRadius: 22,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onSecondaryContainer,
+                          );
+                          Widget buildFilterSegmentedControl() =>
+                              AppSegmentedControl<String>(
+                                options: const [
+                                  SegmentOption<String>(
+                                    value: 'all',
+                                    label: 'הכל',
+                                    icon: FluentIcons.library_24_regular,
+                                  ),
+                                  SegmentOption<String>(
+                                    value: 'in_progress',
+                                    label: 'בתהליך',
+                                    icon: FluentIcons.hourglass_24_regular,
+                                  ),
+                                  SegmentOption<String>(
+                                    value: 'completed',
+                                    label: 'הושלם',
+                                    icon:
+                                        FluentIcons.checkmark_circle_24_regular,
+                                  ),
+                                ],
+                                currentValue: _selectedFilter,
+                                onChanged: (value) {
+                                  setState(() {
+                                    _selectedFilter = value;
+                                  });
+                                },
+                              );
                           final filterControl = SizedBox(
                             width: 420,
-                            child: AppSegmentedControl<String>(
-                              options: const [
-                                SegmentOption<String>(
-                                  value: 'all',
-                                  label: 'הכל',
-                                  icon: FluentIcons.library_24_regular,
-                                ),
-                                SegmentOption<String>(
-                                  value: 'in_progress',
-                                  label: 'בתהליך',
-                                  icon: FluentIcons.hourglass_24_regular,
-                                ),
-                                SegmentOption<String>(
-                                  value: 'completed',
-                                  label: 'הושלם',
-                                  icon: FluentIcons.checkmark_circle_24_regular,
-                                ),
-                              ],
-                              currentValue: _selectedFilter,
-                              onChanged: (value) {
-                                setState(() {
-                                  _selectedFilter = value;
-                                });
-                              },
-                            ),
+                            child: buildFilterSegmentedControl(),
+                          );
+                          final narrowFilterControl = Expanded(
+                            child: buildFilterSegmentedControl(),
                           );
 
                           return AppTopBar(
-                            leadingItems: [
-                              AppTopBarItem(
-                                widget: IconButton(
-                                  tooltip: _isSidebarVisible
-                                      ? 'הסתר ניווט'
-                                      : 'הצג ניווט',
-                                  onPressed: () {
-                                    setState(() {
-                                      _isSidebarVisible = !_isSidebarVisible;
-                                    });
-                                  },
-                                  icon: AnimatedSwitcher(
-                                    duration: AppTokens.animFast,
-                                    transitionBuilder: (child, animation) =>
-                                        RotationTransition(
-                                      turns: Tween<double>(
-                                        begin: 0.5,
-                                        end: 0.0,
-                                      ).animate(animation),
-                                      child: FadeTransition(
-                                        opacity: animation,
-                                        child: child,
-                                      ),
-                                    ),
-                                    child: Icon(
-                                      _isSidebarVisible
-                                          ? FluentIcons
-                                              .panel_right_contract_24_regular
-                                          : FluentIcons.panel_right_24_regular,
-                                      key: ValueKey(_isSidebarVisible),
-                                      size: 24,
-                                    ),
-                                  ),
-                                  visualDensity: VisualDensity.standard,
-                                  splashRadius: 22,
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .onSecondaryContainer,
-                                ),
-                              ),
-                            ],
+                            leadingItems: useSecondaryRow
+                                ? const []
+                                : [
+                                    AppTopBarItem(widget: navigationButton),
+                                  ],
                             center: Row(
                               children: [
                                 if (!useSecondaryRow) ...[
@@ -429,9 +435,12 @@ class ShamorZachorMainScreenState extends State<ShamorZachorMainScreen>
                                       horizontal: 12,
                                       vertical: 6,
                                     ),
-                                    child: Align(
-                                      alignment: Alignment.centerRight,
-                                      child: filterControl,
+                                    child: Row(
+                                      children: [
+                                        navigationButton,
+                                        const SizedBox(width: 8),
+                                        narrowFilterControl,
+                                      ],
                                     ),
                                   )
                                 : null,

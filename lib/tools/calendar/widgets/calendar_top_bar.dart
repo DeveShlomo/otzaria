@@ -406,17 +406,34 @@ class _CalendarTopBarState extends State<CalendarTopBar> {
         return LayoutBuilder(
           builder: (context, constraints) {
             final isNarrow = constraints.maxWidth < _kTopBarNarrowBreakpoint;
-            final isMedium =
-                constraints.maxWidth >= _kTopBarNarrowBreakpoint &&
-                    constraints.maxWidth < _kTopBarMediumBreakpoint;
-            final isWide =
-                constraints.maxWidth >= _kTopBarMediumBreakpoint &&
-                    constraints.maxWidth < _kTopBarWideBreakpoint;
+            final isMedium = constraints.maxWidth >= _kTopBarNarrowBreakpoint &&
+                constraints.maxWidth < _kTopBarMediumBreakpoint;
+            final isWide = constraints.maxWidth >= _kTopBarMediumBreakpoint &&
+                constraints.maxWidth < _kTopBarWideBreakpoint;
 
             if (isNarrow) {
-              final secondaryRow = Padding(
+              final dateRow = Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                child: Wrap(
+                child: Row(
+                  children: [
+                    jumpBtn,
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: FittedBox(
+                          alignment: Alignment.center,
+                          fit: BoxFit.scaleDown,
+                          child: dateNavGroup,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+
+              return AppTopBar(
+                center: Wrap(
                   alignment: WrapAlignment.spaceBetween,
                   runAlignment: WrapAlignment.spaceBetween,
                   crossAxisAlignment: WrapCrossAlignment.center,
@@ -424,22 +441,11 @@ class _CalendarTopBarState extends State<CalendarTopBar> {
                   runSpacing: 8,
                   children: [
                     viewSwitcher,
-                    quickActions,
+                    todayBtn,
                     trailingActions,
                   ],
                 ),
-              );
-
-              return AppTopBar(
-                center: Align(
-                  alignment: Alignment.center,
-                  child: FittedBox(
-                    alignment: Alignment.center,
-                    fit: BoxFit.scaleDown,
-                    child: dateNavGroup,
-                  ),
-                ),
-                secondaryRow: secondaryRow,
+                secondaryRow: dateRow,
               );
             }
 

@@ -309,6 +309,35 @@ class _MeasurementConverterScreenState
                   // סטטוס הסרגל: רחב=_sidebarVisible, צר=_narrowShowCategories
                   final sidebarOpen =
                       isWideBar ? _sidebarVisible : _narrowShowCategories;
+                  final showNavigationInSecondaryRow = !isWideBar && !singleRow;
+                  final navigationButton = IconButton(
+                    icon: AnimatedSwitcher(
+                      duration: AppTokens.animFast,
+                      transitionBuilder: (child, animation) =>
+                          RotationTransition(
+                        turns: Tween<double>(begin: 0.5, end: 0.0)
+                            .animate(animation),
+                        child: FadeTransition(opacity: animation, child: child),
+                      ),
+                      child: Icon(
+                        sidebarOpen
+                            ? FluentIcons.panel_right_contract_24_regular
+                            : FluentIcons.panel_right_24_regular,
+                        key: ValueKey(sidebarOpen),
+                        size: 24,
+                      ),
+                    ),
+                    tooltip: sidebarOpen ? 'הסתר קטגוריות' : 'הצג קטגוריות',
+                    onPressed: () => setState(() {
+                      if (isWideBar) {
+                        _sidebarVisible = !_sidebarVisible;
+                      } else {
+                        _narrowShowCategories = !_narrowShowCategories;
+                      }
+                    }),
+                    visualDensity: VisualDensity.standard,
+                    splashRadius: 22,
+                  );
 
                   // ── ווידג'ט תוצאה (משותף לשני המצבים) ──────────────────
                   Widget resultSection({required bool inPrimaryRow}) => Row(
@@ -380,40 +409,11 @@ class _MeasurementConverterScreenState
                       );
 
                   return AppTopBar(
-                    leadingItems: [
-                      AppTopBarItem(
-                        widget: IconButton(
-                          icon: AnimatedSwitcher(
-                            duration: AppTokens.animFast,
-                            transitionBuilder: (child, animation) =>
-                                RotationTransition(
-                              turns: Tween<double>(begin: 0.5, end: 0.0)
-                                  .animate(animation),
-                              child: FadeTransition(
-                                  opacity: animation, child: child),
-                            ),
-                            child: Icon(
-                              sidebarOpen
-                                  ? FluentIcons.panel_right_contract_24_regular
-                                  : FluentIcons.panel_right_24_regular,
-                              key: ValueKey(sidebarOpen),
-                              size: 24,
-                            ),
-                          ),
-                          tooltip:
-                              sidebarOpen ? 'הסתר קטגוריות' : 'הצג קטגוריות',
-                          onPressed: () => setState(() {
-                            if (isWideBar) {
-                              _sidebarVisible = !_sidebarVisible;
-                            } else {
-                              _narrowShowCategories = !_narrowShowCategories;
-                            }
-                          }),
-                          visualDensity: VisualDensity.standard,
-                          splashRadius: 22,
-                        ),
-                      ),
-                    ],
+                    leadingItems: showNavigationInSecondaryRow
+                        ? const []
+                        : [
+                            AppTopBarItem(widget: navigationButton),
+                          ],
                     center: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
@@ -523,9 +523,10 @@ class _MeasurementConverterScreenState
                                         minHeight: fieldHeight,
                                       ),
                                       suffixIcon: Opacity(
-                                        opacity: _inputController.text.isNotEmpty
-                                            ? 1.0
-                                            : 0.0,
+                                        opacity:
+                                            _inputController.text.isNotEmpty
+                                                ? 1.0
+                                                : 0.0,
                                         child: IconButton(
                                           icon: Icon(
                                               FluentIcons.dismiss_24_regular,
@@ -569,7 +570,17 @@ class _MeasurementConverterScreenState
                         : Padding(
                             padding: const EdgeInsets.symmetric(
                                 horizontal: AppTokens.spaceMD, vertical: 6),
-                            child: resultSection(inPrimaryRow: false),
+                            child: Row(
+                              children: [
+                                if (showNavigationInSecondaryRow) ...[
+                                  navigationButton,
+                                  const SizedBox(width: 8),
+                                ],
+                                Expanded(
+                                  child: resultSection(inPrimaryRow: false),
+                                ),
+                              ],
+                            ),
                           ),
                   );
                 },
