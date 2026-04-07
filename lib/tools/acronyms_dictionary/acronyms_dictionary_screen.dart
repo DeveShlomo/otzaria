@@ -15,6 +15,7 @@ import 'package:otzaria/widgets/keyboard_list_focus.dart';
 import 'package:otzaria/widgets/tool_empty_state.dart';
 import 'package:otzaria/widgets/tool_ui_helpers.dart';
 import 'package:otzaria/widgets/app_top_bar.dart';
+import 'package:otzaria/utils/text_manipulation.dart' as utils;
 
 class AcronymsDictionaryScreen extends StatefulWidget {
   const AcronymsDictionaryScreen({super.key});
@@ -117,13 +118,29 @@ class _AcronymsDictionaryScreenState extends State<AcronymsDictionaryScreen> {
     setState(() {
       _filteredResults = _dictionaryData.entries
           .where((entry) =>
-              entry.key.contains(query) ||
               _dictionaryRepository.acronymMatchesQuery(
                 acronym: entry.key,
                 query: query,
               ) ||
-              entry.value.any((meaning) => meaning.contains(query)))
-          .toList();
+              entry.value.any((meaning) => _normalizedContains(meaning, query)))
+          .toList()
+        ..sort((a, b) {
+          final rankCompare = _compareSearchRelevance(
+            left: a,
+            right: b,
+            query: query,
+          );
+          if (rankCompare != 0) {
+            return rankCompare;
+          }
+
+          final lengthCompare = a.key.length.compareTo(b.key.length);
+          if (lengthCompare != 0) {
+            return lengthCompare;
+          }
+
+          return a.key.compareTo(b.key);
+        });
       _focusedIndex = _keyboardListFocus.reset(
         setToFirstWhenNotEmpty: true,
         itemCount: _filteredResults.length,
@@ -133,6 +150,67 @@ class _AcronymsDictionaryScreenState extends State<AcronymsDictionaryScreen> {
     if (moveFocusToResults && _filteredResults.isNotEmpty) {
       WidgetsBinding.instance.addPostFrameCallback((_) => _focusResultsList());
     }
+  }
+
+  int _compareSearchRelevance({
+    required MapEntry<String, List<String>> left,
+    required MapEntry<String, List<String>> right,
+    required String query,
+  }) {
+    final leftRank = _searchRank(left, query);
+    final rightRank = _searchRank(right, query);
+    return leftRank.compareTo(rightRank);
+  }
+
+  int _searchRank(MapEntry<String, List<String>> entry, String query) {
+    final normalizedAcronym = _normalizeAcronym(entry.key);
+    final normalizedAcronymQuery = _normalizeAcronym(query);
+    final normalizedMeaningQuery = _normalizeSearchText(query);
+
+    if (normalizedAcronym == normalizedAcronymQuery) {
+      return 0;
+    }
+    if (normalizedAcronym.startsWith(normalizedAcronymQuery)) {
+      return 1;
+    }
+    if (normalizedAcronym.contains(normalizedAcronymQuery)) {
+      return 2;
+    }
+
+    final normalizedMeanings = entry.value.map(_normalizeSearchText).toList();
+    if (normalizedMeanings.any((meaning) => meaning == normalizedMeaningQuery)) {
+      return 3;
+    }
+    if (normalizedMeanings
+        .any((meaning) => meaning.startsWith(normalizedMeaningQuery))) {
+      return 4;
+    }
+    if (normalizedMeanings
+        .any((meaning) => meaning.contains(normalizedMeaningQuery))) {
+      return 5;
+    }
+
+    return 6;
+  }
+
+  bool _normalizedContains(String value, String query) {
+    return _normalizeSearchText(value).contains(_normalizeSearchText(query));
+  }
+
+  String _normalizeAcronym(String value) {
+    return _normalizeSearchText(value)
+        .replaceAll('״', '"')
+        .replaceAll('׳', "'")
+        .replaceAll('’', "'")
+        .replaceAll('‘', "'")
+        .replaceAll('“', '"')
+        .replaceAll('”', '"')
+        .replaceAll('"', '')
+        .replaceAll("'", '');
+  }
+
+  String _normalizeSearchText(String value) {
+    return utils.removeVolwels(value).trim().replaceAll(RegExp(r'\s+'), ' ');
   }
 
   void _moveFocus(int delta) {

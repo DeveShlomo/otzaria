@@ -128,7 +128,26 @@ class _AramaicDictionaryScreenState extends State<AramaicDictionaryScreen> {
         final searchIn =
             _isHebrewToAramaic ? entry['hebrew']! : entry['aramaic']!;
         return searchIn.contains(query);
-      }).toList();
+      }).toList()
+        ..sort((a, b) {
+          final aSearchIn = _isHebrewToAramaic ? a['hebrew']! : a['aramaic']!;
+          final bSearchIn = _isHebrewToAramaic ? b['hebrew']! : b['aramaic']!;
+          final rankCompare = _compareSearchRelevance(
+            left: aSearchIn,
+            right: bSearchIn,
+            query: query,
+          );
+          if (rankCompare != 0) {
+            return rankCompare;
+          }
+
+          final secondaryCompare = aSearchIn.length.compareTo(bSearchIn.length);
+          if (secondaryCompare != 0) {
+            return secondaryCompare;
+          }
+
+          return aSearchIn.compareTo(bSearchIn);
+        });
       _focusedIndex = _keyboardListFocus.reset(
         setToFirstWhenNotEmpty: true,
         itemCount: _filteredResults.length,
@@ -138,6 +157,33 @@ class _AramaicDictionaryScreenState extends State<AramaicDictionaryScreen> {
     if (moveFocusToResults && _filteredResults.isNotEmpty) {
       WidgetsBinding.instance.addPostFrameCallback((_) => _focusResultsList());
     }
+  }
+
+  int _compareSearchRelevance({
+    required String left,
+    required String right,
+    required String query,
+  }) {
+    final leftRank = _searchRank(left, query);
+    final rightRank = _searchRank(right, query);
+    return leftRank.compareTo(rightRank);
+  }
+
+  int _searchRank(String value, String query) {
+    if (value == query) {
+      return 0;
+    }
+    if (value.startsWith(query)) {
+      return 1;
+    }
+    if (value.contains(' $query')) {
+      return 2;
+    }
+    if (value.contains(query)) {
+      return 3;
+    }
+
+    return 4;
   }
 
   void _toggleDirection() {
