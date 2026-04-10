@@ -280,18 +280,21 @@ Widget _buildAppMenuRowContent(
   bool isSelected = false,
   bool isDestructive = false,
   bool enabled = true,
+  Color? backgroundColor,
+  Color? foregroundColor,
+  FontWeight? fontWeight,
 }) {
-  final colorScheme = Theme.of(context).colorScheme;
-  // M3: selectedContainer = primaryContainer (ללא גבול, ממלא שורה שלמה)
-  final selectedBackground =
-      colorScheme.primaryContainer.withValues(alpha: 0.95);
-  final foregroundColor = !enabled
-      ? colorScheme.onSurface.withValues(alpha: 0.38)
-      : isDestructive
-          ? colorScheme.error
-          : isSelected
-              ? colorScheme.onPrimaryContainer
-              : colorScheme.onSurface;
+  final selectedBackground = backgroundColor ??
+      (isSelected ? _resolveAppMenuSelectedBackground(context) : null);
+  final resolvedForegroundColor = foregroundColor ??
+      _resolveAppMenuForegroundColor(
+    context,
+    enabled: enabled,
+    isDestructive: isDestructive,
+    isSelected: isSelected,
+  );
+  final resolvedFontWeight =
+      fontWeight ?? (isSelected ? FontWeight.w600 : metrics.itemFontWeight);
 
   return Container(
     constraints: BoxConstraints(
@@ -299,7 +302,7 @@ Widget _buildAppMenuRowContent(
       minHeight: metrics.itemHeight,
     ),
     // צבע מלא שורה — ללא עיגול פינות וללא גבול
-    color: isSelected ? selectedBackground : null,
+    color: selectedBackground,
     padding: metrics.itemPadding,
     alignment: AlignmentDirectional.centerStart,
     child: Row(
@@ -309,14 +312,14 @@ Widget _buildAppMenuRowContent(
           IconTheme.merge(
             data: IconThemeData(
               size: metrics.iconSize,
-              color: foregroundColor,
+              color: resolvedForegroundColor,
             ),
             child: leading,
           ),
           const SizedBox(width: 8),
         ],
         if (icon != null) ...[
-          Icon(icon, size: metrics.iconSize, color: foregroundColor),
+          Icon(icon, size: metrics.iconSize, color: resolvedForegroundColor),
           const SizedBox(width: 8),
         ],
         Expanded(
@@ -325,8 +328,8 @@ Widget _buildAppMenuRowContent(
             style: TextStyle(
               fontFamily: 'Roboto',
               fontSize: metrics.fontSize,
-              fontWeight: isSelected ? FontWeight.w600 : metrics.itemFontWeight,
-              color: foregroundColor,
+              fontWeight: resolvedFontWeight,
+              color: resolvedForegroundColor,
             ),
             overflow: TextOverflow.ellipsis,
             textDirection: TextDirection.rtl,
@@ -338,17 +341,17 @@ Widget _buildAppMenuRowContent(
           Icon(
             FluentIcons.checkmark_24_regular,
             size: metrics.iconSize,
-            color: foregroundColor,
+            color: resolvedForegroundColor,
           ),
         ] else if (trailing != null) ...[
           const SizedBox(width: 8),
           IconTheme.merge(
             data: IconThemeData(
               size: metrics.iconSize,
-              color: foregroundColor,
+              color: resolvedForegroundColor,
             ),
             child: DefaultTextStyle.merge(
-              style: TextStyle(color: foregroundColor),
+              style: TextStyle(color: resolvedForegroundColor),
               child: trailing,
             ),
           ),
@@ -356,6 +359,30 @@ Widget _buildAppMenuRowContent(
       ],
     ),
   );
+}
+
+Color _resolveAppMenuSelectedBackground(BuildContext context) {
+  final colorScheme = Theme.of(context).colorScheme;
+  return colorScheme.primaryContainer.withValues(alpha: 0.95);
+}
+
+Color _resolveAppMenuForegroundColor(
+  BuildContext context, {
+  required bool enabled,
+  bool isDestructive = false,
+  bool isSelected = false,
+}) {
+  final colorScheme = Theme.of(context).colorScheme;
+  if (!enabled) {
+    return colorScheme.onSurface.withValues(alpha: 0.38);
+  }
+  if (isDestructive) {
+    return colorScheme.error;
+  }
+  if (isSelected) {
+    return colorScheme.onPrimaryContainer;
+  }
+  return colorScheme.onSurface;
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -405,12 +432,49 @@ PopupMenuEntry<T> buildAppCustomPopupMenuItem<T>({
   double? height,
   EdgeInsets padding = EdgeInsets.zero,
 }) {
-  return PopupMenuItem<T>(
-    enabled: enabled,
-    height: height ?? metrics.itemHeight,
+  return _AppCustomPopupMenuEntry<T>(
+    heightValue: height ?? metrics.itemHeight,
     padding: padding,
     child: child,
   );
+}
+
+class _AppCustomPopupMenuEntry<T> extends PopupMenuEntry<T> {
+  const _AppCustomPopupMenuEntry({
+    required this.heightValue,
+    required this.child,
+    this.padding = EdgeInsets.zero,
+  });
+
+  final double heightValue;
+  final EdgeInsets padding;
+  final Widget child;
+
+  @override
+  double get height => heightValue;
+
+  @override
+  bool represents(T? value) => false;
+
+  @override
+  State<_AppCustomPopupMenuEntry<T>> createState() =>
+      _AppCustomPopupMenuEntryState<T>();
+}
+
+class _AppCustomPopupMenuEntryState<T>
+    extends State<_AppCustomPopupMenuEntry<T>> {
+  @override
+  Widget build(BuildContext context) {
+    final childHeight =
+        (widget.heightValue - widget.padding.vertical).clamp(0.0, double.infinity);
+    return Padding(
+      padding: widget.padding,
+      child: SizedBox(
+        height: childHeight,
+        child: widget.child,
+      ),
+    );
+  }
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -420,17 +484,23 @@ PopupMenuEntry<T> buildAppCustomPopupMenuItem<T>({
 ButtonStyle buildAppSubmenuItemStyle(
   BuildContext context,
   AppMenuMetrics metrics,
+  {
+  bool isDestructive = false,
+  bool enabled = true,
+}
 ) {
-  final colorScheme = Theme.of(context).colorScheme;
+  final foregroundColor = _resolveAppMenuForegroundColor(
+    context,
+    enabled: enabled,
+    isDestructive: isDestructive,
+  );
   return ButtonStyle(
     padding: const WidgetStatePropertyAll(EdgeInsets.zero),
     minimumSize:
         WidgetStatePropertyAll(Size(metrics.menuMinWidth, metrics.itemHeight)),
     visualDensity: metrics.visualDensity,
-    shape: WidgetStatePropertyAll(
-      RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(metrics.itemBorderRadius),
-      ),
+    shape: const WidgetStatePropertyAll(
+      RoundedRectangleBorder(borderRadius: BorderRadius.zero),
     ),
     alignment: Alignment.centerRight,
     textStyle: WidgetStatePropertyAll(
@@ -442,26 +512,17 @@ ButtonStyle buildAppSubmenuItemStyle(
     ),
     foregroundColor: WidgetStateProperty.resolveWith((states) {
       if (states.contains(WidgetState.disabled)) {
-        return colorScheme.onSurface.withValues(alpha: 0.38);
+        return _resolveAppMenuForegroundColor(context, enabled: false);
       }
-      return colorScheme.onSurface;
+      return foregroundColor;
     }),
     iconColor: WidgetStateProperty.resolveWith((states) {
       if (states.contains(WidgetState.disabled)) {
-        return colorScheme.onSurface.withValues(alpha: 0.38);
+        return _resolveAppMenuForegroundColor(context, enabled: false);
       }
-      return colorScheme.onSurface;
+      return foregroundColor;
     }),
-    overlayColor: WidgetStateProperty.resolveWith((states) {
-      if (states.contains(WidgetState.hovered) ||
-          states.contains(WidgetState.focused)) {
-        return colorScheme.onSurface.withValues(alpha: 0.08);
-      }
-      if (states.contains(WidgetState.pressed)) {
-        return colorScheme.onSurface.withValues(alpha: 0.12);
-      }
-      return null;
-    }),
+    overlayColor: const WidgetStatePropertyAll(Colors.transparent),
   );
 }
 
@@ -480,6 +541,7 @@ PopupMenuEntry<T> buildAppSubmenuPopupMenuItem<T>({
   required AppMenuMetrics metrics,
   required String label,
   IconData? icon,
+  bool isDestructive = false,
   required List<Widget> menuChildren,
 }) {
   final controller = MenuController();
@@ -487,29 +549,20 @@ PopupMenuEntry<T> buildAppSubmenuPopupMenuItem<T>({
   return buildAppCustomPopupMenuItem<T>(
     context: context,
     metrics: metrics,
-    child: MouseRegion(
-      onEnter: (_) {
+    child: _AppSubmenuTriggerButton(
+      controller: controller,
+      metrics: metrics,
+      label: label,
+      icon: icon,
+      isDestructive: isDestructive,
+      menuChildren: menuChildren,
+      onHoverEnter: () {
         if (!_globalSubmenuTracker.isActive(controller)) {
           _globalSubmenuTracker.closeActive();
         }
       },
-      child: SubmenuButton(
-        controller: controller,
-        leadingIcon: const SizedBox.shrink(),
-        trailingIcon: const SizedBox.shrink(),
-        menuChildren: menuChildren,
-        style: buildAppSubmenuItemStyle(context, metrics),
-        menuStyle: buildAppSubmenuMenuStyle(context),
-        onOpen: () => _globalSubmenuTracker.setActive(controller),
-        onClose: () => _globalSubmenuTracker.clearActive(controller),
-        child: _buildAppMenuRowContent(
-          context,
-          metrics,
-          label: label,
-          icon: icon,
-          trailing: const RtlIcon(FluentIcons.chevron_left_24_regular),
-        ),
-      ),
+      onOpen: () => _globalSubmenuTracker.setActive(controller),
+      onClose: () => _globalSubmenuTracker.clearActive(controller),
     ),
   );
 }
@@ -682,29 +735,131 @@ class AppContextMenuRegion extends StatelessWidget {
       context: context,
       metrics: metrics,
       height: metrics.itemHeight,
-      child: MouseRegion(
-        onEnter: (_) {
+      child: _AppSubmenuTriggerButton(
+        controller: controller,
+        metrics: metrics,
+        label: entry.label ?? '',
+        icon: entry.icon,
+        enabled: entry.enabled,
+        isDestructive: entry.isDestructive,
+        menuChildren: subChildren,
+        onHoverEnter: () {
           if (!submenuTracker.isActive(controller)) {
             submenuTracker.closeActive();
           }
         },
-        child: SubmenuButton(
-          controller: controller,
-          leadingIcon: const SizedBox.shrink(),
-          trailingIcon: const SizedBox.shrink(),
-          menuChildren: subChildren,
-          style: buildAppSubmenuItemStyle(context, metrics),
-          menuStyle: buildAppSubmenuMenuStyle(context),
-          onOpen: () => submenuTracker.setActive(controller),
-          onClose: () => submenuTracker.clearActive(controller),
-          child: _buildAppMenuRowContent(
-            context,
-            metrics,
-            label: entry.label ?? '',
-            icon: entry.icon,
-            trailing: const RtlIcon(FluentIcons.chevron_left_24_regular),
-            enabled: entry.enabled,
+        onOpen: () => submenuTracker.setActive(controller),
+        onClose: () => submenuTracker.clearActive(controller),
+      ),
+    );
+  }
+}
+
+class _AppSubmenuTriggerButton extends StatefulWidget {
+  const _AppSubmenuTriggerButton({
+    required this.controller,
+    required this.metrics,
+    required this.label,
+    required this.menuChildren,
+    required this.onHoverEnter,
+    required this.onOpen,
+    required this.onClose,
+    this.icon,
+    this.enabled = true,
+    this.isDestructive = false,
+  });
+
+  final MenuController controller;
+  final AppMenuMetrics metrics;
+  final String label;
+  final IconData? icon;
+  final bool enabled;
+  final bool isDestructive;
+  final List<Widget> menuChildren;
+  final VoidCallback onHoverEnter;
+  final VoidCallback onOpen;
+  final VoidCallback onClose;
+
+  @override
+  State<_AppSubmenuTriggerButton> createState() =>
+      _AppSubmenuTriggerButtonState();
+}
+
+class _AppSubmenuTriggerButtonState extends State<_AppSubmenuTriggerButton> {
+  bool _isOpen = false;
+  bool _isHovered = false;
+
+  void _handleOpen() {
+    if (!_isOpen) {
+      setState(() => _isOpen = true);
+    }
+    widget.onOpen();
+  }
+
+  void _handleClose() {
+    if (_isOpen) {
+      setState(() => _isOpen = false);
+    }
+    widget.onClose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final foregroundColor = _resolveAppMenuForegroundColor(
+      context,
+      enabled: widget.enabled,
+      isDestructive: widget.isDestructive,
+      isSelected: _isOpen,
+    );
+    final colorScheme = Theme.of(context).colorScheme;
+    final backgroundColor = _isOpen
+        ? _resolveAppMenuSelectedBackground(context)
+        : _isHovered && widget.enabled
+            ? colorScheme.onSurface.withValues(alpha: 0.08)
+            : null;
+
+    return MouseRegion(
+      onEnter: (_) {
+        widget.onHoverEnter();
+        if (!_isHovered) {
+          setState(() => _isHovered = true);
+        }
+      },
+      onExit: (_) {
+        if (_isHovered) {
+          setState(() => _isHovered = false);
+        }
+      },
+      child: SubmenuButton(
+        controller: widget.controller,
+        menuChildren: widget.menuChildren,
+        style: buildAppSubmenuItemStyle(
+          context,
+          widget.metrics,
+          isDestructive: widget.isDestructive,
+          enabled: widget.enabled,
+        ),
+        menuStyle: buildAppSubmenuMenuStyle(context),
+        onOpen: _handleOpen,
+        onClose: _handleClose,
+        leadingIcon: null,
+        trailingIcon: null,
+        child: _buildAppMenuRowContent(
+          context,
+          widget.metrics,
+          label: widget.label,
+          icon: widget.icon,
+          trailing: RtlIcon(
+            FluentIcons.chevron_left_24_regular,
+            size: widget.metrics.iconSize,
+            color: foregroundColor,
           ),
+          enabled: widget.enabled,
+          isDestructive: widget.isDestructive,
+          backgroundColor: backgroundColor,
+          foregroundColor: foregroundColor,
+          fontWeight:
+              _isOpen ? FontWeight.w600 : widget.metrics.itemFontWeight,
         ),
       ),
     );
@@ -716,6 +871,17 @@ MenuItemButton _buildContextSubmenuChildButton({
   required AppMenuMetrics metrics,
   required AppContextMenuEntry entry,
 }) {
+  final colorScheme = Theme.of(context).colorScheme;
+  final foregroundColor = WidgetStateProperty.resolveWith<Color?>((states) {
+    if (states.contains(WidgetState.disabled)) {
+      return _resolveAppMenuForegroundColor(context, enabled: false);
+    }
+    return _resolveAppMenuForegroundColor(
+      context,
+      enabled: entry.enabled,
+      isDestructive: entry.isDestructive,
+    );
+  });
   return MenuItemButton(
     style: ButtonStyle(
       padding: const WidgetStatePropertyAll(EdgeInsets.zero),
@@ -726,37 +892,15 @@ MenuItemButton _buildContextSubmenuChildButton({
       shape: const WidgetStatePropertyAll(
         RoundedRectangleBorder(borderRadius: BorderRadius.zero),
       ),
-      foregroundColor: WidgetStateProperty.resolveWith((states) {
-        if (states.contains(WidgetState.disabled)) {
-          return Theme.of(context)
-              .colorScheme
-              .onSurface
-              .withValues(alpha: 0.38);
-        }
-        return Theme.of(context).colorScheme.onSurface;
-      }),
-      iconColor: WidgetStateProperty.resolveWith((states) {
-        if (states.contains(WidgetState.disabled)) {
-          return Theme.of(context)
-              .colorScheme
-              .onSurface
-              .withValues(alpha: 0.38);
-        }
-        return Theme.of(context).colorScheme.onSurface;
-      }),
+      foregroundColor: foregroundColor,
+      iconColor: foregroundColor,
       overlayColor: WidgetStateProperty.resolveWith((states) {
         if (states.contains(WidgetState.hovered) ||
             states.contains(WidgetState.focused)) {
-          return Theme.of(context)
-              .colorScheme
-              .onSurface
-              .withValues(alpha: 0.08);
+          return colorScheme.onSurface.withValues(alpha: 0.08);
         }
         if (states.contains(WidgetState.pressed)) {
-          return Theme.of(context)
-              .colorScheme
-              .onSurface
-              .withValues(alpha: 0.12);
+          return colorScheme.onSurface.withValues(alpha: 0.12);
         }
         return null;
       }),
