@@ -6,7 +6,6 @@ import 'package:otzaria/tools/calendar/bloc/calendar_cubit.dart';
 import 'package:otzaria/settings/tabs/settings_tabs_exports.dart';
 import 'package:otzaria/settings/services/safer_mode/protected_settings_wrapper.dart';
 import 'package:otzaria/widgets/keyboard_navigator.dart';
-import 'package:otzaria/settings/settings_card.dart';
 import 'package:otzaria/theme/theme_exports.dart';
 import 'package:otzaria/widgets/tool_ui_helpers.dart';
 import 'package:otzaria/widgets/rtl_icon.dart';
@@ -72,6 +71,10 @@ class _MySettingsScreenState extends State<MySettingsScreen> {
   void _changeTab(int index) {
     setState(() => _selectedIndex = index);
     _contentFocusNode.requestFocus();
+  }
+
+  void _showMobileMenuView() {
+    setState(() => _showMobileMenu = true);
   }
 
   void _handleRequestedTab() {
@@ -169,6 +172,21 @@ class _MySettingsScreenState extends State<MySettingsScreen> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final bgColor = AppSurfaces.panelBackground(context);
+    final mobileItems = [
+      for (var idx = 0; idx < _tabsData.length; idx++)
+        MobileNavigationItem<int>(
+          value: idx,
+          label: _tabsData[idx].label,
+          leading: Icon(_tabsData[idx].icon, color: colorScheme.primary),
+        ),
+    ];
+    final mobileGroups = [
+      for (final group in _mobileGroups)
+        MobileNavigationGroup<int>(
+          label: group.label,
+          values: group.indices,
+        ),
+    ];
 
     return ProtectedSettingsWrapper(
       child: Directionality(
@@ -192,31 +210,15 @@ class _MySettingsScreenState extends State<MySettingsScreen> {
                       elevation: 0,
                       title: const Text('הגדרות'),
                     ),
-                    body: ListView(
-                      padding: const EdgeInsets.all(12),
-                      children: [
-                        for (final group in _mobileGroups) ...[
-                          SettingsCard(
-                            title: group.label,
-                            children: [
-                              for (final idx in group.indices)
-                                ListTile(
-                                  leading: Icon(_tabsData[idx].icon,
-                                      color: colorScheme.primary),
-                                  title: Text(_tabsData[idx].label),
-                                  trailing: const RtlIcon(Icons.chevron_left),
-                                  onTap: () {
-                                    setState(() {
-                                      _selectedIndex = idx;
-                                      _showMobileMenu = false;
-                                    });
-                                  },
-                                ),
-                            ],
-                          ),
-                          const SizedBox(height: 8),
-                        ],
-                      ],
+                    body: GroupedMobileNavigationList<int>(
+                      items: mobileItems,
+                      groups: mobileGroups,
+                      onSelected: (idx) {
+                        setState(() {
+                          _selectedIndex = idx;
+                          _showMobileMenu = false;
+                        });
+                      },
                     ),
                   ),
                 );
@@ -225,7 +227,7 @@ class _MySettingsScreenState extends State<MySettingsScreen> {
                   currentTabIndex: _selectedIndex,
                   totalTabs: _tabsData.length,
                   onTabChange: _changeTab,
-                  onBack: () => setState(() => _showMobileMenu = true),
+                  onBack: _showMobileMenuView,
                   child: Scaffold(
                     backgroundColor: bgColor,
                     appBar: AppBar(
@@ -236,8 +238,7 @@ class _MySettingsScreenState extends State<MySettingsScreen> {
                         message: 'חזור (Backspace)',
                         child: IconButton(
                           icon: const RtlIcon(Icons.arrow_forward),
-                          onPressed: () =>
-                              setState(() => _showMobileMenu = true),
+                          onPressed: _showMobileMenuView,
                         ),
                       ),
                     ),

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:otzaria/settings/settings_card.dart';
+import 'package:otzaria/widgets/rtl_icon.dart';
 
 /// Widget גנרי לניהול ניווט מקלדת
 /// תומך ב-Ctrl+Tab / Ctrl+Shift+Tab למעבר בין טאבים
@@ -22,6 +24,27 @@ class KeyboardNavigator extends StatelessWidget {
     this.onBack,
   });
 
+  bool _isTextInputFocused() {
+    final focusContext = FocusManager.instance.primaryFocus?.context;
+    if (focusContext == null) {
+      return false;
+    }
+
+    bool isTextInput = false;
+    focusContext.visitAncestorElements((element) {
+      final widget = element.widget;
+      if (widget is EditableText ||
+          widget is TextField ||
+          widget.runtimeType.toString().contains('SearchBar')) {
+        isTextInput = true;
+        return false;
+      }
+      return true;
+    });
+
+    return isTextInput;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Focus(
@@ -41,9 +64,7 @@ class KeyboardNavigator extends StatelessWidget {
 
         // Backspace - חזרה (רק אם אין TextField ממוקד)
         if (event.logicalKey == LogicalKeyboardKey.backspace && onBack != null) {
-          final focusedWidget =
-              FocusManager.instance.primaryFocus?.context?.widget;
-          if (focusedWidget is! EditableText && focusedWidget is! TextField) {
+          if (!_isTextInputFocused()) {
             onBack!();
             return KeyEventResult.handled;
           }
@@ -70,6 +91,167 @@ class KeyboardNavigator extends StatelessWidget {
         return KeyEventResult.ignored;
       },
       child: child,
+    );
+  }
+}
+
+class MobileNavigationItem<T> {
+  final T value;
+  final String label;
+  final Widget leading;
+
+  const MobileNavigationItem({
+    required this.value,
+    required this.label,
+    required this.leading,
+  });
+}
+
+class MobileNavigationGroup<T> {
+  final String label;
+  final List<T> values;
+
+  const MobileNavigationGroup({
+    required this.label,
+    required this.values,
+  });
+}
+
+class GroupedMobileNavigationList<T> extends StatefulWidget {
+  final List<MobileNavigationItem<T>> items;
+  final List<MobileNavigationGroup<T>> groups;
+  final ValueChanged<T> onSelected;
+  final EdgeInsetsGeometry padding;
+  final T? initialFocusValue;
+
+  const GroupedMobileNavigationList({
+    super.key,
+    required this.items,
+    required this.groups,
+    required this.onSelected,
+    this.padding = const EdgeInsets.all(12),
+    this.initialFocusValue,
+  });
+
+  @override
+  State<GroupedMobileNavigationList<T>> createState() =>
+      _GroupedMobileNavigationListState<T>();
+}
+
+class _GroupedMobileNavigationListState<T>
+    extends State<GroupedMobileNavigationList<T>> {
+  late List<FocusNode> _focusNodes;
+  late Map<T, int> _indexByValue;
+
+  @override
+  void initState() {
+    super.initState();
+    _rebuildFocusState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _requestInitialFocus());
+  }
+
+  @override
+  void didUpdateWidget(covariant GroupedMobileNavigationList<T> oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.items.length != widget.items.length ||
+        !_sameValues(oldWidget.items, widget.items)) {
+      for (final node in _focusNodes) {
+        node.dispose();
+      }
+      _rebuildFocusState();
+      WidgetsBinding.instance
+          .addPostFrameCallback((_) => _requestInitialFocus());
+    }
+  }
+
+  bool _sameValues(
+    List<MobileNavigationItem<T>> oldItems,
+    List<MobileNavigationItem<T>> newItems,
+  ) {
+    if (oldItems.length != newItems.length) return false;
+    for (var i = 0; i < oldItems.length; i++) {
+      if (oldItems[i].value != newItems[i].value) return false;
+    }
+    return true;
+  }
+
+  void _rebuildFocusState() {
+    _focusNodes = List.generate(
+      widget.items.length,
+      (_) => FocusNode(debugLabel: 'groupedMobileNavigationItem'),
+    );
+    _indexByValue = {
+      for (var i = 0; i < widget.items.length; i++) widget.items[i].value: i,
+    };
+  }
+
+  void _requestInitialFocus() {
+    if (!mounted || _focusNodes.isEmpty) return;
+    final targetIndex = widget.initialFocusValue != null
+        ? (_indexByValue[widget.initialFocusValue!] ?? 0)
+        : 0;
+    final focusNode = _focusNodes[targetIndex];
+    if (focusNode.canRequestFocus) {
+      focusNode.requestFocus();
+    }
+  }
+
+  void _focusSibling(int currentIndex, int offset) {
+    final nextIndex = (currentIndex + offset).clamp(0, _focusNodes.length - 1);
+    _focusNodes[nextIndex].requestFocus();
+  }
+
+  Widget _buildTile(MobileNavigationItem<T> item, int index) {
+    return CallbackShortcuts(
+      bindings: {
+        const SingleActivator(LogicalKeyboardKey.arrowDown): () =>
+            _focusSibling(index, 1),
+        const SingleActivator(LogicalKeyboardKey.arrowUp): () =>
+            _focusSibling(index, -1),
+      },
+      child: FocusTraversalOrder(
+        order: NumericFocusOrder(index.toDouble()),
+        child: ListTile(
+          focusNode: _focusNodes[index],
+          leading: item.leading,
+          title: Text(item.label),
+          trailing: const RtlIcon(Icons.chevron_left),
+          onTap: () => widget.onSelected(item.value),
+        ),
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    for (final node in _focusNodes) {
+      node.dispose();
+    }
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FocusTraversalGroup(
+      policy: WidgetOrderTraversalPolicy(),
+      child: ListView(
+        padding: widget.padding,
+        children: [
+          for (final group in widget.groups) ...[
+            SettingsCard(
+              title: group.label,
+              children: [
+                for (final value in group.values)
+                  _buildTile(
+                    widget.items[_indexByValue[value]!],
+                    _indexByValue[value]!,
+                  ),
+              ],
+            ),
+            const SizedBox(height: 8),
+          ],
+        ],
+      ),
     );
   }
 }

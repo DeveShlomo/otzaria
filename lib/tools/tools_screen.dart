@@ -155,7 +155,6 @@ class MoreScreenState extends State<MoreScreen>
       _selectedIndex = 0;
       _showMobileMenu = true;
     });
-    _requestFocusForSelectedTab();
   }
 
   void _onMoreFocusChange() {
@@ -216,6 +215,10 @@ class MoreScreenState extends State<MoreScreen>
     });
   }
 
+  void _showMobileMenuView() {
+    setState(() => _showMobileMenu = true);
+  }
+
   @override
   void dispose() {
     FocusRepository().moreScreenFocusNode.removeListener(_onMoreFocusChange);
@@ -230,6 +233,28 @@ class MoreScreenState extends State<MoreScreen>
   // ── Mobile menu ────────────────────────────────────────────────────────────
   Widget _buildMobileMenu(Color bgColor) {
     final cs = Theme.of(context).colorScheme;
+    final items = [
+      for (var idx = 0; idx < _tabs.length; idx++)
+        MobileNavigationItem<int>(
+          value: idx,
+          label: _tabs[idx].label,
+          leading: _tabs[idx].imageIcon != null
+              ? ImageIcon(
+                  AssetImage(_tabs[idx].imageIcon!),
+                  size: 22,
+                  color: cs.primary,
+                )
+              : Icon(_tabs[idx].icon, color: cs.primary),
+        ),
+    ];
+    final groups = [
+      for (final group in _mobileGroups)
+        MobileNavigationGroup<int>(
+          label: group.label,
+          values: group.indices,
+        ),
+    ];
+
     return Scaffold(
       backgroundColor: bgColor,
       appBar: AppBar(
@@ -237,31 +262,10 @@ class MoreScreenState extends State<MoreScreen>
         elevation: 0,
         title: const Text('כלים'),
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(12),
-        children: [
-          for (final group in _mobileGroups) ...[
-            SettingsCard(
-              title: group.label,
-              children: [
-                for (final idx in group.indices)
-                  ListTile(
-                    leading: _tabs[idx].imageIcon != null
-                        ? ImageIcon(
-                            AssetImage(_tabs[idx].imageIcon!),
-                            size: 22,
-                            color: cs.primary,
-                          )
-                        : Icon(_tabs[idx].icon, color: cs.primary),
-                    title: Text(_tabs[idx].label),
-                    trailing: const RtlIcon(Icons.chevron_left),
-                    onTap: () => _changeTab(idx),
-                  ),
-              ],
-            ),
-            const SizedBox(height: 8),
-          ],
-        ],
+      body: GroupedMobileNavigationList<int>(
+        items: items,
+        groups: groups,
+        onSelected: _changeTab,
       ),
     );
   }
@@ -272,7 +276,7 @@ class MoreScreenState extends State<MoreScreen>
       currentTabIndex: _selectedIndex,
       totalTabs: _tabs.length,
       onTabChange: _changeTab,
-      onBack: () => setState(() => _showMobileMenu = true),
+      onBack: _showMobileMenuView,
       child: Scaffold(
         backgroundColor: bgColor,
         appBar: AppBar(
@@ -283,7 +287,7 @@ class MoreScreenState extends State<MoreScreen>
             message: 'חזור (Backspace)',
             child: IconButton(
               icon: const RtlIcon(Icons.arrow_forward),
-              onPressed: () => setState(() => _showMobileMenu = true),
+              onPressed: _showMobileMenuView,
             ),
           ),
         ),
