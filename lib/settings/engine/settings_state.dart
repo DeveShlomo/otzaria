@@ -100,7 +100,7 @@ class SettingsState extends Equatable {
       isDarkMode: false,
       followSystemTheme: false,
       seedColor: Colors.brown,
-      darkSeedColor: Colors.brown, // סגול בהיר למצב כהה
+      darkSeedColor: Color(0xFFCE93D8), // סגול בהיר למצב כהה
       textMaxWidth:
           -1, // רוחב מקסימלי לטקסט (-1 = רמה 1 = 95% כברירת מחדל, 0 = ללא הגבלה)
       fontSize: 16,

@@ -52,7 +52,6 @@ class SettingsRepository {
   static const String keyIndexPath = 'key-index-path';
   static const String keyBackupPath = 'key-backup-path';
   static const String keyLibraryFolderName = 'key-library-folder-name';
-
   /// Android only: nתיב ה-DB שנגיש ל-sqlite3 native (override ל-getDatabasePath).
   /// נוצר כאשר המשתמש בחר ספרייה באחסון חיצוני ו-DB הועתק/הועבר פנימה.
   static const String keyDbEffectivePath = 'key-db-effective-path';
@@ -126,11 +125,11 @@ class SettingsRepository {
       'followSystemTheme':
           _settings.getValue<bool>(keyFollowSystemTheme, defaultValue: false),
       'seedColor': ColorUtils.colorFromString(
-        _settings.getValue<String>(keySwatchColor, defaultValue: '#ff795548'),
+        _settings.getValue<String>(keySwatchColor, defaultValue: '#ff2c1b02'),
       ),
       'darkSeedColor': ColorUtils.colorFromString(
         _settings.getValue<String>(keyDarkSwatchColor,
-            defaultValue: '#ff795548'),
+            defaultValue: '#ffce93d8'),
       ),
       'textMaxWidth':
           _settings.getValue<double>(keyTextMaxWidth, defaultValue: -1),
@@ -711,8 +710,8 @@ class SettingsRepository {
   /// Write all default settings to persistent storage
   Future<void> _writeDefaultsToStorage() async {
     await _settings.setValue(keyDarkMode, false);
-    await _settings.setValue(keySwatchColor, '#ff795548');
-    await _settings.setValue(keyDarkSwatchColor, '#ff795548');
+    await _settings.setValue(keySwatchColor, '#ff2c1b02');
+    await _settings.setValue(keyDarkSwatchColor, '#ffce93d8');
     await _settings.setValue(keyTextMaxWidth, -1.0);
     await _settings.setValue(keyFontSize, 25.0);
     await _settings.setValue(keyFontFamily, AppFonts.defaultFont);
