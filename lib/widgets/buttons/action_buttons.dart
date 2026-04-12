@@ -31,7 +31,9 @@ class RecommendedActionButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     final style = FilledButton.styleFrom(
-        backgroundColor: cs.primary, foregroundColor: cs.onPrimary);
+        backgroundColor: cs.primary,
+        foregroundColor: cs.onPrimary,
+        alignment: Alignment.center);
 
     if (isLoading) {
       return FilledButton(
@@ -48,9 +50,9 @@ class RecommendedActionButton extends StatelessWidget {
           onPressed: onPressed,
           style: style,
           icon: Icon(icon),
-          label: Text(text));
+          label: Text(text, textAlign: TextAlign.center));
     }
-    return FilledButton(onPressed: onPressed, style: style, child: Text(text));
+    return FilledButton(onPressed: onPressed, style: style, child: Text(text, textAlign: TextAlign.center));
   }
 }
 
