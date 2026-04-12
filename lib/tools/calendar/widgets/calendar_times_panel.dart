@@ -289,7 +289,28 @@ class _CalendarTimesPanelState extends State<CalendarTimesPanel> {
     if (omerDay == -1) {
       return null;
     }
-    return 'היום $omerDay לעומר';
+    return 'היום ${_hebrewOmerDayText(omerDay)} לעומר';
+  }
+
+  String _hebrewOmerDayText(int day) {
+    const ones = [
+      '', 'יום אחד', 'שני ימים', 'שלשה ימים', 'ארבעה ימים', 'חמשה ימים',
+      'ששה ימים', 'שבעה ימים', 'שמונה ימים', 'תשעה ימים', 'עשרה ימים',
+      'אחד עשר יום', 'שנים עשר יום', 'שלשה עשר יום', 'ארבעה עשר יום',
+      'חמשה עשר יום', 'ששה עשר יום', 'שבעה עשר יום', 'שמונה עשר יום',
+      'תשעה עשר יום',
+    ];
+    const tens = ['', '', 'עשרים', 'שלשים', 'ארבעים'];
+    const onesSimple = [
+      '', 'אחד', 'שנים', 'שלשה', 'ארבעה', 'חמשה',
+      'ששה', 'שבעה', 'שמונה', 'תשעה',
+    ];
+    if (day <= 0 || day > 49) return '$day';
+    if (day < 20) return ones[day];
+    final t = tens[day ~/ 10];
+    final o = day % 10;
+    if (o == 0) return '$t יום';
+    return '${onesSimple[o]} ו$t יום';
   }
 
   List<CalendarTimeEntry> _arrangeEntriesForGrid(
