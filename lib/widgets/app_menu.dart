@@ -215,7 +215,7 @@ Future<T?> showAnchoredAppMenu<T>({
   required List<PopupMenuEntry<T>> Function(AppMenuMetrics metrics)
       itemsBuilder,
   PopupMenuPosition position = PopupMenuPosition.under,
-  Offset offset = const Offset(0, 4),
+  Offset offset = Offset.zero,
 }) async {
   final metrics = Theme.of(context).extension<AppMenuMetrics>() ??
       AppMenuMetrics.create(compactMenus: false);
@@ -232,8 +232,7 @@ Future<T?> showAnchoredAppMenu<T>({
   final menuHeight = items.fold<double>(
         metrics.menuPadding.vertical,
         (sum, item) => sum + item.height,
-      ) +
-      8;
+      );
   final spaceAbove = targetRect.top;
   final spaceBelow = overlay.size.height - targetRect.bottom;
   final preferBelow = position == PopupMenuPosition.under;
@@ -443,6 +442,7 @@ class _AppMenuItemRowState extends State<_AppMenuItemRow> {
 
   @override
   Widget build(BuildContext context) {
+    final effectiveHovered = widget.enabled && _isHovered;
     return MouseRegion(
       onEnter: (_) {
         widget.onEnter();
@@ -451,7 +451,7 @@ class _AppMenuItemRowState extends State<_AppMenuItemRow> {
       onExit: (_) {
         if (_isHovered) setState(() => _isHovered = false);
       },
-      child: widget.builder(_isHovered),
+      child: widget.builder(effectiveHovered),
     );
   }
 }
@@ -771,21 +771,24 @@ class AppContextMenuRegion extends StatelessWidget {
     AppMenuMetrics metrics,
     _SubmenuTracker submenuTracker,
   ) {
-    return PopupMenuItem<_ContextMenuAction>(
+    return _NoSplashPopupMenuItem<_ContextMenuAction>(
       value: entry.onTap,
       enabled: entry.enabled,
       height: metrics.itemHeight,
       padding: EdgeInsets.zero,
-      // ריחוף על שורה רגילה — סוגר כל submenu פתוח
-      child: MouseRegion(
-        onEnter: (_) => submenuTracker.closeActive(),
-        child: _buildAppMenuRowContent(
+      child: _AppMenuItemRow(
+        onEnter: submenuTracker.closeActive,
+        enabled: entry.enabled,
+        builder: (isHovered) => _buildAppMenuRowContent(
           context,
           metrics,
           label: entry.label ?? '',
           icon: entry.icon,
           isDestructive: entry.isDestructive,
           enabled: entry.enabled,
+          backgroundColor: isHovered
+              ? Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.08)
+              : null,
         ),
       ),
     );
@@ -865,6 +868,21 @@ class _AppSubmenuTriggerButton extends StatefulWidget {
 
 class _AppSubmenuTriggerButtonState extends State<_AppSubmenuTriggerButton> {
   bool _isHovered = false;
+  bool _isSubmenuOpen = false;
+
+  void _handleOpen() {
+    if (!_isSubmenuOpen) {
+      setState(() => _isSubmenuOpen = true);
+    }
+    widget.onOpen();
+  }
+
+  void _handleClose() {
+    if (_isSubmenuOpen) {
+      setState(() => _isSubmenuOpen = false);
+    }
+    widget.onClose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -874,7 +892,7 @@ class _AppSubmenuTriggerButtonState extends State<_AppSubmenuTriggerButton> {
       isDestructive: widget.isDestructive,
     );
     final colorScheme = Theme.of(context).colorScheme;
-    final backgroundColor = _isHovered && widget.enabled
+    final backgroundColor = (_isHovered || _isSubmenuOpen) && widget.enabled
         ? colorScheme.onSurface.withValues(alpha: 0.08)
         : null;
 
@@ -900,8 +918,8 @@ class _AppSubmenuTriggerButtonState extends State<_AppSubmenuTriggerButton> {
           enabled: widget.enabled,
         ),
         menuStyle: buildAppSubmenuMenuStyle(context),
-        onOpen: widget.onOpen,
-        onClose: widget.onClose,
+        onOpen: _handleOpen,
+        onClose: _handleClose,
         leadingIcon: null,
         trailingIcon: null,
         child: _buildAppMenuRowContent(
@@ -930,7 +948,6 @@ MenuItemButton _buildContextSubmenuChildButton({
   required AppMenuMetrics metrics,
   required AppContextMenuEntry entry,
 }) {
-  final colorScheme = Theme.of(context).colorScheme;
   final foregroundColor = WidgetStateProperty.resolveWith<Color?>((states) {
     if (states.contains(WidgetState.disabled)) {
       return _resolveAppMenuForegroundColor(context, enabled: false);
@@ -953,25 +970,23 @@ MenuItemButton _buildContextSubmenuChildButton({
       ),
       foregroundColor: foregroundColor,
       iconColor: foregroundColor,
-      overlayColor: WidgetStateProperty.resolveWith((states) {
-        if (states.contains(WidgetState.hovered) ||
-            states.contains(WidgetState.focused)) {
-          return colorScheme.onSurface.withValues(alpha: 0.08);
-        }
-        if (states.contains(WidgetState.pressed)) {
-          return colorScheme.onSurface.withValues(alpha: 0.12);
-        }
-        return null;
-      }),
+      overlayColor: const WidgetStatePropertyAll(Colors.transparent),
     ),
     onPressed: entry.enabled ? entry.onTap : null,
-    child: _buildAppMenuRowContent(
-      context,
-      metrics,
-      label: entry.label ?? '',
-      icon: entry.icon,
+    child: _AppMenuItemRow(
+      onEnter: () {},
       enabled: entry.enabled,
-      isDestructive: entry.isDestructive,
+      builder: (isHovered) => _buildAppMenuRowContent(
+        context,
+        metrics,
+        label: entry.label ?? '',
+        icon: entry.icon,
+        enabled: entry.enabled,
+        isDestructive: entry.isDestructive,
+        backgroundColor: isHovered
+            ? Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.08)
+            : null,
+      ),
     ),
   );
 }
@@ -1315,6 +1330,7 @@ class _AppDropdownFieldState<T> extends State<AppDropdownField<T>> {
     final selected = await showAnchoredAppMenu<T>(
       context: context,
       anchorContext: anchorContext,
+      offset: const Offset(0, 4),
       itemsBuilder: (metrics) => widget.entries
           .map<PopupMenuEntry<T>>(
             (entry) => buildAppPopupMenuItem<T>(
@@ -1578,6 +1594,7 @@ class _AppDropdownFieldState<T> extends State<AppDropdownField<T>> {
               menuHeight:
                   (metrics.itemHeight * 8) + metrics.menuPadding.vertical,
               width: resolvedWidth,
+              alignmentOffset: const Offset(0, 4),
               showTrailingIcon: false,
               textStyle: TextStyle(
                 fontFamily: 'Roboto',
