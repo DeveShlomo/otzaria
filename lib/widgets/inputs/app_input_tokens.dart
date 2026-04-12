@@ -23,6 +23,10 @@ abstract class AppInputTokens {
   static const double focusedAlpha = 0.12;
   static const double disabledAlpha = 0.04;
 
+  // ── Alpha values לצלליות (Shadow) ─────────────────────────────────────────
+  static const double shadowAlphaPrimary = 0.14;
+  static const double shadowAlphaSecondary = 0.08;
+
   // ── רוחבי אייקונים ─────────────────────────────────────────────────────────
   static const double regularPrefixMinWidth = 44.0;
   static const double compactPrefixMinWidth = 36.0;

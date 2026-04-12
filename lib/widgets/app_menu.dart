@@ -288,11 +288,11 @@ Widget _buildAppMenuRowContent(
       (isSelected ? _resolveAppMenuSelectedBackground(context) : null);
   final resolvedForegroundColor = foregroundColor ??
       _resolveAppMenuForegroundColor(
-    context,
-    enabled: enabled,
-    isDestructive: isDestructive,
-    isSelected: isSelected,
-  );
+        context,
+        enabled: enabled,
+        isDestructive: isDestructive,
+        isSelected: isSelected,
+      );
   final resolvedFontWeight =
       fontWeight ?? (isSelected ? FontWeight.w600 : metrics.itemFontWeight);
 
@@ -386,6 +386,77 @@ Color _resolveAppMenuForegroundColor(
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
+// _NoSplashPopupMenuItem — PopupMenuItem ללא ripple/highlight פנימי
+// ═══════════════════════════════════════════════════════════════════════════
+
+class _NoSplashPopupMenuItem<T> extends PopupMenuItem<T> {
+  const _NoSplashPopupMenuItem({
+    super.key,
+    super.value,
+    super.enabled,
+    super.height,
+    super.padding,
+    super.child,
+  });
+
+  @override
+  PopupMenuItemState<T, PopupMenuItem<T>> createState() =>
+      _NoSplashPopupMenuItemState<T>();
+}
+
+class _NoSplashPopupMenuItemState<T>
+    extends PopupMenuItemState<T, _NoSplashPopupMenuItem<T>> {
+  @override
+  Widget build(BuildContext context) {
+    return Theme(
+      data: Theme.of(context).copyWith(
+        splashColor: Colors.transparent,
+        highlightColor: Colors.transparent,
+        hoverColor: Colors.transparent,
+      ),
+      child: super.build(context),
+    );
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// _AppMenuItemRow — wrapper לניהול hover אחיד עם _AppSubmenuTriggerButton
+// ═══════════════════════════════════════════════════════════════════════════
+
+class _AppMenuItemRow extends StatefulWidget {
+  final VoidCallback onEnter;
+  final bool enabled;
+  final Widget Function(bool isHovered) builder;
+
+  const _AppMenuItemRow({
+    required this.onEnter,
+    required this.enabled,
+    required this.builder,
+  });
+
+  @override
+  State<_AppMenuItemRow> createState() => _AppMenuItemRowState();
+}
+
+class _AppMenuItemRowState extends State<_AppMenuItemRow> {
+  bool _isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) {
+        widget.onEnter();
+        if (!_isHovered) setState(() => _isHovered = true);
+      },
+      onExit: (_) {
+        if (_isHovered) setState(() => _isHovered = false);
+      },
+      child: widget.builder(_isHovered),
+    );
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
 // buildAppPopupMenuItem
 // ═══════════════════════════════════════════════════════════════════════════
 
@@ -397,16 +468,17 @@ PopupMenuEntry<T> buildAppPopupMenuItem<T>(
 ) {
   final isSelected = selectedValue != null && entry.value == selectedValue;
 
-  return PopupMenuItem<T>(
+  // PopupMenuItem מצייר InkWell פנימי — מבטלים splash/highlight
+  // כדי שה-hover יגיע רק מ-_AppMenuItemRow (אחיד עם _AppSubmenuTriggerButton)
+  return _NoSplashPopupMenuItem<T>(
     value: entry.value,
     enabled: entry.enabled,
     height: metrics.itemHeight,
-    // padding: EdgeInsets.zero — הריפוד מנוהל ב-_buildAppMenuRowContent
-    // כדי שהצבע הנבחר יכסה שורה שלמה
     padding: EdgeInsets.zero,
-    child: MouseRegion(
-      onEnter: (_) => _globalSubmenuTracker.closeActive(),
-      child: _buildAppMenuRowContent(
+    child: _AppMenuItemRow(
+      onEnter: () => _globalSubmenuTracker.closeActive(),
+      enabled: entry.enabled,
+      builder: (isHovered) => _buildAppMenuRowContent(
         context,
         metrics,
         label: entry.label,
@@ -415,6 +487,14 @@ PopupMenuEntry<T> buildAppPopupMenuItem<T>(
         isSelected: isSelected,
         isDestructive: entry.isDestructive,
         enabled: entry.enabled,
+        backgroundColor: isSelected
+            ? _resolveAppMenuSelectedBackground(context)
+            : isHovered && entry.enabled
+                ? Theme.of(context)
+                    .colorScheme
+                    .onSurface
+                    .withValues(alpha: 0.08)
+                : null,
       ),
     ),
   );
@@ -465,8 +545,8 @@ class _AppCustomPopupMenuEntryState<T>
     extends State<_AppCustomPopupMenuEntry<T>> {
   @override
   Widget build(BuildContext context) {
-    final childHeight =
-        (widget.heightValue - widget.padding.vertical).clamp(0.0, double.infinity);
+    final childHeight = (widget.heightValue - widget.padding.vertical)
+        .clamp(0.0, double.infinity);
     return Padding(
       padding: widget.padding,
       child: SizedBox(
@@ -483,12 +563,10 @@ class _AppCustomPopupMenuEntryState<T>
 
 ButtonStyle buildAppSubmenuItemStyle(
   BuildContext context,
-  AppMenuMetrics metrics,
-  {
+  AppMenuMetrics metrics, {
   bool isDestructive = false,
   bool enabled = true,
-}
-) {
+}) {
   final foregroundColor = _resolveAppMenuForegroundColor(
     context,
     enabled: enabled,
@@ -786,22 +864,7 @@ class _AppSubmenuTriggerButton extends StatefulWidget {
 }
 
 class _AppSubmenuTriggerButtonState extends State<_AppSubmenuTriggerButton> {
-  bool _isOpen = false;
   bool _isHovered = false;
-
-  void _handleOpen() {
-    if (!_isOpen) {
-      setState(() => _isOpen = true);
-    }
-    widget.onOpen();
-  }
-
-  void _handleClose() {
-    if (_isOpen) {
-      setState(() => _isOpen = false);
-    }
-    widget.onClose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -809,14 +872,11 @@ class _AppSubmenuTriggerButtonState extends State<_AppSubmenuTriggerButton> {
       context,
       enabled: widget.enabled,
       isDestructive: widget.isDestructive,
-      isSelected: _isOpen,
     );
     final colorScheme = Theme.of(context).colorScheme;
-    final backgroundColor = _isOpen
-        ? _resolveAppMenuSelectedBackground(context)
-        : _isHovered && widget.enabled
-            ? colorScheme.onSurface.withValues(alpha: 0.08)
-            : null;
+    final backgroundColor = _isHovered && widget.enabled
+        ? colorScheme.onSurface.withValues(alpha: 0.08)
+        : null;
 
     return MouseRegion(
       onEnter: (_) {
@@ -840,8 +900,8 @@ class _AppSubmenuTriggerButtonState extends State<_AppSubmenuTriggerButton> {
           enabled: widget.enabled,
         ),
         menuStyle: buildAppSubmenuMenuStyle(context),
-        onOpen: _handleOpen,
-        onClose: _handleClose,
+        onOpen: widget.onOpen,
+        onClose: widget.onClose,
         leadingIcon: null,
         trailingIcon: null,
         child: _buildAppMenuRowContent(
@@ -858,8 +918,7 @@ class _AppSubmenuTriggerButtonState extends State<_AppSubmenuTriggerButton> {
           isDestructive: widget.isDestructive,
           backgroundColor: backgroundColor,
           foregroundColor: foregroundColor,
-          fontWeight:
-              _isOpen ? FontWeight.w600 : widget.metrics.itemFontWeight,
+          fontWeight: widget.metrics.itemFontWeight,
         ),
       ),
     );

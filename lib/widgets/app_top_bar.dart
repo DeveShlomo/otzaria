@@ -15,6 +15,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:otzaria/settings/settings_exports.dart';
+import 'package:otzaria/widgets/inputs/app_input_tokens.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  AppTopBarItem
@@ -206,7 +207,7 @@ class _AppTopBarState extends State<AppTopBar>
         final cs = Theme.of(context).colorScheme;
         // ✅ תוקן: barColor ו-shadowColor משתמשים בצבעי theme
         final barColor = cs.secondaryContainer;
-        final shadowColor = cs.shadow.withValues(alpha: 0.14);
+        final shadowColor = cs.shadow.withValues(alpha: AppInputTokens.shadowAlphaPrimary);
         final barH = isCompact ? _kCompactHeight : _kTouchHeight;
         final hPad = isCompact ? 6.0 : 8.0;
         final vPad = isCompact ? 4.0 : 8.0;
@@ -255,7 +256,7 @@ class _AppTopBarState extends State<AppTopBar>
                     key: _secondaryRowKey,
                     color: barColor,
                     elevation: 1.0,
-                    shadowColor: cs.shadow.withValues(alpha: 0.08),
+                    shadowColor: cs.shadow.withValues(alpha: AppInputTokens.shadowAlphaSecondary),
                     surfaceTintColor: Colors.transparent,
                     child: widget.secondaryRow!,
                   ),
