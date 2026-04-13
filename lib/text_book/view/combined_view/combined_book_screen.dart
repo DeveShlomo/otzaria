@@ -7,6 +7,7 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:otzaria/widgets/app_menu.dart';
 import 'package:otzaria/settings/settings_exports.dart';
+import 'package:otzaria/utils/fullscreen_helper.dart';
 import 'package:otzaria/text_book/bloc/text_book_bloc.dart';
 import 'package:otzaria/text_book/bloc/text_book_state.dart';
 import 'package:otzaria/text_book/models/commentator_group.dart';
@@ -696,7 +697,29 @@ class _CombinedViewState extends State<CombinedView> {
             // שומר את גובה הבלוק בפועל לשימוש בחישובי הגלילה
             _viewportHeight = constraints.maxHeight;
 
-            return SelectionArea(
+            return Focus(
+              canRequestFocus: false,
+              skipTraversal: true,
+              onKeyEvent: (node, event) {
+                if (event is! KeyDownEvent) return KeyEventResult.ignored;
+                if (event.logicalKey != LogicalKeyboardKey.escape) {
+                  return KeyEventResult.ignored;
+                }
+                // ESC: קודם בדוק fullscreen/navigator — אם כן, אל תטפל כאן
+                final settingsBloc = context.read<SettingsBloc>();
+                if (settingsBloc.state.isFullscreen) {
+                  FullscreenHelper.toggleFullscreen(context, false);
+                  return KeyEventResult.handled;
+                }
+                // ניקוי בחירה — רק אם אין דבר אחר לטפל
+                _selectionManager.exitSelectionMode();
+                _savedSelectedText.value = null;
+                _savedSelectedIndex.value = null;
+                _currentSelectedIndex.value = null;
+                widget.onSelectedTextChanged?.call(null);
+                return KeyEventResult.handled;
+              },
+              child: SelectionArea(
               key: _selectionAreaKey,
               // SelectionArea אחד לכל הרשימה - מאפשר בחירה רציפה בין פסקאות
               contextMenuBuilder: (context, selectableRegionState) {
@@ -786,10 +809,6 @@ class _CombinedViewState extends State<CombinedView> {
                       LogicalKeyboardKey.meta,
                       LogicalKeyboardKey.keyC,
                     ): const _CopySelectedTextIntent(),
-                    // Esc לניקוי בחירה
-                    LogicalKeySet(
-                      LogicalKeyboardKey.escape,
-                    ): const ClearSelectionIntent(),
                   },
                   child: Actions(
                     actions: <Type, Action<Intent>>{
@@ -874,7 +893,8 @@ class _CombinedViewState extends State<CombinedView> {
                   ),
                 ),
               ),
-            );
+            ), // SelectionArea
+            ); // Focus
           },
         );
       },

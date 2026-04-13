@@ -10,10 +10,13 @@
 import 'package:flutter/material.dart';
 import 'package:otzaria/settings/settings_exports.dart';
 import 'package:otzaria/theme/theme_exports.dart';
+import 'package:otzaria/widgets/context_overlay_panel.dart';
 
 class GematriaSettingsPanel extends StatelessWidget {
   final bool isVisible;
   final VoidCallback onToggle;
+  /// callback לסגירה בלבד (לשימוש ב-overlay) — ברירת מחדל: onToggle
+  final VoidCallback? onClose;
 
   static const double _panelWidth = 360.0;
   static const double _narrowBreakpoint = 800.0;
@@ -22,6 +25,7 @@ class GematriaSettingsPanel extends StatelessWidget {
     super.key,
     required this.isVisible,
     required this.onToggle,
+    this.onClose,
   });
 
   @override
@@ -78,11 +82,12 @@ class GematriaSettingsPanel extends StatelessWidget {
 
   // ── תוכן הפאנל (משותף לצר ולרחב) ─────────────────────────────────────────
   Widget buildNarrowOverlay(BuildContext context) {
-    return _NarrowOverlayPanel(
-      isVisible: isVisible,
-      onToggle: onToggle,
-      panelWidth: _panelWidth,
-      content: _buildPanelContent(context),
+    return ContextOverlayPanel(
+      isOpen: isVisible,
+      onClose: onClose ?? onToggle,
+      width: _panelWidth,
+      alignment: AlignmentDirectional.centerStart,
+      child: _buildPanelContent(context),
     );
   }
 
@@ -114,60 +119,6 @@ class GematriaSettingsPanel extends StatelessWidget {
           child: SingleChildScrollView(
             padding: EdgeInsets.all(AppTokens.spaceMD),
             child: GematriaSettingsTab(),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-// ── Overlay panel (מסך צר) ─────────────────────────────────────────────────────
-// ריצה עצמאית כ-AnimatedPositioned על גבי Stack בhגdמה שבהורה.
-
-class _NarrowOverlayPanel extends StatelessWidget {
-  final bool isVisible;
-  final VoidCallback onToggle;
-  final double panelWidth;
-  final Widget content;
-
-  const _NarrowOverlayPanel({
-    required this.isVisible,
-    required this.onToggle,
-    required this.panelWidth,
-    required this.content,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-    final screenWidth = MediaQuery.of(context).size.width;
-    final effectiveWidth = panelWidth.clamp(0.0, screenWidth * 0.88);
-
-    return Stack(
-      children: [
-        // ── scrim (מחשיך את הרקע) ──────────────────────────────────────────
-        if (isVisible)
-          GestureDetector(
-            onTap: onToggle,
-            child: ColoredBox(
-              color: cs.scrim.withValues(alpha: 0.35),
-              child: const SizedBox.expand(),
-            ),
-          ),
-        // ── הפאנל עצמו ──────────────────────────────────────────────────────
-        AnimatedPositioned(
-          duration: AppTokens.animSlow,
-          curve: Curves.easeInOut,
-          top: 0,
-          bottom: 0,
-          left: isVisible ? screenWidth - effectiveWidth : screenWidth,
-          child: SizedBox(
-            width: effectiveWidth,
-            child: Material(
-              elevation: 8,
-              color: Theme.of(context).colorScheme.surface,
-              child: SafeArea(child: content),
-            ),
           ),
         ),
       ],

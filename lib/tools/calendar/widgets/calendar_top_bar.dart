@@ -310,8 +310,7 @@ class _CalendarTopBarState extends State<CalendarTopBar>
       return KeyEventResult.ignored;
     }
 
-    if (event.logicalKey == LogicalKeyboardKey.escape ||
-        event.logicalKey == LogicalKeyboardKey.backspace) {
+    if (event.logicalKey == LogicalKeyboardKey.escape) {
       widget.onCloseJumpToDateSearch();
       return KeyEventResult.handled;
     }
@@ -381,14 +380,7 @@ class _CalendarTopBarState extends State<CalendarTopBar>
           left: dialogLeft,
           top: dialogTop,
           width: safeDialogWidth,
-          child: CallbackShortcuts(
-            bindings: {
-              const SingleActivator(LogicalKeyboardKey.escape):
-                  widget.onCloseJumpToDateSearch,
-              const SingleActivator(LogicalKeyboardKey.enter):
-                  _submitJumpDateSearch,
-            },
-            child: Focus(
+          child: Focus(
               focusNode: _dialogFocusNode,
               onKeyEvent: _handleDialogKeyEvent,
               child: Material(
@@ -429,7 +421,6 @@ class _CalendarTopBarState extends State<CalendarTopBar>
                 ),
               ),
             ),
-          ),
         ),
       ],
     );

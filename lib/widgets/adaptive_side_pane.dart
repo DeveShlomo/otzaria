@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:otzaria/theme/app_surfaces.dart';
 import 'package:otzaria/widgets/floating_panel.dart';
 import 'package:otzaria/widgets/resizable_drag_handle.dart';
@@ -25,10 +26,11 @@ class AdaptiveSidePane extends StatefulWidget {
   final double minPaneWidth;
   final double? maxPaneWidth;
   final ValueChanged<double>? onPaneWidthChanged;
-  final Widget Function(BuildContext context, Widget paneContent, double paneWidth)?
+  final Widget Function(
+          BuildContext context, Widget paneContent, double paneWidth)?
       widePaneBuilder;
   final Widget Function(BuildContext context, Widget paneContent)?
-     narrowPaneBuilder;
+      narrowPaneBuilder;
   final bool autoHandleResponsiveVisibility;
 
   const AdaptiveSidePane({
@@ -58,6 +60,10 @@ class AdaptiveSidePane extends StatefulWidget {
 
 class _AdaptiveSidePaneState extends State<AdaptiveSidePane> {
   bool? _lastHadRoomForSideBySide;
+  final FocusNode _narrowFocusNode =
+      FocusNode(debugLabel: 'AdaptiveSidePane_narrow');
+  final FocusScopeNode _narrowFocusScopeNode =
+      FocusScopeNode(debugLabel: 'AdaptiveSidePane_scope');
   static const double _kWideTopGap = 14;
   static const double _kWideBottomGap = 10;
   static const double _kWideOuterSideGap = 10;
@@ -81,6 +87,36 @@ class _AdaptiveSidePaneState extends State<AdaptiveSidePane> {
 
     final resolved = widget.alignment.resolve(Directionality.of(context));
     return resolved.x >= 0;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.isOpen) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && widget.isOpen) {
+          _narrowFocusNode.requestFocus();
+        }
+      });
+    }
+  }
+
+  @override
+  void didUpdateWidget(AdaptiveSidePane oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // כשהחלונית הצרה נפתחת — בקש פוקוס כדי שESC יעבוד
+    if (widget.isOpen && !oldWidget.isOpen) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _narrowFocusNode.requestFocus();
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _narrowFocusNode.dispose();
+    _narrowFocusScopeNode.dispose();
+    super.dispose();
   }
 
   void _handleResponsiveAutoClose(bool hasRoomForSideBySide) {
@@ -190,8 +226,8 @@ class _AdaptiveSidePaneState extends State<AdaptiveSidePane> {
         final paneOnRight = _isPaneOnRight(context);
         final wideOccupiedWidth =
             widget.paneWidth + _kWideOuterSideGap + _kWideInnerSideGap;
-        final hasRoomForSideBySide =
-            constraints.maxWidth >= (wideOccupiedWidth + widget.minMainContentWidth);
+        final hasRoomForSideBySide = constraints.maxWidth >=
+            (wideOccupiedWidth + widget.minMainContentWidth);
 
         if (widget.autoHandleResponsiveVisibility) {
           _handleResponsiveAutoClose(hasRoomForSideBySide);
@@ -199,7 +235,8 @@ class _AdaptiveSidePaneState extends State<AdaptiveSidePane> {
 
         if (hasRoomForSideBySide) {
           final widePaneContent = widget.widePaneBuilder != null
-              ? widget.widePaneBuilder!(context, widget.paneContent, widget.paneWidth)
+              ? widget.widePaneBuilder!(
+                  context, widget.paneContent, widget.paneWidth)
               : widget.paneContent;
 
           final widePane = SizedBox(
@@ -223,18 +260,17 @@ class _AdaptiveSidePaneState extends State<AdaptiveSidePane> {
                 child: OverflowBox(
                   maxWidth: wideOccupiedWidth,
                   minWidth: 0,
-                  alignment:
-                      paneOnRight ? Alignment.centerRight : Alignment.centerLeft,
+                  alignment: paneOnRight
+                      ? Alignment.centerRight
+                      : Alignment.centerLeft,
                   child: Padding(
                     padding: EdgeInsetsDirectional.only(
                       top: _kWideTopGap,
                       bottom: _kWideBottomGap,
-                      start: paneOnRight
-                          ? _kWideInnerSideGap
-                          : _kWideOuterSideGap,
-                      end: paneOnRight
-                          ? _kWideOuterSideGap
-                          : _kWideInnerSideGap,
+                      start:
+                          paneOnRight ? _kWideInnerSideGap : _kWideOuterSideGap,
+                      end:
+                          paneOnRight ? _kWideOuterSideGap : _kWideInnerSideGap,
                     ),
                     child: SizedBox(
                       width: widget.paneWidth,
@@ -274,15 +310,25 @@ class _AdaptiveSidePaneState extends State<AdaptiveSidePane> {
               )
             : narrowPaneContent;
 
+        // במצב narrow: ESC סוגר את החלונית כשהיא פתוחה (מסתירה תוכן)
+        // הפוקוס מועבר לעטיפת ה-Focus כדי שהמקש יעבוד ללא תלות בפוקוס הנוכחי
         return Stack(
           children: [
-            Positioned.fill(child: widget.mainContent),
+            Positioned.fill(
+              child: ExcludeFocus(
+                excluding: widget.isOpen,
+                child: widget.mainContent,
+              ),
+            ),
             if (widget.isOpen)
               Positioned.fill(
                 child: GestureDetector(
                   onTap: widget.onClose,
                   child: ColoredBox(
-                    color: Theme.of(context).colorScheme.scrim.withValues(alpha: 0.30),
+                    color: Theme.of(context)
+                        .colorScheme
+                        .scrim
+                        .withValues(alpha: 0.30),
                   ),
                 ),
               ),
@@ -294,15 +340,31 @@ class _AdaptiveSidePaneState extends State<AdaptiveSidePane> {
               width: widget.paneWidth,
               child: IgnorePointer(
                 ignoring: !widget.isOpen,
-                child: AnimatedSlide(
-                  duration: const Duration(milliseconds: 250),
-                  curve: Curves.easeOut,
-                  offset: widget.isOpen
-                      ? Offset.zero
-                      : (paneOnRight
-                          ? const Offset(1, 0)
-                          : const Offset(-1, 0)),
-                  child: narrowPane,
+                child: FocusScope(
+                  node: _narrowFocusScopeNode,
+                  child: Focus(
+                    focusNode: _narrowFocusNode,
+                    onKeyEvent: widget.isOpen
+                        ? (node, event) {
+                            if (event is KeyDownEvent &&
+                                event.logicalKey == LogicalKeyboardKey.escape) {
+                              widget.onClose();
+                              return KeyEventResult.handled;
+                            }
+                            return KeyEventResult.ignored;
+                          }
+                        : null,
+                    child: AnimatedSlide(
+                      duration: const Duration(milliseconds: 250),
+                      curve: Curves.easeOut,
+                      offset: widget.isOpen
+                          ? Offset.zero
+                          : (paneOnRight
+                              ? const Offset(1, 0)
+                              : const Offset(-1, 0)),
+                      child: narrowPane,
+                    ),
+                  ),
                 ),
               ),
             ),

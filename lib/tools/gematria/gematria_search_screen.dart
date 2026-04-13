@@ -144,8 +144,19 @@ class GematriaSearchScreenState extends State<GematriaSearchScreen> {
     requestFocusIfNeeded(_searchFocusNode);
   }
 
-  void _toggleSettings() =>
-      setState(() => _showingSettings = !_showingSettings);
+  void _closeSettings() {
+    if (!_showingSettings) return;
+    setState(() => _showingSettings = false);
+    _searchFocusNode.requestFocus();
+  }
+
+  void _toggleSettings() {
+    if (_showingSettings) {
+      _closeSettings();
+    } else {
+      setState(() => _showingSettings = true);
+    }
+  }
 
   void _focusResultsSurface() {
     if (!mounted || !_screenFocusNode.canRequestFocus) return;
@@ -426,7 +437,7 @@ class GematriaSearchScreenState extends State<GematriaSearchScreen> {
                   ),
                   ContextOverlayPanel(
                     isOpen: _showingSettings,
-                    onClose: _toggleSettings,
+                    onClose: _closeSettings,
                     width: 400,
                     child: Column(
                       children: [

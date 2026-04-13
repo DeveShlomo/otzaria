@@ -235,14 +235,17 @@ class _MySettingsScreenState extends State<MySettingsScreen> {
                       elevation: 0,
                       title: Text(_tabsData[_selectedIndex].label),
                       leading: Tooltip(
-                        message: 'חזור (Backspace)',
+                        message: 'חזור (Esc)',
                         child: IconButton(
                           icon: const RtlIcon(Icons.arrow_forward),
                           onPressed: _showMobileMenuView,
                         ),
                       ),
                     ),
-                    body: _tabsData[_selectedIndex].pageBuilder(),
+                    body: Focus(
+                      focusNode: _contentFocusNode,
+                      child: _tabsData[_selectedIndex].pageBuilder(),
+                    ),
                   ),
                 );
               }

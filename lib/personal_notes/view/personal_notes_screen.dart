@@ -121,12 +121,43 @@ class _PersonalNotesManagerScreenState
     requestFocusIfNeeded(_searchFocusNode);
   }
 
+  bool _isNavigationOverlayMode() {
+    final screenWidth = MediaQuery.sizeOf(context).width;
+    final sideBySideThreshold = _navigationWidth + 10 + 12 + 320;
+    return screenWidth < sideBySideThreshold;
+  }
+
+  void _openNavigation() {
+    setState(() => _isNavigationVisible = true);
+  }
+
+  void _closeNavigation() {
+    if (!_isNavigationVisible) return;
+    setState(() => _isNavigationVisible = false);
+    requestKeyboardFocus();
+  }
+
+  void _toggleNavigation() {
+    if (_isNavigationVisible) {
+      _closeNavigation();
+      return;
+    }
+    _openNavigation();
+  }
+
   KeyEventResult _handleWindowKeyEvent(FocusNode node, KeyEvent event) {
     if (event is! KeyDownEvent) return KeyEventResult.ignored;
     final focusedWidget = FocusManager.instance.primaryFocus?.context?.widget;
     final isEditing =
         focusedWidget is EditableText || focusedWidget is TextField;
     if (isEditing) return KeyEventResult.ignored;
+
+    if (event.logicalKey == LogicalKeyboardKey.escape &&
+        _isNavigationVisible &&
+        _isNavigationOverlayMode()) {
+      _closeNavigation();
+      return KeyEventResult.handled;
+    }
 
     if (event.logicalKey == LogicalKeyboardKey.space ||
         event.logicalKey == LogicalKeyboardKey.pageDown) {
@@ -238,8 +269,8 @@ class _PersonalNotesManagerScreenState
                     mainContent: _buildAllNotesList(),
                     paneWidth: _navigationWidth,
                     minMainContentWidth: 320,
-                    onClose: () => setState(() => _isNavigationVisible = false),
-                    onOpen: () => setState(() => _isNavigationVisible = true),
+                    onClose: _closeNavigation,
+                    onOpen: _openNavigation,
                     isResizable: true,
                     minPaneWidth: 150,
                     maxPaneWidth: 500,
@@ -273,11 +304,7 @@ class _PersonalNotesManagerScreenState
             AppTopBarItem(
               widget: IconButton(
                 tooltip: _isNavigationVisible ? 'הסתר ניווט' : 'הצג ניווט',
-                onPressed: () {
-                  setState(() {
-                    _isNavigationVisible = !_isNavigationVisible;
-                  });
-                },
+                onPressed: _toggleNavigation,
                 icon: AnimatedSwitcher(
                   duration: AppTokens.animFast,
                   transitionBuilder: (child, animation) => RotationTransition(

@@ -242,8 +242,13 @@ class _KeyboardShortcutsState extends State<KeyboardShortcuts> {
       return KeyEventResult.handled;
     }
 
-    // ESC - יציאה ממסך מלא
+    // ESC - סגור דיאלוג/חלון פתוח, ואם אין - צא ממסך מלא
     if (ShortcutHelper.matchesShortcut(event, 'escape')) {
+      final navigator = navigatorKey.currentState;
+      if (navigator != null && navigator.canPop()) {
+        navigator.pop();
+        return KeyEventResult.handled;
+      }
       final settingsBloc = context.read<SettingsBloc>();
       if (settingsBloc.state.isFullscreen) {
         FullscreenHelper.toggleFullscreen(context, false);

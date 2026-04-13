@@ -265,6 +265,7 @@ class MoreScreenState extends State<MoreScreen>
       body: GroupedMobileNavigationList<int>(
         items: items,
         groups: groups,
+        initialFocusValue: _selectedIndex,
         onSelected: _changeTab,
       ),
     );
@@ -284,7 +285,7 @@ class MoreScreenState extends State<MoreScreen>
           elevation: 0,
           title: Text(_tabs[_selectedIndex].label),
           leading: Tooltip(
-            message: 'חזור (Backspace)',
+            message: 'חזור (Esc)',
             child: IconButton(
               icon: const RtlIcon(Icons.arrow_forward),
               onPressed: _showMobileMenuView,
