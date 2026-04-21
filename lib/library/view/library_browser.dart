@@ -24,14 +24,12 @@ import 'package:otzaria/library/view/grid_items.dart';
 import 'package:otzaria/library/view/otzar_book_dialog.dart';
 import 'package:otzaria/library/view/book_preview_panel.dart';
 import 'package:otzaria/library/view/library_panel_controller.dart';
-import 'package:otzaria/settings/panels/library_settings_panel.dart';
 import 'package:otzaria/widgets/widgets_exports.dart';
 import 'package:otzaria/widgets/app_top_bar.dart';
 import 'package:otzaria/widgets/responsive_action_bar.dart';
 import 'package:otzaria/utils/open_book.dart';
 import 'package:otzaria/widgets/adaptive_side_pane.dart';
 import 'package:otzaria/widgets/context_overlay_panel.dart';
-
 import 'package:otzaria/navigation/bloc/navigation_bloc.dart';
 import 'package:otzaria/navigation/bloc/navigation_event.dart';
 import 'package:otzaria/navigation/bloc/navigation_state.dart';
@@ -222,9 +220,12 @@ class _LibraryBrowserState extends State<LibraryBrowser>
       listeners: [
         BlocListener<LibraryBloc, LibraryState>(
           listenWhen: (previous, current) =>
-              previous.isLoading && !current.isLoading && current.library != null,
+              previous.isLoading &&
+              !current.isLoading &&
+              current.library != null,
           listener: (context, state) {
-            final book = _getFirstDisplayedBook(state.currentCategory ?? state.library!);
+            final book =
+                _getFirstDisplayedBook(state.currentCategory ?? state.library!);
             if (book != null) {
               context.read<LibraryBloc>().add(SelectBookForPreview(book));
             }
@@ -577,7 +578,8 @@ class _LibraryBrowserState extends State<LibraryBrowser>
             focusNode: focusRepository.librarySearchFocusNode,
             autofocus: true,
             slim: isCompact,
-            hintText: 'איתור ספר או מחבר ב${state.currentCategory?.title ?? ""}',
+            hintText:
+                'איתור ספר או מחבר ב${state.currentCategory?.title ?? ""}',
             maxWidth: isCompact ? 500 : 400,
             onChanged: (value) {
               context.read<LibraryBloc>().add(UpdateSearchQuery(value));
@@ -1389,9 +1391,11 @@ class _LibraryBrowserState extends State<LibraryBrowser>
 
     final subs = category.subCategories.toList();
     if (category is Library) {
-      subs.sort((a, b) => _getTopCategoryOrder(a).compareTo(_getTopCategoryOrder(b)));
+      subs.sort(
+          (a, b) => _getTopCategoryOrder(a).compareTo(_getTopCategoryOrder(b)));
     } else {
-      subs.sort((a, b) => _normalizeOrder(a.order).compareTo(_normalizeOrder(b.order)));
+      subs.sort((a, b) =>
+          _normalizeOrder(a.order).compareTo(_normalizeOrder(b.order)));
     }
     for (final sub in subs) {
       final book = _getFirstDisplayedBook(sub);
