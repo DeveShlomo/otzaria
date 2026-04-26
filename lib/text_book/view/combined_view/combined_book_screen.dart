@@ -8,6 +8,7 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:otzaria/widgets/misc/app_menu_exports.dart';
 import 'package:otzaria/settings/settings_exports.dart';
+import 'package:otzaria/utils/ui/fullscreen_helper.dart';
 import 'package:otzaria/text_book/bloc/text_book_bloc.dart';
 import 'package:otzaria/text_book/bloc/text_book_state.dart';
 import 'package:otzaria/text_book/models/commentator_group.dart';
@@ -885,201 +886,221 @@ class _CombinedViewState extends State<CombinedView> {
             // שומר את גובה הבלוק בפועל לשימוש בחישובי הגלילה
             _viewportHeight = constraints.maxHeight;
 
-            return SelectionArea(
-              key: _selectionAreaKey,
-              // SelectionArea אחד לכל הרשימה - מאפשר בחירה רציפה בין פסקאות
-              contextMenuBuilder: (context, selectableRegionState) {
-                return const SizedBox.shrink();
+            return Focus(
+              canRequestFocus: false,
+              skipTraversal: true,
+              onKeyEvent: (node, event) {
+                if (event is! KeyDownEvent) return KeyEventResult.ignored;
+                if (event.logicalKey != LogicalKeyboardKey.escape) {
+                  return KeyEventResult.ignored;
+                }
+                final settingsBloc = context.read<SettingsBloc>();
+                if (settingsBloc.state.isFullscreen) {
+                  FullscreenHelper.toggleFullscreen(context, false);
+                  return KeyEventResult.handled;
+                }
+                _selectionManager.exitSelectionMode();
+                _savedSelectedText.value = null;
+                _savedSelectedIndex.value = null;
+                _currentSelectedIndex.value = null;
+                widget.onSelectedTextChanged?.call(null);
+                return KeyEventResult.handled;
               },
-              onSelectionChanged: (selection) {
-                final plain = selection?.plainText;
-                if (!shouldPersistSelectedText(plain)) {
-                  // אם הבחירה נוקתה, יוצאים ממצב בחירה ומנקים את הטקסט השמור
-                  _selectionManager.exitSelectionMode();
-                  _savedSelectedText.value = null;
-                  return;
-                }
-                // כניסה למצב בחירה כשיש טקסט נבחר
-                if (!_selectionManager.isInSelectionMode) {
-                  // שימוש באינדקס העליון הנראה במקום 0
-                  _selectionManager.setAnchor(topmostVisibleIndex(
-                      widget.tab.positionsListener.itemPositions.value));
-                }
-
-                // חשוב: כדי ש-Ctrl+C יעבוד מיד אחרי סימון טקסט עם העכבר
-                // נוודא שהפוקוס נמצא על אזור הקריאה.
-                _focusNode.requestFocus();
-
-                // מחשב את מספר השורה המדויק של הטקסט המודגש
-                // משתמש באותה לוגיקה כמו בדיווח שגיאות
-                final TextBookLoaded? loadedState =
-                    _textBookBloc.state is TextBookLoaded
-                        ? _textBookBloc.state as TextBookLoaded
-                        : null;
-                int? foundIndex;
-                var fixedPlain = plain;
-
-                if (loadedState != null) {
-                  final settingsState = context.read<SettingsBloc>().state;
-                  // מקבל את השורה הראשונה הנראית
-                  final baseIndex = loadedState.visibleIndices.isNotEmpty
-                      ? loadedState.visibleIndices.first
-                      : 0;
-
-                  final visibleLines =
-                      _buildRenderedVisibleLines(loadedState, settingsState);
-                  final visibleText = visibleLines.join('\n');
-
-                  fixedPlain = restoreSelectedTextLineBreaks(
-                    selectedText: plain!,
-                    visibleLines: visibleLines,
-                  );
-
-                  // מוצא את המיקום של הטקסט המודגש
-                  final selectionStart = visibleText.indexOf(fixedPlain);
-
-                  if (selectionStart >= 0) {
-                    // סופר כמה שורות יש לפני הטקסט המודגש
-                    final before = visibleText.substring(0, selectionStart);
-                    final offset = '\n'.allMatches(before).length;
-                    foundIndex = baseIndex + offset;
+              child: SelectionArea(
+                key: _selectionAreaKey,
+                // SelectionArea אחד לכל הרשימה - מאפשר בחירה רציפה בין פסקאות
+                contextMenuBuilder: (context, selectableRegionState) {
+                  return const SizedBox.shrink();
+                },
+                onSelectionChanged: (selection) {
+                  final plain = selection?.plainText;
+                  if (!shouldPersistSelectedText(plain)) {
+                    // אם הבחירה נוקתה, יוצאים ממצב בחירה ומנקים את הטקסט השמור
+                    _selectionManager.exitSelectionMode();
+                    _savedSelectedText.value = null;
+                    return;
+                  }
+                  // כניסה למצב בחירה כשיש טקסט נבחר
+                  if (!_selectionManager.isInSelectionMode) {
+                    // שימוש באינדקס העליון הנראה במקום 0
+                    _selectionManager.setAnchor(topmostVisibleIndex(
+                        widget.tab.positionsListener.itemPositions.value));
                   }
 
-                  // fallback: אם לא הצלחנו לחשב אינדקס, נשתמש בשורה שנבחרה (אם קיימת)
-                  foundIndex ??= loadedState.selectedIndex;
-                }
+                  // חשוב: כדי ש-Ctrl+C יעבוד מיד אחרי סימון טקסט עם העכבר
+                  // נוודא שהפוקוס נמצא על אזור הקריאה.
+                  _focusNode.requestFocus();
 
-                if (mounted) {
-                  _savedSelectedText.value = fixedPlain;
-                  _savedSelectedIndex.value = foundIndex;
-                  _currentSelectedIndex.value = foundIndex;
-                  widget.onSelectedTextChanged?.call(fixedPlain);
+                  // מחשב את מספר השורה המדויק של הטקסט המודגש
+                  // משתמש באותה לוגיקה כמו בדיווח שגיאות
+                  final TextBookLoaded? loadedState =
+                      _textBookBloc.state is TextBookLoaded
+                          ? _textBookBloc.state as TextBookLoaded
+                          : null;
+                  int? foundIndex;
+                  var fixedPlain = plain;
 
-                  // שליחת event לפלאגינים עם ה-index המדויק
-                  final selectionText = fixedPlain?.trim() ?? '';
-                  if (selectionText.isNotEmpty && loadedState != null) {
-                    unawaited(PluginRuntimeDispatcher.instance.dispatchEvent(
-                      'reader.selection_changed',
-                      {
-                        'text': selectionText,
-                        'currentRef': loadedState.currentTitle ?? '',
-                        'currentBook': loadedState.book.title,
-                        'currentBookId': loadedState.book.title,
-                        'currentIndex': foundIndex ?? 0,
-                      },
-                    ));
+                  if (loadedState != null) {
+                    final settingsState = context.read<SettingsBloc>().state;
+                    // מקבל את השורה הראשונה הנראית
+                    final baseIndex = loadedState.visibleIndices.isNotEmpty
+                        ? loadedState.visibleIndices.first
+                        : 0;
+
+                    final visibleLines =
+                        _buildRenderedVisibleLines(loadedState, settingsState);
+                    final visibleText = visibleLines.join('\n');
+
+                    fixedPlain = restoreSelectedTextLineBreaks(
+                      selectedText: plain!,
+                      visibleLines: visibleLines,
+                    );
+
+                    // מוצא את המיקום של הטקסט המודגש
+                    final selectionStart = visibleText.indexOf(fixedPlain);
+
+                    if (selectionStart >= 0) {
+                      // סופר כמה שורות יש לפני הטקסט המודגש
+                      final before = visibleText.substring(0, selectionStart);
+                      final offset = '\n'.allMatches(before).length;
+                      foundIndex = baseIndex + offset;
+                    }
+
+                    // fallback: אם לא הצלחנו לחשב אינדקס, נשתמש בשורה שנבחרה (אם קיימת)
+                    foundIndex ??= loadedState.selectedIndex;
                   }
-                }
-                _prefetchDictionaryLookups(fixedPlain);
-              },
-              child: Directionality(
-                textDirection: TextDirection.rtl,
-                child: Shortcuts(
-                  shortcuts: <ShortcutActivator, Intent>{
-                    // Windows/Linux
-                    LogicalKeySet(
-                      LogicalKeyboardKey.control,
-                      LogicalKeyboardKey.keyC,
-                    ): const _CopySelectedTextIntent(),
-                    // Windows "classic" copy
-                    LogicalKeySet(
-                      LogicalKeyboardKey.control,
-                      LogicalKeyboardKey.insert,
-                    ): const _CopySelectedTextIntent(),
-                    // macOS (למקרה שמריצים שם)
-                    LogicalKeySet(
-                      LogicalKeyboardKey.meta,
-                      LogicalKeyboardKey.keyC,
-                    ): const _CopySelectedTextIntent(),
-                    // Esc לניקוי בחירה
-                    LogicalKeySet(
-                      LogicalKeyboardKey.escape,
-                    ): const ClearSelectionIntent(),
-                  },
-                  child: Actions(
-                    actions: <Type, Action<Intent>>{
-                      _CopySelectedTextIntent:
-                          CallbackAction<_CopySelectedTextIntent>(
-                        onInvoke: (_) {
-                          _copyFormattedText();
-                          return null;
+
+                  if (mounted) {
+                    _savedSelectedText.value = fixedPlain;
+                    _savedSelectedIndex.value = foundIndex;
+                    _currentSelectedIndex.value = foundIndex;
+                    widget.onSelectedTextChanged?.call(fixedPlain);
+
+                    // שליחת event לפלאגינים עם ה-index המדויק
+                    final selectionText = fixedPlain?.trim() ?? '';
+                    if (selectionText.isNotEmpty && loadedState != null) {
+                      unawaited(PluginRuntimeDispatcher.instance.dispatchEvent(
+                        'reader.selection_changed',
+                        {
+                          'text': selectionText,
+                          'currentRef': loadedState.currentTitle ?? '',
+                          'currentBook': loadedState.book.title,
+                          'currentBookId': loadedState.book.title,
+                          'currentIndex': foundIndex ?? 0,
                         },
-                      ),
-                      CopySelectionTextIntent:
-                          CallbackAction<CopySelectionTextIntent>(
-                        onInvoke: (_) {
-                          _copyFormattedText();
-                          return null;
-                        },
-                      ),
-                      ClearSelectionIntent:
-                          CallbackAction<ClearSelectionIntent>(
-                        onInvoke: (_) {
-                          _selectionManager.exitSelectionMode();
-                          // ניקוי הבחירה ב-SelectionArea
-                          _savedSelectedText.value = null;
-                          _savedSelectedIndex.value = null;
-                          _currentSelectedIndex.value = null;
-                          widget.onSelectedTextChanged?.call(null);
-                          return null;
-                        },
-                      ),
+                      ));
+                    }
+                  }
+                  _prefetchDictionaryLookups(fixedPlain);
+                },
+                child: Directionality(
+                  textDirection: TextDirection.rtl,
+                  child: Shortcuts(
+                    shortcuts: <ShortcutActivator, Intent>{
+                      // Windows/Linux
+                      LogicalKeySet(
+                        LogicalKeyboardKey.control,
+                        LogicalKeyboardKey.keyC,
+                      ): const _CopySelectedTextIntent(),
+                      // Windows "classic" copy
+                      LogicalKeySet(
+                        LogicalKeyboardKey.control,
+                        LogicalKeyboardKey.insert,
+                      ): const _CopySelectedTextIntent(),
+                      // macOS (למקרה שמריצים שם)
+                      LogicalKeySet(
+                        LogicalKeyboardKey.meta,
+                        LogicalKeyboardKey.keyC,
+                      ): const _CopySelectedTextIntent(),
                     },
-                    child: Directionality(
-                      textDirection: TextDirection.rtl,
-                      child: widget.isPreviewMode
-                          ? Scrollbar(
-                              controller: _previewScrollController,
-                              thumbVisibility: true,
-                              thickness: 8.0,
-                              radius: const Radius.circular(4.0),
-                              child: ListView.builder(
+                    child: Actions(
+                      actions: <Type, Action<Intent>>{
+                        _CopySelectedTextIntent:
+                            CallbackAction<_CopySelectedTextIntent>(
+                          onInvoke: (_) {
+                            _copyFormattedText();
+                            return null;
+                          },
+                        ),
+                        CopySelectionTextIntent:
+                            CallbackAction<CopySelectionTextIntent>(
+                          onInvoke: (_) {
+                            _copyFormattedText();
+                            return null;
+                          },
+                        ),
+                        ClearSelectionIntent:
+                            CallbackAction<ClearSelectionIntent>(
+                          onInvoke: (_) {
+                            _selectionManager.exitSelectionMode();
+                            // ניקוי הבחירה ב-SelectionArea
+                            _savedSelectedText.value = null;
+                            _savedSelectedIndex.value = null;
+                            _currentSelectedIndex.value = null;
+                            widget.onSelectedTextChanged?.call(null);
+                            return null;
+                          },
+                        ),
+                      },
+                      child: Directionality(
+                        textDirection: TextDirection.rtl,
+                        child: widget.isPreviewMode
+                            ? Scrollbar(
                                 controller: _previewScrollController,
-                                itemCount: widget.data.length,
-                                itemBuilder: (context, index) {
-                                  return buildExpansiomTile(
-                                      ExpansibleController(),
-                                      index,
-                                      state, const <int, List<PersonalNote>>{});
-                                },
-                              ),
-                            )
-                          : ScrollablePositionedListScrollbar(
-                              scrollController: widget.tab.scrollController,
-                              itemPositionsListener:
-                                  widget.tab.positionsListener,
-                              itemCount: widget.data.length,
-                              child: ProgressiveScroll(
-                                focusNode: _focusNode,
-                                maxSpeed: 10000.0,
-                                curve: 10.0,
-                                accelerationFactor: 5,
-                                scrollController:
-                                    widget.tab.mainOffsetController,
-                                child: BlocBuilder<PersonalNotesBloc,
-                                    PersonalNotesState>(
-                                  builder: (context, notesState) {
-                                    final noteMap = <int, List<PersonalNote>>{};
-                                    if (notesState.bookId == state.book.title) {
-                                      for (final note
-                                          in notesState.locatedNotes) {
-                                        final line = note.lineNumber;
-                                        if (line == null) continue;
-                                        noteMap
-                                            .putIfAbsent(line, () => [])
-                                            .add(note);
-                                      }
-                                    }
-                                    return buildOuterList(state, noteMap);
+                                thumbVisibility: true,
+                                thickness: 8.0,
+                                radius: const Radius.circular(4.0),
+                                child: ListView.builder(
+                                  controller: _previewScrollController,
+                                  itemCount: widget.data.length,
+                                  itemBuilder: (context, index) {
+                                    return buildExpansiomTile(
+                                        ExpansibleController(),
+                                        index,
+                                        state,
+                                        const <int, List<PersonalNote>>{});
                                   },
                                 ),
+                              )
+                            : ScrollablePositionedListScrollbar(
+                                scrollController: widget.tab.scrollController,
+                                itemPositionsListener:
+                                    widget.tab.positionsListener,
+                                itemCount: widget.data.length,
+                                child: ProgressiveScroll(
+                                  focusNode: _focusNode,
+                                  maxSpeed: 10000.0,
+                                  curve: 10.0,
+                                  accelerationFactor: 5,
+                                  scrollController:
+                                      widget.tab.mainOffsetController,
+                                  child: BlocBuilder<PersonalNotesBloc,
+                                      PersonalNotesState>(
+                                    builder: (context, notesState) {
+                                      final noteMap =
+                                          <int, List<PersonalNote>>{};
+                                      if (notesState.bookId ==
+                                          state.book.title) {
+                                        for (final note
+                                            in notesState.locatedNotes) {
+                                          final line = note.lineNumber;
+                                          if (line == null) continue;
+                                          noteMap
+                                              .putIfAbsent(line, () => [])
+                                              .add(note);
+                                        }
+                                      }
+                                      return buildOuterList(state, noteMap);
+                                    },
+                                  ),
+                                ),
                               ),
-                            ),
+                      ),
                     ),
                   ),
                 ),
-              ),
-            );
+              ), // SelectionArea
+            ); // Focus
           },
         );
       },

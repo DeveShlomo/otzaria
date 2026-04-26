@@ -203,8 +203,16 @@ class _ShamorZachorMainScreenState extends State<ShamorZachorMainScreen>
     if (event is! KeyDownEvent) return KeyEventResult.ignored;
     if (_isTextFieldFocused()) return KeyEventResult.ignored;
 
-    if (event.logicalKey == LogicalKeyboardKey.escape ||
-        event.logicalKey == LogicalKeyboardKey.backspace) {
+    if (event.logicalKey == LogicalKeyboardKey.escape) {
+      if (_isSidebarVisible) {
+        final screenWidth = MediaQuery.sizeOf(context).width;
+        final isOverlay = screenWidth < (_sidebarWidth + 10 + 12 + 320);
+        if (isOverlay) {
+          setState(() => _isSidebarVisible = false);
+          _windowFocusNode.requestFocus();
+          return KeyEventResult.handled;
+        }
+      }
       if (_selectedBookName != null && _selectedBookDetails != null) {
         _closeBookDetails();
         return KeyEventResult.handled;

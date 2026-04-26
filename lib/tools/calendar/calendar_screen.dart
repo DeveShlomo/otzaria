@@ -259,46 +259,63 @@ class CalendarWidgetState extends State<CalendarWidget> {
   }
 
   void _toggleTimesPanel() {
+    final closing =
+        _sidePanelView == CalendarSidePanelView.times && _isSidebarVisible;
     setState(() {
-      if (_sidePanelView == CalendarSidePanelView.times && _isSidebarVisible) {
+      if (closing) {
         _isSidebarVisible = false;
         _isSidebarExplicitlyClosed = true;
-        return;
+      } else {
+        _sidePanelView = CalendarSidePanelView.times;
+        _isSidebarVisible = true;
+        _isSidebarExplicitlyClosed = false;
+        _isSidebarAutoHiddenForNarrow = false;
       }
-      _sidePanelView = CalendarSidePanelView.times;
-      _isSidebarVisible = true;
-      _isSidebarExplicitlyClosed = false;
-      _isSidebarAutoHiddenForNarrow = false;
     });
+    if (closing) _requestFocusIfNeeded();
   }
 
   void _toggleEventsPanel() {
+    final closing =
+        _sidePanelView == CalendarSidePanelView.events && _isSidebarVisible;
     setState(() {
-      if (_sidePanelView == CalendarSidePanelView.events && _isSidebarVisible) {
+      if (closing) {
         _isSidebarVisible = false;
         _isSidebarExplicitlyClosed = true;
-        return;
+      } else {
+        _sidePanelView = CalendarSidePanelView.events;
+        _isSidebarVisible = true;
+        _isSidebarExplicitlyClosed = false;
+        _isSidebarAutoHiddenForNarrow = false;
       }
-      _sidePanelView = CalendarSidePanelView.events;
-      _isSidebarVisible = true;
-      _isSidebarExplicitlyClosed = false;
-      _isSidebarAutoHiddenForNarrow = false;
     });
+    if (closing) _requestFocusIfNeeded();
   }
 
-  void _toggleSettingsPanel() {
+  void _openSettingsPanel() {
     final screenWidth = MediaQuery.of(context).size.width;
     final isNarrowForOverlay = screenWidth < kSideBySideMinWidth;
-
     setState(() {
-      final nextOpen = !_isSettingsPanelOpen;
-      _isSettingsPanelOpen = nextOpen;
-
-      if (nextOpen && isNarrowForOverlay && _isSidebarVisible) {
+      _isSettingsPanelOpen = true;
+      if (isNarrowForOverlay && _isSidebarVisible) {
         _isSidebarVisible = false;
         _isSidebarAutoHiddenForNarrow = true;
       }
     });
+  }
+
+  void _closeSettingsPanel() {
+    if (!_isSettingsPanelOpen) return;
+    setState(() => _isSettingsPanelOpen = false);
+    _requestFocusIfNeeded();
+  }
+
+  void _toggleSettingsPanel() {
+    if (_isSettingsPanelOpen) {
+      _closeSettingsPanel();
+    } else {
+      _openSettingsPanel();
+    }
   }
 
   // ─── Build ──────────────────────────────────────────────────────────────────
@@ -541,7 +558,7 @@ class CalendarWidgetState extends State<CalendarWidget> {
         // פאנל הגדרות overlay
         ContextOverlayPanel(
           isOpen: _isSettingsPanelOpen,
-          onClose: _toggleSettingsPanel,
+          onClose: _closeSettingsPanel,
           width: 400,
           child: Column(
             children: [
