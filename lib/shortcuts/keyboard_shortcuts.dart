@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:otzaria/core/focus_repository.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:otzaria/core/ui_snack.dart';
 import 'package:otzaria/library/view/library_panel_controller.dart';
 import 'package:otzaria/navigation/bloc/navigation_bloc.dart';
@@ -58,16 +58,18 @@ class _KeyboardShortcutsState extends State<KeyboardShortcuts> {
   bool _isEditing() {
     final focusNode = FocusManager.instance.primaryFocus;
     if (focusNode == null || focusNode.context == null) return false;
+    // בדיקה מעמיקה יותר - האם הוידג'ט שמחזיק את הפוקוס הוא צאצא של EditableText
     return focusNode.context!.widget is EditableText ||
         focusNode.context!.findAncestorWidgetOfExactType<EditableText>() !=
             null;
   }
 
-  /// פותח דיאלוג, או סוגר אם כבר פתוח
   void _toggleDialog(WidgetBuilder builder) {
     final navigator = navigatorKey.currentState;
     final dialogContext = navigatorKey.currentContext;
-    if (navigator == null || dialogContext == null) return;
+    if (navigator == null || dialogContext == null) {
+      return;
+    }
     if (navigator.canPop()) {
       navigator.pop();
       return;
@@ -86,6 +88,7 @@ class _KeyboardShortcutsState extends State<KeyboardShortcuts> {
           HardwareKeyboard.instance.isMetaPressed;
 
       if (!isModifierPressed) {
+        // מתיר רק מקשי F ומקש Escape
         final isAllowed = event.logicalKey == LogicalKeyboardKey.escape ||
             (event.logicalKey.keyId >= LogicalKeyboardKey.f1.keyId &&
                 event.logicalKey.keyId <= LogicalKeyboardKey.f12.keyId);
@@ -116,8 +119,7 @@ class _KeyboardShortcutsState extends State<KeyboardShortcuts> {
     final contextSettingsShortcut =
         _shortcutSettings['key-shortcut-open-context-settings'] ??
             'ctrl+shift+comma';
-    final moreShortcut =
-        _shortcutSettings['key-shortcut-open-more'] ?? 'ctrl+m';
+    final moreShortcut = _shortcutSettings['key-shortcut-open-more'] ?? 'ctrl+m';
     final bookmarksShortcut =
         _shortcutSettings['key-shortcut-open-bookmarks'] ?? 'ctrl+shift+b';
     final historyShortcut =
@@ -205,7 +207,7 @@ class _KeyboardShortcutsState extends State<KeyboardShortcuts> {
       return KeyEventResult.handled;
     }
 
-    // הגדרות הקשר (לפי מסך פעיל)
+    // הגדרות הקשר
     if (ShortcutHelper.matchesShortcut(event, contextSettingsShortcut)) {
       final currentScreen = context.read<NavigationBloc>().state.currentScreen;
       switch (currentScreen) {

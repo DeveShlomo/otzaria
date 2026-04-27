@@ -29,9 +29,12 @@ class ShortcutValidator {
     'key-shortcut-open-history',
     'key-shortcut-switch-workspace',
     'key-shortcut-print',
+    // Book view shortcuts
+    // [EDITING DISABLED] 'key-shortcut-edit-section',
     'key-shortcut-add-bookmark',
     'key-shortcut-add-note',
     'key-shortcut-toggle-pdf-view',
+    // Calendar shortcuts
     'key-shortcut-calendar-toggle-times',
     'key-shortcut-calendar-toggle-events',
     'key-shortcut-calendar-today',
@@ -55,10 +58,12 @@ class ShortcutValidator {
     'key-shortcut-open-bookmarks': 'ctrl+shift+b',
     'key-shortcut-open-history': 'ctrl+h',
     'key-shortcut-print': 'ctrl+p',
+    // [EDITING DISABLED] 'key-shortcut-edit-section': 'ctrl+e',
     'key-shortcut-add-bookmark': 'ctrl+b',
     'key-shortcut-add-note': 'ctrl+n',
     'key-shortcut-switch-workspace': 'ctrl+k',
     'key-shortcut-toggle-pdf-view': 'ctrl+shift+p',
+    // Calendar shortcuts
     'key-shortcut-calendar-toggle-times': 'ctrl+e',
     'key-shortcut-calendar-toggle-events': 'ctrl+n',
     'key-shortcut-calendar-today': 'ctrl+d',
@@ -83,9 +88,12 @@ class ShortcutValidator {
     'key-shortcut-open-history': 'היסטוריה',
     'key-shortcut-switch-workspace': 'החלף שולחן עבודה',
     'key-shortcut-print': 'הדפסה',
+    // Book view shortcuts
+    // [EDITING DISABLED] 'key-shortcut-edit-section': 'עריכת קטע',
     'key-shortcut-add-bookmark': 'הוסף סימניה',
     'key-shortcut-add-note': 'הוספת הערה',
     'key-shortcut-toggle-pdf-view': 'החלף מצב תצוגה (PDF/טקסט)',
+    // Calendar shortcuts
     'key-shortcut-calendar-toggle-times': 'לוח שנה: פתיחה/סגירה זמני היום',
     'key-shortcut-calendar-toggle-events': 'לוח שנה: פתיחה/סגירה אירועים',
     'key-shortcut-calendar-today': 'לוח שנה: מעבר להיום',
@@ -98,6 +106,8 @@ class ShortcutValidator {
   /// Returns a map of conflicting shortcuts: {shortcut: [key1, key2, ...]}
   static Map<String, List<String>> checkConflicts() {
     final Map<String, List<String>> conflicts = {};
+
+    // Build a map of shortcut values to their keys
     final Map<String, List<String>> shortcutToKeys = {};
 
     for (final key in shortcutKeys) {
@@ -107,6 +117,7 @@ class ShortcutValidator {
       }
     }
 
+    // Find conflicts (shortcuts used by more than one action)
     for (final entry in shortcutToKeys.entries) {
       final conflictingKeys = entry.value;
       if (conflictingKeys.length > 1 &&
