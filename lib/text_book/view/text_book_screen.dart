@@ -1129,7 +1129,13 @@ class _TextBookViewerBlocState extends State<TextBookViewerBloc>
                     focusNode: _bookContentFocusNode,
                     autofocus: false,
                     onKeyEvent: (event) => _handleGlobalKeyEvent(
-                        event, context, state, widget.tab),
+                      event,
+                      context,
+                      state,
+                      widget.tab,
+                      openPersonalNotes: () =>
+                          _openPersonalNotesForCurrentView(state),
+                    ),
                     child: Scaffold(
                       appBar: _buildAppBar(context, state, wideScreen),
                       body: _buildBody(context, state),
@@ -2511,8 +2517,13 @@ class _TextBookViewerBlocState extends State<TextBookViewerBloc>
 //   context.read<TextBookBloc>().add(OpenFullFileEditor());
 // }
 
-bool _handleGlobalKeyEvent(KeyEvent event, BuildContext context,
-    TextBookLoaded state, TextBookTab tab) {
+bool _handleGlobalKeyEvent(
+  KeyEvent event,
+  BuildContext context,
+  TextBookLoaded state,
+  TextBookTab tab, {
+  required VoidCallback openPersonalNotes,
+}) {
   // [EDITING DISABLED]
   // // עריכת קטע
   // final editSectionShortcut =
@@ -2559,7 +2570,7 @@ bool _handleGlobalKeyEvent(KeyEvent event, BuildContext context,
       }
     },
     onBookmark: () => _addBookmarkFromKeyboard(context, state),
-    onNote: () => _addNoteFromKeyboard(context, state),
+    onNote: () => _addNoteFromKeyboard(context, state, openPersonalNotes),
   )) {
     return true;
   }
@@ -2746,12 +2757,11 @@ void _addBookmarkFromKeyboard(
 
 /// Helper function to add note from keyboard shortcut
 Future<void> _addNoteFromKeyboard(
-    BuildContext context, TextBookLoaded state) async {
+    BuildContext context, TextBookLoaded state, VoidCallback openPersonalNotes) async {
   // משתמש בשורה הנבחרת אם קיימת, אחרת בשורה הראשונה הנראית
   final currentIndex = state.selectedIndex ??
       (state.visibleIndices.isNotEmpty ? state.visibleIndices.first : 0);
   // לא צריך טקסט נבחר - ההערה חלה על כל השורה
-  final textBookBloc = context.read<TextBookBloc>();
   final personalNotesBloc = context.read<PersonalNotesBloc>();
 
   // קבלת הטקסט המזהה של השורה (כמו שיוצג ככותרת ההערה)
@@ -2779,17 +2789,7 @@ Future<void> _addNoteFromKeyboard(
         initialFormat: draft?.contentFormat ?? PersonalNoteContentFormat.plain,
       ));
 
-  if (state.showPageShapeView) {
-    final viewerState =
-        context.findAncestorStateOfType<_TextBookViewerBlocState>();
-    viewerState?._pageShapeSidebarTabNotifier.value = 1;
-    return;
-  }
-
-  // פתח את ה-split view אם הוא סגור
-  if (!state.showSplitView) {
-    textBookBloc.add(const ToggleSplitView(true));
-  }
+  openPersonalNotes();
 }
 
 // [EDITING DISABLED]
