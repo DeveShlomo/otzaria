@@ -577,8 +577,7 @@ class _PdfBookScreenState extends State<PdfBookScreen>
   // אם הייתה פתוחה — נשארת ברוחב הנוכחי ועוברת לטאב הערות.
   void _openPersonalNotesPane() {
     final current = _bloc.state;
-    final isOpen =
-        current is PdfBookLoaded && current.showRightPane;
+    final isOpen = current is PdfBookLoaded && current.showRightPane;
     setState(() {
       _rightPaneInitialTabIndex = 2;
     });

@@ -1,4 +1,4 @@
-﻿import 'dart:io';
+import 'dart:io';
 import 'dart:math';
 import 'dart:async';
 import 'dart:ui' as ui;
@@ -1127,7 +1127,13 @@ class _TextBookViewerBlocState extends State<TextBookViewerBloc>
                     focusNode: _bookContentFocusNode,
                     autofocus: false,
                     onKeyEvent: (event) => _handleGlobalKeyEvent(
-                        event, context, state, widget.tab),
+                      event,
+                      context,
+                      state,
+                      widget.tab,
+                      openPersonalNotes: () =>
+                          _openPersonalNotesForCurrentView(state),
+                    ),
                     child: Scaffold(
                       appBar: _buildAppBar(context, state, wideScreen),
                       body: _buildBody(context, state),
@@ -2486,8 +2492,13 @@ int _bottommostVisibleIndex(TextBookLoaded state) =>
 //   context.read<TextBookBloc>().add(OpenFullFileEditor());
 // }
 
-bool _handleGlobalKeyEvent(KeyEvent event, BuildContext context,
-    TextBookLoaded state, TextBookTab tab) {
+bool _handleGlobalKeyEvent(
+  KeyEvent event,
+  BuildContext context,
+  TextBookLoaded state,
+  TextBookTab tab, {
+  required VoidCallback openPersonalNotes,
+}) {
   // [EDITING DISABLED]
   // // עריכת קטע
   // final editSectionShortcut =
@@ -2530,7 +2541,7 @@ bool _handleGlobalKeyEvent(KeyEvent event, BuildContext context,
           ?._openSearchFromToolbar();
     },
     onBookmark: () => _addBookmarkFromKeyboard(context, state),
-    onNote: () => _addNoteFromKeyboard(context, state),
+    onNote: () => _addNoteFromKeyboard(context, state, openPersonalNotes),
   )) {
     return true;
   }
@@ -2716,13 +2727,12 @@ void _addBookmarkFromKeyboard(
 }
 
 /// Helper function to add note from keyboard shortcut
-Future<void> _addNoteFromKeyboard(
-    BuildContext context, TextBookLoaded state) async {
+Future<void> _addNoteFromKeyboard(BuildContext context, TextBookLoaded state,
+    VoidCallback openPersonalNotes) async {
   // משתמש בשורה הנבחרת אם קיימת, אחרת בשורה הראשונה הנראית
   final currentIndex = state.selectedIndex ??
       (state.visibleIndices.isNotEmpty ? state.visibleIndices.first : 0);
   // לא צריך טקסט נבחר - ההערה חלה על כל השורה
-  final textBookBloc = context.read<TextBookBloc>();
   final personalNotesBloc = context.read<PersonalNotesBloc>();
 
   // קבלת הטקסט המזהה של השורה (כמו שיוצג ככותרת ההערה)
@@ -2743,24 +2753,14 @@ Future<void> _addNoteFromKeyboard(
 
   // שלח event לפתיחת מצב יצירה בסיידבר
   personalNotesBloc.add(StartCreatingPersonalNote(
-        bookId: state.book.title,
-        lineNumber: currentIndex + 1,
-        referenceText: referenceText,
-        initialContent: draft?.content ?? '',
-        initialFormat: draft?.contentFormat ?? PersonalNoteContentFormat.plain,
-      ));
+    bookId: state.book.title,
+    lineNumber: currentIndex + 1,
+    referenceText: referenceText,
+    initialContent: draft?.content ?? '',
+    initialFormat: draft?.contentFormat ?? PersonalNoteContentFormat.plain,
+  ));
 
-  if (state.showPageShapeView) {
-    final viewerState =
-        context.findAncestorStateOfType<_TextBookViewerBlocState>();
-    viewerState?._pageShapeSidebarTabNotifier.value = 1;
-    return;
-  }
-
-  // פתח את ה-split view אם הוא סגור
-  if (!state.showSplitView) {
-    textBookBloc.add(const ToggleSplitView(true));
-  }
+  openPersonalNotes();
 }
 
 // [EDITING DISABLED]
