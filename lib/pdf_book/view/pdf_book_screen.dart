@@ -52,7 +52,7 @@ import 'package:otzaria/models/pdf_headings.dart';
 import 'package:otzaria/text_book/models/commentator_group.dart';
 import 'package:otzaria/printing/printing_helpers.dart';
 import 'package:otzaria/printing/view/printing_screen.dart';
-import 'package:otzaria/shortcuts/shortcut_helper.dart';
+import 'package:otzaria/shortcuts/book_keyboard_shortcuts_mixin.dart';
 
 final GlobalKey pdfBookNavigationTourTargetKey = GlobalKey(
   debugLabel: 'pdf_book_navigation_tour_target',
@@ -112,7 +112,10 @@ bool shouldShowOpenPdfLinksPaneEntry({
 }
 
 class _PdfBookScreenState extends State<PdfBookScreen>
-    with AutomaticKeepAliveClientMixin, TickerProviderStateMixin {
+    with
+        AutomaticKeepAliveClientMixin,
+        TickerProviderStateMixin,
+        BookKeyboardShortcutsMixin {
   static const int _defaultPdfLineRange = 50;
   static const double _bookViewGap = 3.0;
   static const double _bookViewScale = 0.5;
@@ -1081,13 +1084,16 @@ class _PdfBookScreenState extends State<PdfBookScreen>
           focusNode: _pdfViewFocusNode,
           autofocus: false,
           onKeyEvent: (FocusNode node, KeyEvent event) {
+            if (handleBookKeyEvent(
+              event: event,
+              onPrint: () => _handlePrintPress(context),
+              onSearch: _ensureSearchTabIsActive,
+              onBookmark: () => _handleBookmarkPress(context),
+              onNote: () => _handleAddNotePress(context),
+            )) {
+              return KeyEventResult.handled;
+            }
             if (event is KeyDownEvent) {
-              final printShortcut =
-                  Settings.getValue<String>('key-shortcut-print') ?? 'ctrl+p';
-              if (ShortcutHelper.matchesShortcut(event, printShortcut)) {
-                _handlePrintPress(context);
-                return KeyEventResult.handled;
-              }
               if (event.logicalKey == LogicalKeyboardKey.arrowLeft) {
                 _goNextPage();
                 return KeyEventResult.handled;

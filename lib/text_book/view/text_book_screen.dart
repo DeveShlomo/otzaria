@@ -42,6 +42,7 @@ import 'package:otzaria/text_book/view/book_source_dialog.dart';
 import 'package:otzaria/personal_notes/personal_notes_system.dart';
 import 'package:otzaria/shortcuts/shortcut_helper.dart';
 import 'package:otzaria/shortcuts/shortcut_validator.dart';
+import 'package:otzaria/shortcuts/book_keyboard_shortcuts_mixin.dart';
 import 'package:otzaria/utils/ui/fullscreen_helper.dart';
 
 import 'package:otzaria/widgets/navigation/responsive_action_bar.dart';
@@ -2512,27 +2513,10 @@ class _TextBookViewerBlocState extends State<TextBookViewerBloc>
 
 bool _handleGlobalKeyEvent(KeyEvent event, BuildContext context,
     TextBookLoaded state, TextBookTab tab) {
-  // קריאת קיצורים מההגדרות
-  // [EDITING DISABLED]
-  // final editSectionShortcut =
-  //     Settings.getValue<String>('key-shortcut-edit-section') ?? 'ctrl+e';
-  final searchInBookShortcut = ShortcutValidator.getShortcutValue(
-        ShortcutValidator.currentWindowSearchKey,
-      ) ??
-      'ctrl+f';
-  final printShortcut =
-      Settings.getValue<String>('key-shortcut-print') ?? 'ctrl+p';
-  final addBookmarkShortcut =
-      Settings.getValue<String>('key-shortcut-add-bookmark') ?? 'ctrl+b';
-  final addNoteShortcut =
-      Settings.getValue<String>('key-shortcut-add-note') ?? 'ctrl+n';
-  final togglePdfShortcut =
-      Settings.getValue<String>('key-shortcut-toggle-pdf-view') ??
-          ShortcutValidator.defaultShortcuts['key-shortcut-toggle-pdf-view'] ??
-          'ctrl+shift+p';
-
   // [EDITING DISABLED]
   // // עריכת קטע
+  // final editSectionShortcut =
+  //     Settings.getValue<String>('key-shortcut-edit-section') ?? 'ctrl+e';
   // if (ShortcutHelper.matchesShortcut(event, editSectionShortcut)) {
   //   if (!state.isEditorOpen) {
   //     if (HardwareKeyboard.instance.isShiftPressed) {
@@ -2544,52 +2528,47 @@ bool _handleGlobalKeyEvent(KeyEvent event, BuildContext context,
   //   }
   // }
 
-  // חיפוש בספר
-  if (ShortcutHelper.matchesShortcut(event, searchInBookShortcut)) {
-    context.read<TextBookBloc>().add(const ToggleLeftPane(true));
-    final tabController = context
-        .findAncestorStateOfType<_TextBookViewerBlocState>()
-        ?.tabController;
-    if (tabController != null) {
-      tabController.index = 1;
-    }
-    return true;
-  }
-
-  // הדפסה
-  if (ShortcutHelper.matchesShortcut(event, printShortcut)) {
-    final settingsState = context.read<SettingsBloc>().state;
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => PrintingScreen(
-        data: Future.value(state.content.join('\n')),
-        bookId: state.book.title,
-        book: state.book,
-        links: state.links,
-        activeCommentators: state.activeCommentators,
-        startLine: state.visibleIndices.first,
-        removeNikud: state.removeNikud,
-        removeTaamim: !settingsState.showTeamim,
-        tableOfContents: state.tableOfContents,
-      ),
-    );
-    return true;
-  }
-
-  // הוספת סימניה
-  if (ShortcutHelper.matchesShortcut(event, addBookmarkShortcut)) {
-    _addBookmarkFromKeyboard(context, state);
-    return true;
-  }
-
-  // הוספת הערה
-  if (ShortcutHelper.matchesShortcut(event, addNoteShortcut)) {
-    _addNoteFromKeyboard(context, state);
+  // קיצורים משותפים (הדפסה, חיפוש, סימניה, הערה)
+  if (BookKeyboardShortcuts.handle(
+    event: event,
+    onPrint: () {
+      final settingsState = context.read<SettingsBloc>().state;
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => PrintingScreen(
+          data: Future.value(state.content.join('\n')),
+          bookId: state.book.title,
+          book: state.book,
+          links: state.links,
+          activeCommentators: state.activeCommentators,
+          startLine: state.visibleIndices.first,
+          removeNikud: state.removeNikud,
+          removeTaamim: !settingsState.showTeamim,
+          tableOfContents: state.tableOfContents,
+        ),
+      );
+    },
+    onSearch: () {
+      context.read<TextBookBloc>().add(const ToggleLeftPane(true));
+      final tabController = context
+          .findAncestorStateOfType<_TextBookViewerBlocState>()
+          ?.tabController;
+      if (tabController != null) {
+        tabController.index = 1;
+      }
+    },
+    onBookmark: () => _addBookmarkFromKeyboard(context, state),
+    onNote: () => _addNoteFromKeyboard(context, state),
+  )) {
     return true;
   }
 
   // מעבר ל-PDF
+  final togglePdfShortcut =
+      Settings.getValue<String>('key-shortcut-toggle-pdf-view') ??
+          ShortcutValidator.defaultShortcuts['key-shortcut-toggle-pdf-view'] ??
+          'ctrl+shift+p';
   if (ShortcutHelper.matchesShortcut(event, togglePdfShortcut)) {
     _togglePdfView(context, state, tab);
     return true;
@@ -2773,6 +2752,7 @@ Future<void> _addNoteFromKeyboard(
       (state.visibleIndices.isNotEmpty ? state.visibleIndices.first : 0);
   // לא צריך טקסט נבחר - ההערה חלה על כל השורה
   final textBookBloc = context.read<TextBookBloc>();
+  final personalNotesBloc = context.read<PersonalNotesBloc>();
 
   // קבלת הטקסט המזהה של השורה (כמו שיוצג ככותרת ההערה)
   final referenceText = extractDisplayTextFromLines(
@@ -2791,7 +2771,7 @@ Future<void> _addNoteFromKeyboard(
   if (!context.mounted) return;
 
   // שלח event לפתיחת מצב יצירה בסיידבר
-  context.read<PersonalNotesBloc>().add(StartCreatingPersonalNote(
+  personalNotesBloc.add(StartCreatingPersonalNote(
         bookId: state.book.title,
         lineNumber: currentIndex + 1,
         referenceText: referenceText,
