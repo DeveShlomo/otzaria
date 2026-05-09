@@ -190,6 +190,9 @@ class ToolsScreenState extends State<ToolsScreen>
       GlobalKey<CalendarWidgetState>();
   final GlobalKey<GematriaSearchScreenState> _gematriaKey =
       GlobalKey<GematriaSearchScreenState>();
+  final GlobalKey _personalNotesKey = GlobalKey();
+  final ShamorZachorFocusController _shamorZachorFocusController =
+      ShamorZachorFocusController();
   final FocusNode _contentFocusNode = FocusNode(skipTraversal: true);
   final ScrollController _contentScrollController = ScrollController();
 
@@ -267,20 +270,34 @@ class ToolsScreenState extends State<ToolsScreen>
   /// הקריטריון הוא מה מחובר לעץ הפוקוס בפועל, לא _showMobileMenu:
   /// - בdesktop, _contentFocusNode תמיד בעץ גם כש-_showMobileMenu==true
   /// - בmobile menu, _contentFocusNode לא מחובר → canRestore=false טבעית
+  void _requestToolFocus() {
+    if (_selectedToolId == 'builtin.calendar') {
+      _requestCalendarFocus();
+    } else if (_selectedToolId == 'builtin.shamor_zachor') {
+      _shamorZachorFocusController.requestKeyboardFocus();
+    } else if (_selectedToolId == 'builtin.notes') {
+      (_personalNotesKey.currentState as dynamic)?.requestKeyboardFocus();
+    } else if (_contentFocusNode.enclosingScope != null) {
+      _contentFocusNode.requestFocus();
+    }
+  }
+
   void _registerMoreRestorer() {
     FocusRepository().setScreenRestorer(
       restore: () {
         if (!mounted) return;
-        if (_selectedToolId == 'builtin.calendar') {
-          _requestCalendarFocus();
-        } else if (_contentFocusNode.enclosingScope != null) {
-          _contentFocusNode.requestFocus();
-        }
+        _requestToolFocus();
       },
       canRestore: () {
         if (!mounted) return false;
         if (_selectedToolId == 'builtin.calendar') {
           return _calendarKey.currentState != null;
+        }
+        if (_selectedToolId == 'builtin.shamor_zachor') {
+          return _shamorZachorFocusController.isAttached;
+        }
+        if (_selectedToolId == 'builtin.notes') {
+          return _personalNotesKey.currentState != null;
         }
         return _contentFocusNode.enclosingScope != null;
       },
@@ -288,18 +305,10 @@ class ToolsScreenState extends State<ToolsScreen>
   }
 
   void requestActiveTabFocus() {
-    // עדכון restorer מיידי לפי מצב נוכחי, לפני כל addPostFrameCallback
     _registerMoreRestorer();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      // אין unfocus גלובלי — זה עלול להשאיר את האפליקציה ללא פוקוס כלל
-      // אם ה-requestFocus שאחריו נכשל (למשל בזמן resize ב-Windows).
-      if (_selectedToolId == 'builtin.calendar') {
-        _requestCalendarFocus();
-      } else if (_contentFocusNode.enclosingScope != null &&
-          !_contentFocusNode.hasFocus) {
-        _contentFocusNode.requestFocus();
-      }
+      _requestToolFocus();
     });
   }
 
@@ -322,7 +331,10 @@ class ToolsScreenState extends State<ToolsScreen>
         label: 'שמור וזכור',
         imageIcon: 'assets/icon/שמור וזכור שחור ריק.png',
         order: 20,
-        pageBuilder: () => ShamorZachorWidget(onTitleChanged: (_) {}),
+        pageBuilder: () => ShamorZachorWidget(
+              focusController: _shamorZachorFocusController,
+              onTitleChanged: (_) {},
+            ),
       ),
       BuiltInToolDescriptor(
         toolId: 'builtin.measurements',
@@ -338,7 +350,7 @@ class ToolsScreenState extends State<ToolsScreen>
         icon: FluentIcons.note_24_regular,
         iconFilled: FluentIcons.note_24_filled,
         order: 40,
-        pageBuilder: () => const PersonalNotesManagerScreen(),
+        pageBuilder: () => PersonalNotesManagerScreen(key: _personalNotesKey),
       ),
       BuiltInToolDescriptor(
         toolId: 'builtin.gematria',
