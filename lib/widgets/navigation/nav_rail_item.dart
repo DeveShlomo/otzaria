@@ -97,25 +97,28 @@ class NavRailItem extends StatelessWidget {
       ),
     );
 
-    Widget content = Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        indicator,
-        const SizedBox(height: 2),
-        AnimatedDefaultTextStyle(
-          duration: const Duration(milliseconds: 250),
-          curve: Curves.easeInOutCubicEmphasized,
-          style: TextStyle(
-            fontSize: 11,
-            color: isSelected ? cs.onSecondaryContainer : cs.onSurfaceVariant,
+    Widget content = Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          indicator,
+          const SizedBox(height: 4),
+          AnimatedDefaultTextStyle(
+            duration: const Duration(milliseconds: 250),
+            curve: Curves.easeInOutCubicEmphasized,
+            style: TextStyle(
+              fontSize: 11,
+              color: isSelected ? cs.onSecondaryContainer : cs.onSurfaceVariant,
+            ),
+            child: Text(
+              label,
+              textAlign: TextAlign.center,
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
-          child: Text(
-            label,
-            textAlign: TextAlign.center,
-            overflow: TextOverflow.ellipsis,
-          ),
-        ),
-      ],
+        ],
+      ),
     );
 
     // Tooltip עוטף את כל הכפתור — מופיע בריחוף על כל השטח

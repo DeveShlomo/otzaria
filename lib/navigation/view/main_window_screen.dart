@@ -156,7 +156,6 @@ class MainWindowScreenState extends State<MainWindowScreen>
   // עוקב אחר מצב הלוח הקודם לצורך dispatch ספציפי
   CalendarState? _prevCalendarState;
 
-  bool _hasInitializedPageController = false;
   bool _isProcessingExternalActivations = false;
   StreamSubscription<FileSystemEvent>? _externalActivationWatchSub;
   StreamSubscription<String>? _externalActivationChannelSub;
@@ -219,6 +218,11 @@ class MainWindowScreenState extends State<MainWindowScreen>
     _settingsScreenController = SettingsScreenController();
     _tourCubit = TourCubit();
     _lastScreen = context.read<NavigationBloc>().state.currentScreen;
+    final initialPage = _pageIndexForScreen(
+            context.read<NavigationBloc>().state.currentScreen) ??
+        Screen.library.index;
+    _currentPageIndex = initialPage;
+    pageController = PageController(initialPage: initialPage);
 
     // הצגת פופאפ פרסומת אחרי 5 שניות
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -263,20 +267,6 @@ class MainWindowScreenState extends State<MainWindowScreen>
 
     // NOTE: Background sync is now triggered by LibraryBloc listener
     // (see MultiBlocListener) to avoid DB lock contention during library loading.
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-
-    // אתחול PageController פעם אחת עם initialPage הנכון
-    if (!_hasInitializedPageController) {
-      _hasInitializedPageController = true;
-      final initialScreen = context.read<NavigationBloc>().state.currentScreen;
-      _currentPageIndex =
-          _pageIndexForScreen(initialScreen) ?? Screen.library.index;
-      pageController = PageController(initialPage: _currentPageIndex);
-    }
   }
 
   /// Trigger FileSyncBloc to start syncing AFTER the library is loaded.
