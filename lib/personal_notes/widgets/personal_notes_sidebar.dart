@@ -65,7 +65,7 @@ class PersonalNotesSidebarState extends State<PersonalNotesSidebar>
       if (visibleLineIndices != null) {
         context
             .read<PersonalNotesBloc>()
-            .add(UpdateVisibleLines(visibleLineIndices));
+            .add(UpdateVisibleLines(visibleLineIndices, bookId: widget.bookId));
       }
     });
   }
@@ -86,7 +86,7 @@ class PersonalNotesSidebarState extends State<PersonalNotesSidebar>
         widget.visibleLineIndices != null) {
       context
           .read<PersonalNotesBloc>()
-          .add(UpdateVisibleLines(widget.visibleLineIndices!));
+          .add(UpdateVisibleLines(widget.visibleLineIndices!, bookId: widget.bookId));
     }
   }
 

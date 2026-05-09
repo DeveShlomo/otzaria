@@ -859,7 +859,7 @@ class _TextBookViewerBlocState extends State<TextBookViewerBloc>
               listener: (context, state) {
                 if (state is TextBookLoaded) {
                   context.read<PersonalNotesBloc>().add(
-                        UpdateVisibleLines(state.visibleIndices),
+                        UpdateVisibleLines(state.visibleIndices, bookId: state.book.title),
                       );
                 }
                 // [EDITING DISABLED]

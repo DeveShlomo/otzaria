@@ -192,6 +192,11 @@ class PersonalNotesBloc extends Bloc<PersonalNotesEvent, PersonalNotesState> {
     UpdateVisibleLines event,
     Emitter<PersonalNotesState> emit,
   ) {
+    // התעלם מ-event של ספר אחר
+    if (event.bookId != null && state.bookId != null &&
+        event.bookId != state.bookId) {
+      return;
+    }
     final filtered = _applyFilters(
       state.locatedNotes,
       state.missingNotes,

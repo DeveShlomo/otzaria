@@ -130,11 +130,12 @@ class UpdateSearchQuery extends PersonalNotesEvent {
 
 class UpdateVisibleLines extends PersonalNotesEvent {
   final List<int> visibleLineIndices;
+  final String? bookId;
 
-  const UpdateVisibleLines(this.visibleLineIndices);
+  const UpdateVisibleLines(this.visibleLineIndices, {this.bookId});
 
   @override
-  List<Object?> get props => [visibleLineIndices];
+  List<Object?> get props => [visibleLineIndices, bookId];
 }
 
 class ToggleShowOnlyVisible extends PersonalNotesEvent {
