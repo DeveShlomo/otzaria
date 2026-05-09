@@ -635,22 +635,6 @@ class SettingsRepository {
       }
     }
 
-    for (final entry in ShortcutValidator.legacyShortcutAliases.entries) {
-      final canonicalKey = entry.key;
-      final hasCanonicalOverride = shortcuts[canonicalKey] !=
-          ShortcutValidator.defaultShortcuts[canonicalKey];
-      if (hasCanonicalOverride) continue;
-
-      for (final legacyKey in entry.value) {
-        final legacyValue = _settings.getValue<String?>(legacyKey,
-            defaultValue: savedShortcutsMap[legacyKey] as String?);
-        if (legacyValue != null && legacyValue.isNotEmpty) {
-          shortcuts[canonicalKey] = legacyValue;
-          break;
-        }
-      }
-    }
-
     return Map<String, String>.unmodifiable(shortcuts);
   }
 
@@ -659,23 +643,13 @@ class SettingsRepository {
     for (final key in ShortcutValidator.shortcutKeys) {
       await _settings.remove(key);
     }
-    for (final legacyKeys in ShortcutValidator.legacyShortcutAliases.values) {
-      for (final legacyKey in legacyKeys) {
-        await _settings.remove(legacyKey);
-      }
-    }
     // Set the main shortcuts map back to the default values
     await _settings.setValue('shortcuts', ShortcutValidator.defaultShortcuts);
   }
 
   Future<void> updateShortcut(String key, String value) async {
-    final canonicalKey = ShortcutValidator.canonicalSettingKey(key);
-
     // Update the individual setting key for the UI
-    await _settings.setValue(canonicalKey, value);
-    for (final legacyKey in ShortcutValidator.legacyKeysFor(canonicalKey)) {
-      await _settings.remove(legacyKey);
-    }
+    await _settings.setValue(key, value);
 
     // Update the central shortcuts map for the application logic
     final storedShortcutsRaw = _settings.getValue<Map<dynamic, dynamic>>(
@@ -686,10 +660,7 @@ class SettingsRepository {
     final updatedShortcuts = Map<String, String>.from(
       storedShortcuts.cast<String, String>(),
     );
-    updatedShortcuts[canonicalKey] = value;
-    for (final legacyKey in ShortcutValidator.legacyKeysFor(canonicalKey)) {
-      updatedShortcuts.remove(legacyKey);
-    }
+    updatedShortcuts[key] = value;
     await _settings.setValue('shortcuts', updatedShortcuts);
   }
 

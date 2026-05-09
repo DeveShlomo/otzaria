@@ -1805,7 +1805,7 @@ class _TextBookViewerBlocState extends State<TextBookViewerBloc>
     Key? key,
   }) {
     final shortcut = ShortcutValidator.getShortcutValue(
-          ShortcutValidator.currentWindowSearchKey,
+          'key-shortcut-search-current-window',
         ) ??
         'ctrl+f';
     return IconButton(
@@ -2495,7 +2495,7 @@ bool _handleGlobalKeyEvent(KeyEvent event, BuildContext context,
   // final editSectionShortcut =
   //     Settings.getValue<String>('key-shortcut-edit-section') ?? 'ctrl+e';
   final searchInBookShortcut = ShortcutValidator.getShortcutValue(
-        ShortcutValidator.currentWindowSearchKey,
+        'key-shortcut-search-current-window',
       ) ??
       'ctrl+f';
   final printShortcut =
