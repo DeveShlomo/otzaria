@@ -35,6 +35,7 @@ class FocusRepository {
 
   final FocusNode librarySearchFocusNode = FocusNode();
   final FocusNode findRefSearchFocusNode = FocusNode();
+  final FocusNode settingsSearchFocusNode = FocusNode();
 
   final TextEditingController librarySearchController = TextEditingController();
   final TextEditingController findRefSearchController = TextEditingController();
@@ -126,6 +127,19 @@ class FocusRepository {
         }
       },
       canRestore: () => librarySearchFocusNode.canRequestFocus,
+    );
+  }
+
+  void requestSettingsSearchFocus() {
+    debugPrint('[FocusRepo] requestSettingsSearchFocus: canRequest=${settingsSearchFocusNode.canRequestFocus}, attached=${settingsSearchFocusNode.context != null}');
+    settingsSearchFocusNode.requestFocus();
+    setScreenRestorer(
+      restore: () {
+        if (settingsSearchFocusNode.canRequestFocus) {
+          settingsSearchFocusNode.requestFocus();
+        }
+      },
+      canRestore: () => settingsSearchFocusNode.canRequestFocus,
     );
   }
 
@@ -233,6 +247,7 @@ class FocusRepository {
     _resizeDebounceTimer?.cancel();
     librarySearchFocusNode.dispose();
     findRefSearchFocusNode.dispose();
+    settingsSearchFocusNode.dispose();
     librarySearchController.dispose();
     findRefSearchController.dispose();
   }

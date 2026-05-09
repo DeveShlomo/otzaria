@@ -145,6 +145,11 @@ class _KeyboardShortcutsState extends State<KeyboardShortcuts> {
             .requestLibrarySearchFocus(selectAll: true);
         return KeyEventResult.handled;
       }
+      if (currentScreen == Screen.settings) {
+        debugPrint('[KeyboardShortcuts] ctrl+f on settings screen');
+        context.read<FocusRepository>().requestSettingsSearchFocus();
+        return KeyEventResult.handled;
+      }
     }
 
     // איתור

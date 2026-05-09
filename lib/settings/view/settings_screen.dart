@@ -61,7 +61,7 @@ class _MySettingsScreenState extends State<MySettingsScreen> {
 
   // ── חיפוש בהגדרות ─────────────────────────────────────────────────────────
   final TextEditingController _searchController = TextEditingController();
-  final FocusNode _searchFocusNode = FocusNode();
+  FocusNode get _searchFocusNode => FocusRepository().settingsSearchFocusNode;
   String _searchQuery = '';
   List<SettingsSearchEntry> _searchResults = const [];
 
@@ -82,7 +82,6 @@ class _MySettingsScreenState extends State<MySettingsScreen> {
     _contentFocusNode.dispose();
     _contentScrollController.dispose();
     _searchController.dispose();
-    _searchFocusNode.dispose();
     super.dispose();
   }
 
