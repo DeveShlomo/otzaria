@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:otzaria/core/ui_snack.dart';
@@ -48,6 +49,8 @@ class PersonalNotesSidebarState extends State<PersonalNotesSidebar>
   @override
   bool get wantKeepAlive => true;
   final PersonalNoteDraftService _draftService = PersonalNoteDraftService();
+  final ItemScrollController _itemScrollController = ItemScrollController();
+  int? _lastScrolledToNoteIndex;
 
   @override
   void initState() {
@@ -152,10 +155,23 @@ class PersonalNotesSidebarState extends State<PersonalNotesSidebar>
 
     final child = BlocBuilder<PersonalNotesBloc, PersonalNotesState>(
       buildWhen: (previous, current) {
+        if (current.bookId != widget.bookId) return false;
         if (previous.isCreatingNewNote != current.isCreatingNewNote) {
           return true;
         }
-        return current.bookId == widget.bookId;
+        if (!listEquals(previous.visibleLineIndices, current.visibleLineIndices)) {
+          return true;
+        }
+        if (previous.showOnlyVisible != current.showOnlyVisible) return true;
+        if (previous.filteredLocatedNotes != current.filteredLocatedNotes) {
+          return true;
+        }
+        if (previous.filteredMissingNotes != current.filteredMissingNotes) {
+          return true;
+        }
+        return previous.isLoading != current.isLoading ||
+            previous.errorMessage != current.errorMessage ||
+            previous.searchQuery != current.searchQuery;
       },
       builder: (context, state) {
         if (state.isLoading && state.locatedNotes.isEmpty) {
@@ -203,24 +219,6 @@ class PersonalNotesSidebarState extends State<PersonalNotesSidebar>
         );
       },
     );
-
-    // אם TextBookBloc זמין, נעטוף עם listener
-    if (hasTextBookBloc) {
-      return MultiBlocListener(
-        listeners: [
-          BlocListener<TextBookBloc, TextBookState>(
-            listener: (context, state) {
-              if (state is TextBookLoaded) {
-                context
-                    .read<PersonalNotesBloc>()
-                    .add(UpdateVisibleLines(state.visibleIndices));
-              }
-            },
-          ),
-        ],
-        child: child,
-      );
-    }
 
     return child;
   }
@@ -386,10 +384,59 @@ class PersonalNotesSidebarState extends State<PersonalNotesSidebar>
       );
     }
 
-    return ListView(
+    // גלילה אוטומטית להערה הרלוונטית כשמוצגות כל ההערות
+    if (!state.showOnlyVisible && state.visibleLineIndices.isNotEmpty) {
+      final scrollIndex = _findScrollTargetIndex(state, items);
+      if (scrollIndex != null && scrollIndex != _lastScrolledToNoteIndex) {
+        _lastScrolledToNoteIndex = scrollIndex;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (!mounted || !_itemScrollController.isAttached) return;
+          _itemScrollController.scrollTo(
+            index: scrollIndex,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+            alignment: 0.0, // בראש החלון
+          );
+        });
+      }
+    } else if (state.showOnlyVisible) {
+      _lastScrolledToNoteIndex = null;
+    }
+
+    return ScrollablePositionedList.builder(
       padding: EdgeInsets.zero,
-      children: items,
+      itemScrollController: _itemScrollController,
+      itemCount: items.length,
+      itemBuilder: (context, index) => items[index],
     );
+  }
+
+  // מוצא את ה-index של ההערה הקרובה ביותר לטקסט הנראה ברשימת items
+  int? _findScrollTargetIndex(PersonalNotesState state, List<Widget> items) {
+    if (state.filteredLocatedNotes.isEmpty ||
+        state.visibleLineIndices.isEmpty) {
+      return null;
+    }
+
+    // offset: אם יש עורך הערה חדשה, הוא item[0]
+    final offset = state.isCreatingNewNote ? 1 : 0;
+
+    // מוצא את ההערה הממוקמת הקרובה ביותר לתחילת הטקסט הנראה
+    final firstVisible = state.visibleLineIndices.first;
+    int bestIndex = 0;
+    int bestDistance = (state.filteredLocatedNotes[0].lineNumber ?? 0) - firstVisible;
+    if (bestDistance < 0) bestDistance = -bestDistance;
+
+    for (int i = 1; i < state.filteredLocatedNotes.length; i++) {
+      final line = state.filteredLocatedNotes[i].lineNumber ?? 0;
+      final dist = (line - 1 - firstVisible).abs();
+      if (dist < bestDistance) {
+        bestDistance = dist;
+        bestIndex = i;
+      }
+    }
+
+    return offset + bestIndex;
   }
 
   Widget _buildNewNoteEditor(BuildContext context, PersonalNotesState state) {

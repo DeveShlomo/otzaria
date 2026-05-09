@@ -857,6 +857,11 @@ class _TextBookViewerBlocState extends State<TextBookViewerBloc>
             return BlocConsumer<TextBookBloc, TextBookState>(
               bloc: context.read<TextBookBloc>(),
               listener: (context, state) {
+                if (state is TextBookLoaded) {
+                  context.read<PersonalNotesBloc>().add(
+                        UpdateVisibleLines(state.visibleIndices),
+                      );
+                }
                 // [EDITING DISABLED]
                 // if (state is TextBookLoaded &&
                 //     state.isEditorOpen &&
