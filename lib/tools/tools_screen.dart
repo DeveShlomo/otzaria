@@ -190,7 +190,8 @@ class ToolsScreenState extends State<ToolsScreen>
       GlobalKey<CalendarWidgetState>();
   final GlobalKey<GematriaSearchScreenState> _gematriaKey =
       GlobalKey<GematriaSearchScreenState>();
-  final GlobalKey _personalNotesKey = GlobalKey();
+  final GlobalKey<PersonalNotesManagerScreenState> _personalNotesKey =
+      GlobalKey<PersonalNotesManagerScreenState>();
   final ShamorZachorFocusController _shamorZachorFocusController =
       ShamorZachorFocusController();
   final FocusNode _contentFocusNode = FocusNode(skipTraversal: true);
@@ -276,7 +277,7 @@ class ToolsScreenState extends State<ToolsScreen>
     } else if (_selectedToolId == 'builtin.shamor_zachor') {
       _shamorZachorFocusController.requestKeyboardFocus();
     } else if (_selectedToolId == 'builtin.notes') {
-      (_personalNotesKey.currentState as dynamic)?.requestKeyboardFocus();
+      _personalNotesKey.currentState?.requestKeyboardFocus();
     } else if (_contentFocusNode.enclosingScope != null) {
       _contentFocusNode.requestFocus();
     }
@@ -297,7 +298,7 @@ class ToolsScreenState extends State<ToolsScreen>
           return _shamorZachorFocusController.isAttached;
         }
         if (_selectedToolId == 'builtin.notes') {
-          return _personalNotesKey.currentState != null;
+          return _personalNotesKey.currentState?.mounted == true;
         }
         return _contentFocusNode.enclosingScope != null;
       },

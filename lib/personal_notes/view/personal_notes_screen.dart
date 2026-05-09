@@ -36,6 +36,10 @@ import 'package:otzaria/widgets/layout/adaptive_side_pane.dart';
 import 'package:otzaria/theme/theme_exports.dart';
 import 'package:otzaria/tools/calendar/helpers/calendar_date_helpers.dart';
 
+abstract class PersonalNotesManagerScreenState extends State<PersonalNotesManagerScreen> {
+  void requestKeyboardFocus();
+}
+
 class PersonalNotesManagerScreen extends StatefulWidget {
   const PersonalNotesManagerScreen({
     super.key,
@@ -52,7 +56,7 @@ class PersonalNotesManagerScreen extends StatefulWidget {
 }
 
 class _PersonalNotesManagerScreenState
-    extends State<PersonalNotesManagerScreen> {
+    extends PersonalNotesManagerScreenState {
   late final PersonalNotesRepository _repository;
   late final PersonalNotesImportExportService _importExportService;
 
@@ -133,6 +137,7 @@ class _PersonalNotesManagerScreenState
     });
   }
 
+  @override
   void requestKeyboardFocus() {
     if (!mounted || !_windowFocusNode.canRequestFocus) return;
     if (!_windowFocusNode.hasFocus) _windowFocusNode.requestFocus();

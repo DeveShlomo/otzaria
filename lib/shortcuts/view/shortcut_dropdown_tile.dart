@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:otzaria/core/ui_snack.dart';
 import 'package:otzaria/settings/settings_exports.dart';
 import 'package:otzaria/shortcuts/shortcut_validator.dart';
@@ -183,6 +184,7 @@ class _ShortcutDropDownTileState extends State<ShortcutDropDownTile> {
       if (!mounted) return;
 
       if (customShortcut != null && customShortcut.isNotEmpty) {
+        await Settings.setValue<String>(widget.settingKey, customShortcut);
         finalValue = customShortcut;
       } else {
         finalValue = null;

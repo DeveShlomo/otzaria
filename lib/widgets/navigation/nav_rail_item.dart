@@ -2,44 +2,21 @@
 //
 // NavRailItem — כפתור ניווט אנכי בסגנון Material 3.
 //
-// מממש את הסגנון של _buildNavButton ב-MainWindowScreen:
-//  • אייקון (24px) מעל תווית
-//  • Active Indicator: AnimatedContainer + AnimatedScale → secondaryContainer pill
-//  • AnimatedSwitcher להחלפת regular ↔ filled
-//  • AnimatedDefaultTextStyle לאנימציית צבע הטקסט
-//  • תמיכה ב-Tooltip לקיצורי מקלדת
-//
-// **שימוש:**
-// ```dart
-// NavRailItem(
-//   icon: FluentIcons.library_24_regular,
-//   iconFilled: FluentIcons.library_24_filled,
-//   label: 'ספרייה',
-//   isSelected: _currentIndex == 0,
-//   onTap: () => _navigate(0),
-//   tooltip: 'Ctrl+L',
-// )
-// ```
+// • אייקון (24px) מעל תווית
+// • Active Indicator: AnimatedContainer + AnimatedScale → secondaryContainer pill
+// • AnimatedSwitcher להחלפת regular ↔ filled
+// • AnimatedDefaultTextStyle לאנימציית צבע הטקסט
+// • Tooltip על כל הכפתור (לא רק על האייקון)
+// • InkWell — רק על האינדיקטור (כמו Material 3 NavigationRail)
 
 import 'package:flutter/material.dart';
 
 class NavRailItem extends StatelessWidget {
-  /// אייקון רגיל (כשלא נבחר)
   final IconData icon;
-
-  /// אייקון filled (כשנבחר) — אופציונלי
   final IconData? iconFilled;
-
-  /// תווית מתחת לאייקון
   final String label;
-
-  /// האם פריט זה נבחר
   final bool isSelected;
-
-  /// Callback בעת לחיצה
   final VoidCallback onTap;
-
-  /// טקסט Tooltip (לרוב קיצור מקלדת) — אופציונלי
   final String? tooltip;
 
   /// האם להדגיש את הפריט בגלל סיור מודרך
@@ -68,93 +45,92 @@ class NavRailItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
 
-    // ── אייקון עם אנימציה regular ↔ filled ──────────────────────────────
-    Widget iconWidget = AnimatedSwitcher(
+    // האינדיקטור עם InkWell — ריחוף רק עליו
+    final indicator = AnimatedScale(
+      scale: isSelected ? 1.0 : 0.95,
       duration: const Duration(milliseconds: 250),
-      switchInCurve: Curves.easeInOutCubicEmphasized,
-      switchOutCurve: Curves.easeInOutCubicEmphasized,
-      transitionBuilder: (child, animation) => FadeTransition(
-        opacity: animation,
-        child: ScaleTransition(scale: animation, child: child),
-      ),
-      child: Icon(
-        isSelected && iconFilled != null ? iconFilled! : icon,
-        key: ValueKey<bool>(isSelected),
-        size: 24,
-        color: isSelected ? cs.onSecondaryContainer : cs.onSurfaceVariant,
+      curve: Curves.easeInOutCubicEmphasized,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.easeInOutCubicEmphasized,
+        decoration: BoxDecoration(
+          color: isSelected ? cs.secondaryContainer : Colors.transparent,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: onTap,
+            borderRadius: BorderRadius.circular(16),
+            overlayColor: WidgetStateProperty.resolveWith((states) {
+              if (states.contains(WidgetState.pressed)) {
+                return cs.onSurface.withValues(alpha: 0.12);
+              }
+              if (states.contains(WidgetState.hovered) ||
+                  states.contains(WidgetState.focused)) {
+                return cs.onSurface.withValues(alpha: 0.08);
+              }
+              return null;
+            }),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              child: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 250),
+                switchInCurve: Curves.easeInOutCubicEmphasized,
+                switchOutCurve: Curves.easeInOutCubicEmphasized,
+                transitionBuilder: (child, animation) => FadeTransition(
+                  opacity: animation,
+                  child: ScaleTransition(scale: animation, child: child),
+                ),
+                child: Icon(
+                  isSelected && iconFilled != null ? iconFilled! : icon,
+                  key: ValueKey<bool>(isSelected),
+                  size: 24,
+                  color: isSelected
+                      ? cs.onSecondaryContainer
+                      : cs.onSurfaceVariant,
+                ),
+              ),
+            ),
+          ),
+        ),
       ),
     );
 
+    Widget content = Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        indicator,
+        const SizedBox(height: 2),
+        AnimatedDefaultTextStyle(
+          duration: const Duration(milliseconds: 250),
+          curve: Curves.easeInOutCubicEmphasized,
+          style: TextStyle(
+            fontSize: 11,
+            color: isSelected ? cs.onSecondaryContainer : cs.onSurfaceVariant,
+          ),
+          child: Text(
+            label,
+            textAlign: TextAlign.center,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+      ],
+    );
+
+    // Tooltip עוטף את כל הכפתור — מופיע בריחוף על כל השטח
     if (tooltip != null) {
-      iconWidget = Tooltip(
+      content = Tooltip(
         preferBelow: false,
         message: tooltip!,
-        child: iconWidget,
+        child: content,
       );
     }
 
     return SizedBox(
       key: tourItemKey,
       width: 74,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 4),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // ── Active Indicator ────────────────────────────────────────
-            AnimatedScale(
-              scale: isSelected ? 1.0 : 0.95,
-              duration: const Duration(milliseconds: 250),
-              curve: Curves.easeInOutCubicEmphasized,
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 250),
-                curve: Curves.easeInOutCubicEmphasized,
-                decoration: BoxDecoration(
-                  color: isSelected
-                      ? cs.secondaryContainer
-                      : isTourHighlighted
-                          ? cs.primary.withAlpha((0.08 * 255).round())
-                          : Colors.transparent,
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: IconButton(
-                  key: tourTargetKey,
-                  onPressed: onTap,
-                  icon: iconWidget,
-                  style: IconButton.styleFrom(
-                    backgroundColor: Colors.transparent,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    minimumSize: const Size(56, 25),
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 2),
-            // ── תווית ──────────────────────────────────────────────────
-            AnimatedDefaultTextStyle(
-              duration: const Duration(milliseconds: 250),
-              curve: Curves.easeInOutCubicEmphasized,
-              style: TextStyle(
-                fontSize: 11,
-                color: isSelected
-                    ? cs.onSecondaryContainer
-                    : isTourHighlighted
-                        ? cs.primary
-                        : cs.onSurfaceVariant,
-                fontWeight:
-                    isTourHighlighted ? FontWeight.bold : FontWeight.normal,
-              ),
-              child: Text(
-                label,
-                textAlign: TextAlign.center,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-          ],
-        ),
-      ),
+      child: content,
     );
   }
 }

@@ -22,6 +22,23 @@ class KeyboardNavigator extends StatelessWidget {
     this.onBack,
   });
 
+  static bool _isTextInputFocused() {
+    final focusContext = FocusManager.instance.primaryFocus?.context;
+    if (focusContext == null) return false;
+    bool isTextInput = false;
+    focusContext.visitAncestorElements((element) {
+      final w = element.widget;
+      if (w is EditableText ||
+          w is TextField ||
+          w.runtimeType.toString().contains('SearchBar')) {
+        isTextInput = true;
+        return false;
+      }
+      return true;
+    });
+    return isTextInput;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Focus(
@@ -39,11 +56,9 @@ class KeyboardNavigator extends StatelessWidget {
           return KeyEventResult.handled;
         }
 
-        // Backspace - חזרה (רק אם אין TextField ממוקד)
+        // Backspace - חזרה (רק אם אין TextField/SearchBar ממוקד)
         if (event.logicalKey == LogicalKeyboardKey.backspace && onBack != null) {
-          final focusedWidget =
-              FocusManager.instance.primaryFocus?.context?.widget;
-          if (focusedWidget is! EditableText && focusedWidget is! TextField) {
+          if (!_isTextInputFocused()) {
             onBack!();
             return KeyEventResult.handled;
           }
