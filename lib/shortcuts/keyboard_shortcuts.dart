@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:otzaria/core/focus_repository.dart';
+import 'package:otzaria/core/ui_snack.dart';
+import 'package:otzaria/library/view/library_panel_controller.dart';
 import 'package:otzaria/navigation/bloc/navigation_bloc.dart';
 import 'package:otzaria/navigation/bloc/navigation_event.dart';
 import 'package:otzaria/navigation/bloc/navigation_state.dart';
 import 'package:otzaria/tabs/bloc/tabs_bloc.dart';
 import 'package:otzaria/tabs/bloc/tabs_event.dart';
+import 'package:otzaria/find_ref/view/find_ref_dialog.dart';
 import 'package:otzaria/history/bloc/history_bloc.dart';
 import 'package:otzaria/history/bloc/history_event.dart';
 import 'package:otzaria/tabs/models/searching_tab.dart';
@@ -13,7 +17,6 @@ import 'package:otzaria/search/view/search_dialog.dart';
 import 'package:otzaria/bookmarks/view/bookmark_screen.dart';
 import 'package:otzaria/history/view/history_screen.dart';
 import 'package:otzaria/workspaces/view/workspace_switcher_dialog.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:otzaria/shortcuts/shortcut_helper.dart';
 import 'package:otzaria/utils/ui/fullscreen_helper.dart';
 import 'package:otzaria/settings/settings_exports.dart';
@@ -34,6 +37,7 @@ class KeyboardShortcuts extends StatefulWidget {
 
 class _KeyboardShortcutsState extends State<KeyboardShortcuts> {
   late final FocusScopeNode _shortcutFocusScopeNode;
+  Map<String, String> _shortcutSettings = const {};
 
   @override
   void initState() {
@@ -54,15 +58,25 @@ class _KeyboardShortcutsState extends State<KeyboardShortcuts> {
   bool _isEditing() {
     final focusNode = FocusManager.instance.primaryFocus;
     if (focusNode == null || focusNode.context == null) return false;
-    // בדיקה מעמיקה יותר - האם הוידג'ט שמחזיק את הפוקוס הוא צאצא של EditableText
     return focusNode.context!.widget is EditableText ||
         focusNode.context!.findAncestorWidgetOfExactType<EditableText>() !=
             null;
   }
 
+  /// פותח דיאלוג, או סוגר אם כבר פתוח
+  void _toggleDialog(WidgetBuilder builder) {
+    final navigator = navigatorKey.currentState;
+    final dialogContext = navigatorKey.currentContext;
+    if (navigator == null || dialogContext == null) return;
+    if (navigator.canPop()) {
+      navigator.pop();
+      return;
+    }
+    showDialog(context: dialogContext, builder: builder);
+  }
+
   /// מטפל באירועי מקלדת ברמה הגלובלית - עובד גם כשיש TextField עם focus
-  KeyEventResult _handleKeyEvent(
-      FocusNode node, KeyEvent event, Map<String, String> shortcutSettings) {
+  KeyEventResult _handleKeyEvent(FocusNode node, KeyEvent event) {
     if (event is! KeyDownEvent) return KeyEventResult.ignored;
 
     // מניעת הפעלת קיצורי מקשים של תו בודד (ללא modifiers) בזמן עריכת טקסט
@@ -72,7 +86,6 @@ class _KeyboardShortcutsState extends State<KeyboardShortcuts> {
           HardwareKeyboard.instance.isMetaPressed;
 
       if (!isModifierPressed) {
-        // מתיר רק מקשי F ומקש Escape
         final isAllowed = event.logicalKey == LogicalKeyboardKey.escape ||
             (event.logicalKey.keyId >= LogicalKeyboardKey.f1.keyId &&
                 event.logicalKey.keyId <= LogicalKeyboardKey.f12.keyId);
@@ -85,26 +98,32 @@ class _KeyboardShortcutsState extends State<KeyboardShortcuts> {
 
     // קריאת ערכי הקיצורים מההגדרות
     final libraryShortcut =
-        shortcutSettings['key-shortcut-open-library-browser'] ?? 'ctrl+l';
+        _shortcutSettings['key-shortcut-open-library-browser'] ?? 'ctrl+l';
+    final currentWindowSearchShortcut =
+        _shortcutSettings['key-shortcut-search-current-window'] ?? 'ctrl+f';
     final findRefShortcut =
-        shortcutSettings['key-shortcut-open-find-ref'] ?? 'ctrl+o';
+        _shortcutSettings['key-shortcut-open-find-ref'] ?? 'ctrl+o';
     final closeTabShortcut =
-        shortcutSettings['key-shortcut-close-tab'] ?? 'ctrl+w';
+        _shortcutSettings['key-shortcut-close-tab'] ?? 'ctrl+w';
     final closeAllTabsShortcut =
-        shortcutSettings['key-shortcut-close-all-tabs'] ?? 'ctrl+shift+w';
+        _shortcutSettings['key-shortcut-close-all-tabs'] ?? 'ctrl+shift+w';
     final readingScreenShortcut =
-        shortcutSettings['key-shortcut-open-reading-screen'] ?? 'ctrl+r';
+        _shortcutSettings['key-shortcut-open-reading-screen'] ?? 'ctrl+r';
     final newSearchShortcut =
-        shortcutSettings['key-shortcut-open-new-search'] ?? 'ctrl+q';
+        _shortcutSettings['key-shortcut-open-new-search'] ?? 'ctrl+q';
     final settingsShortcut =
-        shortcutSettings['key-shortcut-open-settings'] ?? 'ctrl+comma';
-    final moreShortcut = shortcutSettings['key-shortcut-open-more'] ?? 'ctrl+m';
+        _shortcutSettings['key-shortcut-open-settings'] ?? 'ctrl+comma';
+    final contextSettingsShortcut =
+        _shortcutSettings['key-shortcut-open-context-settings'] ??
+            'ctrl+shift+comma';
+    final moreShortcut =
+        _shortcutSettings['key-shortcut-open-more'] ?? 'ctrl+m';
     final bookmarksShortcut =
-        shortcutSettings['key-shortcut-open-bookmarks'] ?? 'ctrl+shift+b';
+        _shortcutSettings['key-shortcut-open-bookmarks'] ?? 'ctrl+shift+b';
     final historyShortcut =
-        shortcutSettings['key-shortcut-open-history'] ?? 'ctrl+h';
+        _shortcutSettings['key-shortcut-open-history'] ?? 'ctrl+h';
     final workspaceShortcut =
-        shortcutSettings['key-shortcut-switch-workspace'] ?? 'ctrl+k';
+        _shortcutSettings['key-shortcut-switch-workspace'] ?? 'ctrl+k';
 
     // ספרייה
     if (ShortcutHelper.matchesShortcut(event, libraryShortcut)) {
@@ -117,9 +136,20 @@ class _KeyboardShortcutsState extends State<KeyboardShortcuts> {
       return KeyEventResult.handled;
     }
 
+    // מעבר לשדה החיפוש בחלון הנוכחי
+    if (ShortcutHelper.matchesShortcut(event, currentWindowSearchShortcut)) {
+      final currentScreen = context.read<NavigationBloc>().state.currentScreen;
+      if (currentScreen == Screen.library) {
+        context
+            .read<FocusRepository>()
+            .requestLibrarySearchFocus(selectAll: true);
+        return KeyEventResult.handled;
+      }
+    }
+
     // איתור
     if (ShortcutHelper.matchesShortcut(event, findRefShortcut)) {
-      widget.onFindRefRequested();
+      _toggleDialog((context) => FindRefDialog());
       return KeyEventResult.handled;
     }
 
@@ -158,10 +188,7 @@ class _KeyboardShortcutsState extends State<KeyboardShortcuts> {
 
     // חיפוש חדש
     if (ShortcutHelper.matchesShortcut(event, newSearchShortcut)) {
-      showDialog(
-        context: context,
-        builder: (context) => const SearchDialog(existingTab: null),
-      );
+      _toggleDialog((context) => const SearchDialog(existingTab: null));
       return KeyEventResult.handled;
     }
 
@@ -173,6 +200,23 @@ class _KeyboardShortcutsState extends State<KeyboardShortcuts> {
       return KeyEventResult.handled;
     }
 
+    // הגדרות הקשר (לפי מסך פעיל)
+    if (ShortcutHelper.matchesShortcut(event, contextSettingsShortcut)) {
+      final currentScreen = context.read<NavigationBloc>().state.currentScreen;
+      switch (currentScreen) {
+        case Screen.library:
+          LibraryPanelController.toggleSettingsPanel();
+          break;
+        case Screen.reading:
+        case Screen.search:
+          showReadingSettingsDialog(context);
+          break;
+        default:
+          break;
+      }
+      return KeyEventResult.handled;
+    }
+
     // כלים
     if (ShortcutHelper.matchesShortcut(event, moreShortcut)) {
       context.read<NavigationBloc>().add(const NavigateToScreen(Screen.more));
@@ -181,28 +225,19 @@ class _KeyboardShortcutsState extends State<KeyboardShortcuts> {
 
     // סימניות
     if (ShortcutHelper.matchesShortcut(event, bookmarksShortcut)) {
-      showDialog(
-        context: context,
-        builder: (context) => const BookmarksDialog(),
-      );
+      _toggleDialog((context) => const BookmarksDialog());
       return KeyEventResult.handled;
     }
 
     // היסטוריה
     if (ShortcutHelper.matchesShortcut(event, historyShortcut)) {
-      showDialog(
-        context: context,
-        builder: (context) => const HistoryDialog(),
-      );
+      _toggleDialog((context) => const HistoryDialog());
       return KeyEventResult.handled;
     }
 
     // החלף שולחן עבודה
     if (ShortcutHelper.matchesShortcut(event, workspaceShortcut)) {
-      showDialog(
-        context: context,
-        builder: (context) => const WorkspaceSwitcherDialog(),
-      );
+      _toggleDialog((context) => const WorkspaceSwitcherDialog());
       return KeyEventResult.handled;
     }
 
@@ -226,8 +261,13 @@ class _KeyboardShortcutsState extends State<KeyboardShortcuts> {
       return KeyEventResult.handled;
     }
 
-    // ESC - יציאה ממסך מלא
+    // ESC - סגור דיאלוג/חלון פתוח, ואם אין - צא ממסך מלא
     if (ShortcutHelper.matchesShortcut(event, 'escape')) {
+      final navigator = navigatorKey.currentState;
+      if (navigator != null && navigator.canPop()) {
+        navigator.pop();
+        return KeyEventResult.handled;
+      }
       final settingsBloc = context.read<SettingsBloc>();
       if (settingsBloc.state.isFullscreen) {
         FullscreenHelper.toggleFullscreen(context, false);
@@ -243,13 +283,11 @@ class _KeyboardShortcutsState extends State<KeyboardShortcuts> {
     return BlocBuilder<SettingsBloc, SettingsState>(
       buildWhen: (previous, current) => previous.shortcuts != current.shortcuts,
       builder: (context, state) {
-        // Scope יציב שומר על קיצורים גלובליים גם כשאין child ממוקד, בלי
-        // ליצור FocusScopeNode חדש בכל rebuild.
+        _shortcutSettings = state.shortcuts;
         return FocusScope(
           node: _shortcutFocusScopeNode,
           autofocus: true,
-          onKeyEvent: (node, event) =>
-              _handleKeyEvent(node, event, state.shortcuts),
+          onKeyEvent: _handleKeyEvent,
           child: widget.child,
         );
       },

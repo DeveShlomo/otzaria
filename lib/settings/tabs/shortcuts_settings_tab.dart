@@ -7,7 +7,6 @@ import 'package:otzaria/settings/search/settings_anchor.dart';
 import 'package:otzaria/settings/search/settings_search_models.dart';
 import 'package:otzaria/settings/view/settings_screen.dart';
 import 'package:otzaria/shortcuts/view/shortcut_dropdown_tile.dart';
-import 'package:otzaria/shortcuts/shortcut_validator.dart';
 import 'package:otzaria/widgets/widgets_exports.dart';
 import 'package:otzaria/core/ui_snack.dart';
 import 'package:otzaria/settings/settings_card.dart';
@@ -191,6 +190,11 @@ class ShortcutsSettingsTab extends StatelessWidget {
     'ctrl+comma': 'CTRL + ,',
     'ctrl+shift+b': 'CTRL + SHIFT + B',
     'ctrl+shift+w': 'CTRL + SHIFT + W',
+    'ctrl+shift+comma': 'CTRL + SHIFT + ,',
+    'ctrl+shift+d': 'CTRL + SHIFT + D',
+    'ctrl+shift+e': 'CTRL + SHIFT + E',
+    'ctrl+shift+n': 'CTRL + SHIFT + N',
+    'ctrl+shift+p': 'CTRL + SHIFT + P',
   };
 
   @override
@@ -305,63 +309,150 @@ class ShortcutsSettingsTab extends StatelessWidget {
 
             kSettingsCardSpacing,
 
-            // ── תצוגת ספר ─────────────────────────────────────────────────
-            SettingsCard(
-              title: 'תצוגת ספר',
-              children: [
-                _ShortcutTile(
-                  settingKey: ShortcutValidator.currentWindowSearchKey,
-                  label: 'חיפוש בחלון הנוכחי',
-                  subtitle: 'משמש לחיפוש מהיר במסכי תוכן וכלים תומכים',
-                  defaultShortcut: 'ctrl+f',
-                  icon: FluentIcons.search_24_regular,
-                  allShortcuts: _shortcutsList,
-                ),
-                // _ShortcutTile(
-                //   settingKey: 'key-shortcut-edit-section',
-                //   label: 'עריכת קטע',
-                //   defaultShortcut: 'ctrl+e',
-                //   icon: FluentIcons.document_edit_24_regular,
-                //   allShortcuts: _shortcutsList,
-                // ),
-                _ShortcutTile(
-                  settingKey: 'key-shortcut-print',
-                  label: 'הדפסה',
-                  defaultShortcut: 'ctrl+p',
-                  icon: FluentIcons.print_24_regular,
-                  allShortcuts: _shortcutsList,
-                ),
-                _ShortcutTile(
-                  settingKey: 'key-shortcut-add-bookmark',
-                  label: 'הוסף סימניה',
-                  defaultShortcut: 'ctrl+b',
-                  icon: FluentIcons.bookmark_24_regular,
-                  allShortcuts: _shortcutsList,
-                ),
-                _ShortcutTile(
-                  settingKey: 'key-shortcut-add-note',
-                  label: 'הוספת הערה',
-                  defaultShortcut: 'ctrl+n',
-                  icon: FluentIcons.note_24_regular,
-                  allShortcuts: _shortcutsList,
-                ),
-                _ShortcutTile(
-                  settingKey: 'key-shortcut-close-tab',
-                  label: 'סגור ספר נוכחי',
-                  defaultShortcut: 'ctrl+w',
-                  icon: FluentIcons.dismiss_circle_24_regular,
-                  allShortcuts: _shortcutsList,
-                ),
-                _ShortcutTile(
-                  settingKey: 'key-shortcut-close-all-tabs',
-                  label: 'סגור כל הספרים',
-                  defaultShortcut: 'ctrl+shift+w',
-                  icon: FluentIcons.dismiss_24_regular,
-                  allShortcuts: _shortcutsList,
-                ),
-              ],
-            ),
-          ],
+          // ── ניווט כללי ────────────────────────────────────────────────
+          SettingsCard(
+            title: 'ניווט כללי',
+            children: [
+              _ShortcutTile(
+                settingKey: 'key-shortcut-open-library-browser',
+                label: 'ספרייה',
+                defaultShortcut: 'ctrl+l',
+                icon: FluentIcons.library_24_regular,
+                allShortcuts: _shortcutsList,
+              ),
+              _ShortcutTile(
+                settingKey: 'key-shortcut-open-find-ref',
+                label: 'איתור',
+                defaultShortcut: 'ctrl+o',
+                icon: FluentIcons.book_search_24_regular,
+                allShortcuts: _shortcutsList,
+              ),
+              _ShortcutTile(
+                settingKey: 'key-shortcut-open-reading-screen',
+                label: 'עיון',
+                defaultShortcut: 'ctrl+r',
+                icon: FluentIcons.book_open_24_regular,
+                allShortcuts: _shortcutsList,
+              ),
+              _ShortcutTile(
+                settingKey: 'key-shortcut-open-new-search',
+                label: 'חלון חיפוש חדש',
+                defaultShortcut: 'ctrl+q',
+                icon: FluentIcons.search_24_regular,
+                allShortcuts: _shortcutsList,
+              ),
+              _ShortcutTile(
+                settingKey: 'key-shortcut-open-settings',
+                label: 'הגדרות',
+                defaultShortcut: 'ctrl+comma',
+                icon: FluentIcons.settings_24_regular,
+                allShortcuts: _shortcutsList,
+              ),
+              _ShortcutTile(
+                settingKey: 'key-shortcut-open-more',
+                label: 'כלים',
+                defaultShortcut: 'ctrl+m',
+                icon: FluentIcons.apps_24_regular,
+                allShortcuts: _shortcutsList,
+              ),
+              _ShortcutTile(
+                settingKey: 'key-shortcut-open-bookmarks',
+                label: 'סימניות',
+                defaultShortcut: 'ctrl+shift+b',
+                icon: FluentIcons.bookmark_24_regular,
+                allShortcuts: _shortcutsList,
+              ),
+              _ShortcutTile(
+                settingKey: 'key-shortcut-open-history',
+                label: 'היסטוריה',
+                defaultShortcut: 'ctrl+h',
+                icon: FluentIcons.history_24_regular,
+                allShortcuts: _shortcutsList,
+              ),
+              _ShortcutTile(
+                settingKey: 'key-shortcut-switch-workspace',
+                label: 'החלף שולחן עבודה',
+                defaultShortcut: 'ctrl+k',
+                icon: FluentIcons.grid_24_regular,
+                allShortcuts: _shortcutsList,
+              ),
+              _ShortcutTile(
+                settingKey: 'key-shortcut-open-context-settings',
+                label: 'הגדרות חלון נוכחי',
+                subtitle: 'פותח הגדרות הקשר לפי המסך הפעיל (ספרייה, עיון, חיפוש)',
+                defaultShortcut: 'ctrl+shift+comma',
+                icon: FluentIcons.settings_24_filled,
+                allShortcuts: _shortcutsList,
+              ),
+            ],
+          ),
+
+          kSettingsCardSpacing,
+
+          // ── תצוגת ספר ─────────────────────────────────────────────────
+          SettingsCard(
+            title: 'תצוגת ספר',
+            children: [
+              _ShortcutTile(
+                settingKey: 'key-shortcut-search-current-window',
+                label: 'חיפוש בספר ובחלון הנוכחי',
+                subtitle: 'משמש לחיפוש מהיר במסכי תוכן וכלים תומכים',
+                defaultShortcut: 'ctrl+f',
+                icon: FluentIcons.search_24_regular,
+                allShortcuts: _shortcutsList,
+              ),
+              // _ShortcutTile(
+              //   settingKey: 'key-shortcut-edit-section',
+              //   label: 'עריכת קטע',
+              //   defaultShortcut: 'ctrl+e',
+              //   icon: FluentIcons.document_edit_24_regular,
+              //   allShortcuts: _shortcutsList,
+              // ),
+              _ShortcutTile(
+                settingKey: 'key-shortcut-print',
+                label: 'הדפסה',
+                defaultShortcut: 'ctrl+p',
+                icon: FluentIcons.print_24_regular,
+                allShortcuts: _shortcutsList,
+              ),
+              _ShortcutTile(
+                settingKey: 'key-shortcut-add-bookmark',
+                label: 'הוסף סימניה',
+                defaultShortcut: 'ctrl+b',
+                icon: FluentIcons.bookmark_24_regular,
+                allShortcuts: _shortcutsList,
+              ),
+              _ShortcutTile(
+                settingKey: 'key-shortcut-add-note',
+                label: 'הוספת הערה',
+                defaultShortcut: 'ctrl+n',
+                icon: FluentIcons.note_24_regular,
+                allShortcuts: _shortcutsList,
+              ),
+              _ShortcutTile(
+                settingKey: 'key-shortcut-toggle-pdf-view',
+                label: 'החלף מצב תצוגה (PDF/טקסט)',
+                defaultShortcut: 'ctrl+shift+p',
+                icon: FluentIcons.document_pdf_24_regular,
+                allShortcuts: _shortcutsList,
+              ),
+              _ShortcutTile(
+                settingKey: 'key-shortcut-close-tab',
+                label: 'סגור ספר נוכחי',
+                defaultShortcut: 'ctrl+w',
+                icon: FluentIcons.dismiss_circle_24_regular,
+                allShortcuts: _shortcutsList,
+              ),
+              _ShortcutTile(
+                settingKey: 'key-shortcut-close-all-tabs',
+                label: 'סגור כל הספרים',
+                defaultShortcut: 'ctrl+shift+w',
+                icon: FluentIcons.dismiss_24_regular,
+                allShortcuts: _shortcutsList,
+              ),
+            ],
+          ),
+        ],
         ),
       ),
     );

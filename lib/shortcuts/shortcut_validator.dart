@@ -2,10 +2,6 @@ import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 
 /// Validator for keyboard shortcuts to detect conflicts
 class ShortcutValidator {
-  static const String currentWindowSearchKey =
-      'key-shortcut-search-current-window';
-  static const String legacySearchInBookKey = 'key-shortcut-search-in-book';
-
   static const Set<Set<String>> _compatibleShortcutGroups = {
     {
       'key-shortcut-add-note',
@@ -17,27 +13,24 @@ class ShortcutValidator {
     },
   };
 
-  static const Map<String, List<String>> legacyShortcutAliases = {
-    currentWindowSearchKey: [legacySearchInBookKey],
-  };
-
   /// List of all shortcut setting keys
   static const List<String> shortcutKeys = [
     'key-shortcut-open-library-browser',
-    currentWindowSearchKey,
+    'key-shortcut-search-current-window',
     'key-shortcut-open-find-ref',
     'key-shortcut-close-tab',
     'key-shortcut-close-all-tabs',
     'key-shortcut-open-reading-screen',
     'key-shortcut-open-new-search',
     'key-shortcut-open-settings',
+    'key-shortcut-open-context-settings',
     'key-shortcut-open-more',
     'key-shortcut-open-bookmarks',
     'key-shortcut-open-history',
-    'key-shortcut-add-bookmark',
-    'key-shortcut-add-note',
     'key-shortcut-switch-workspace',
     'key-shortcut-print',
+    'key-shortcut-add-bookmark',
+    'key-shortcut-add-note',
     'key-shortcut-toggle-pdf-view',
     'key-shortcut-calendar-toggle-times',
     'key-shortcut-calendar-toggle-events',
@@ -50,20 +43,21 @@ class ShortcutValidator {
   /// Default values for shortcuts
   static const Map<String, String> defaultShortcuts = {
     'key-shortcut-open-library-browser': 'ctrl+l',
-    currentWindowSearchKey: 'ctrl+f',
+    'key-shortcut-search-current-window': 'ctrl+f',
     'key-shortcut-open-find-ref': 'ctrl+o',
     'key-shortcut-close-tab': 'ctrl+w',
     'key-shortcut-close-all-tabs': 'ctrl+shift+w',
     'key-shortcut-open-reading-screen': 'ctrl+r',
     'key-shortcut-open-new-search': 'ctrl+q',
     'key-shortcut-open-settings': 'ctrl+comma',
+    'key-shortcut-open-context-settings': 'ctrl+shift+comma',
     'key-shortcut-open-more': 'ctrl+m',
     'key-shortcut-open-bookmarks': 'ctrl+shift+b',
     'key-shortcut-open-history': 'ctrl+h',
+    'key-shortcut-print': 'ctrl+p',
     'key-shortcut-add-bookmark': 'ctrl+b',
     'key-shortcut-add-note': 'ctrl+n',
     'key-shortcut-switch-workspace': 'ctrl+k',
-    'key-shortcut-print': 'ctrl+p',
     'key-shortcut-toggle-pdf-view': 'ctrl+shift+p',
     'key-shortcut-calendar-toggle-times': 'ctrl+e',
     'key-shortcut-calendar-toggle-events': 'ctrl+n',
@@ -76,28 +70,28 @@ class ShortcutValidator {
   /// Shortcut names for display
   static const Map<String, String> shortcutNames = {
     'key-shortcut-open-library-browser': 'ספרייה',
-    currentWindowSearchKey: 'חיפוש בחלון הנוכחי',
+    'key-shortcut-search-current-window': 'חיפוש בספר ובחלון הנוכחי',
     'key-shortcut-open-find-ref': 'איתור',
     'key-shortcut-close-tab': 'סגור ספר נוכחי',
     'key-shortcut-close-all-tabs': 'סגור כל הספרים',
     'key-shortcut-open-reading-screen': 'עיון',
     'key-shortcut-open-new-search': 'חלון חיפוש חדש',
     'key-shortcut-open-settings': 'הגדרות',
+    'key-shortcut-open-context-settings': 'הגדרות חלון נוכחי',
     'key-shortcut-open-more': 'כלים',
     'key-shortcut-open-bookmarks': 'סימניות',
     'key-shortcut-open-history': 'היסטוריה',
-    'key-shortcut-add-bookmark': 'הוסף סימניה',
-    'key-shortcut-add-note': 'הוספת הערה',
     'key-shortcut-switch-workspace': 'החלף שולחן עבודה',
     'key-shortcut-print': 'הדפסה',
+    'key-shortcut-add-bookmark': 'הוסף סימניה',
+    'key-shortcut-add-note': 'הוספת הערה',
     'key-shortcut-toggle-pdf-view': 'החלף מצב תצוגה (PDF/טקסט)',
     'key-shortcut-calendar-toggle-times': 'לוח שנה: פתיחה/סגירה זמני היום',
     'key-shortcut-calendar-toggle-events': 'לוח שנה: פתיחה/סגירה אירועים',
     'key-shortcut-calendar-today': 'לוח שנה: מעבר להיום',
     'key-shortcut-calendar-create-event': 'לוח שנה: יצירת אירוע',
-    'key-shortcut-calendar-toggle-view': 'לוח שנה: מעבר בין תצוגות',
-    'key-shortcut-shamor-zachor-cycle-filter':
-        'שמור וזכור: מעבר בין הסינונים',
+    'key-shortcut-calendar-toggle-view': 'לוח שנה: מעבר בין תצוגות שבוע/חודש',
+    'key-shortcut-shamor-zachor-cycle-filter': 'שמור וזכור: מעבר בין הסינונים',
   };
 
   /// Check for conflicts in current shortcuts
@@ -167,29 +161,14 @@ class ShortcutValidator {
 
   /// מחזיר את ערך הקיצור הנוכחי עבור [settingKey] או את ברירת המחדל שלו.
   static String? getShortcutValue(String settingKey) {
-    final normalizedKey = canonicalSettingKey(settingKey);
-    final directValue = Settings.getValue<String>(normalizedKey);
-    if (directValue != null && directValue.isNotEmpty) {
-      return directValue;
-    }
-
-    for (final legacyKey in legacyShortcutAliases[normalizedKey] ?? const []) {
-      final legacyValue = Settings.getValue<String>(legacyKey);
-      if (legacyValue != null && legacyValue.isNotEmpty) {
-        return legacyValue;
-      }
-    }
-
-    return defaultShortcuts[normalizedKey];
+    return Settings.getValue<String>(settingKey) ?? defaultShortcuts[settingKey];
   }
 
   static bool canShareShortcut(String firstKey, String secondKey) {
-    final normalizedFirst = canonicalSettingKey(firstKey);
-    final normalizedSecond = canonicalSettingKey(secondKey);
-    if (normalizedFirst == normalizedSecond) return true;
+    if (firstKey == secondKey) return true;
 
     for (final group in _compatibleShortcutGroups) {
-      if (group.contains(normalizedFirst) && group.contains(normalizedSecond)) {
+      if (group.contains(firstKey) && group.contains(secondKey)) {
         return true;
       }
     }
@@ -197,24 +176,9 @@ class ShortcutValidator {
     return false;
   }
 
-  static String canonicalSettingKey(String settingKey) {
-    if (settingKey == legacySearchInBookKey) {
-      return currentWindowSearchKey;
-    }
-    return settingKey;
-  }
-
-  static Set<String> legacyKeysFor(String settingKey) {
-    final normalizedKey = canonicalSettingKey(settingKey);
-    return Set<String>.from(legacyShortcutAliases[normalizedKey] ?? const []);
-  }
-
   static bool _isCompatibleGroup(Set<String> keys) {
-    if (keys.length < 2) return false;
-
-    final normalizedKeys = keys.map(canonicalSettingKey).toSet();
     for (final group in _compatibleShortcutGroups) {
-      if (group.containsAll(normalizedKeys)) {
+      if (group.containsAll(keys)) {
         return true;
       }
     }
