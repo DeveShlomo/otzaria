@@ -126,7 +126,7 @@ class AppThemeData {
           ),
       cardTheme: CardThemeData(
         color: AppColors.darkCard,
-        elevation: AppTokens.elevation2,
+        elevation: AppTokens.elevationMedium,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppTokens.radiusMD),
           side: const BorderSide(color: AppColors.darkOutline, width: 1),
@@ -170,7 +170,7 @@ class AppThemeData {
       color: backgroundColor,
       surfaceTintColor: Colors.transparent,
       shadowColor: Colors.black.withValues(alpha: 0.22),
-      elevation: AppTokens.elevation1,
+      elevation: AppTokens.elevationLow,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(metrics.menuBorderRadius),
         side: _menuBorder(cs),
@@ -196,7 +196,7 @@ class AppThemeData {
         surfaceTintColor: const WidgetStatePropertyAll(Colors.transparent),
         shadowColor:
             WidgetStatePropertyAll(Colors.black.withValues(alpha: 0.22)),
-        elevation: const WidgetStatePropertyAll(AppTokens.elevation1),
+        elevation: const WidgetStatePropertyAll(AppTokens.elevationLow),
         shape: WidgetStatePropertyAll(
           RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(metrics.menuBorderRadius),
@@ -229,7 +229,7 @@ class AppThemeData {
         surfaceTintColor: const WidgetStatePropertyAll(Colors.transparent),
         shadowColor:
             WidgetStatePropertyAll(Colors.black.withValues(alpha: 0.22)),
-        elevation: const WidgetStatePropertyAll(AppTokens.elevation1),
+        elevation: const WidgetStatePropertyAll(AppTokens.elevationLow),
         shape: WidgetStatePropertyAll(
           RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(metrics.menuBorderRadius),

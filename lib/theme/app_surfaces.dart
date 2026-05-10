@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:otzaria/theme/app_tokens.dart';
 
 /// רקעי מסך לסביבות שימוש שונות באפליקציה
 ///
@@ -45,4 +46,13 @@ class AppSurfaces {
   /// זהה ל-[panelBackground] — נשמר לתאימות עם קוד קיים.
   static Color solidPanelBackground(BuildContext context) =>
       panelBackground(context);
+
+  /// צבע הצל של פאנלים צפים (AdaptiveSidePane, FloatingPanel, ContextOverlayPanel)
+  static Color panelShadow(BuildContext context) => Theme.of(context)
+      .colorScheme
+      .shadow
+      .withValues(alpha: AppTokens.shadowAlphaStrong);
+
+  /// elevation של פאנלים צפים
+  static const double panelElevation = AppTokens.elevationMedium;
 }

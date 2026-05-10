@@ -66,7 +66,7 @@ Widget buildDayCell(
           ? Color.alphaBlend(
               cs.surfaceTint.withValues(alpha: 0.08), baseBackground)
           : baseBackground;
-      final elevation = (isHovered || isToday) ? AppTokens.elevation2 : 0.0;
+      final elevation = (isHovered || isToday) ? AppTokens.elevationMedium : 0.0;
 
       return GestureDetector(
         onTap: onTap,

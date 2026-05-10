@@ -154,8 +154,7 @@ class _AdaptiveSidePaneState extends State<AdaptiveSidePane> {
     required bool paneOnRight,
   }) {
     final paneColor = _effectivePaneColor(context);
-    final shadowColor =
-        Theme.of(context).colorScheme.shadow.withValues(alpha: 0.22);
+    final shadowColor = AppSurfaces.panelShadow(context);
 
     final scrollbarWrapped = ScrollbarTheme(
       data: ScrollbarThemeData(
@@ -168,7 +167,7 @@ class _AdaptiveSidePaneState extends State<AdaptiveSidePane> {
     if (widget.wrapPaneInFloatingPanel) {
       return FloatingPanel(
         color: paneColor,
-        elevation: 8,
+        elevation: AppSurfaces.panelElevation,
         shadowColor: shadowColor,
         borderRadius: _kPanelRadius,
         child: scrollbarWrapped,
@@ -177,7 +176,7 @@ class _AdaptiveSidePaneState extends State<AdaptiveSidePane> {
 
     return Material(
       color: paneColor,
-      elevation: 4,
+      elevation: AppSurfaces.panelElevation,
       shadowColor: shadowColor,
       surfaceTintColor: Colors.transparent,
       borderRadius: _kPanelRadius,
@@ -366,14 +365,14 @@ class _AdaptiveSidePaneState extends State<AdaptiveSidePane> {
     BuildContext context, {
     required bool paneOnRight,
   }) {
-    final narrowPaneContent = (widget.narrowPaneBuilder ?? _defaultNarrowPaneBuilder)
-        .call(context, widget.paneContent);
+    final narrowPaneContent =
+        (widget.narrowPaneBuilder ?? _defaultNarrowPaneBuilder)
+            .call(context, widget.paneContent);
     final narrowPane =
         _buildPaneShell(context, narrowPaneContent, paneOnRight: paneOnRight);
 
     final showHandle = widget.isResizable && widget.onPaneWidthChanged != null;
-    final closedOffset =
-        paneOnRight ? const Offset(1, 0) : const Offset(-1, 0);
+    final closedOffset = paneOnRight ? const Offset(1, 0) : const Offset(-1, 0);
 
     return Stack(
       children: [
@@ -433,7 +432,8 @@ class _AdaptiveSidePaneState extends State<AdaptiveSidePane> {
                             child: AnimatedSlide(
                               duration: AppTokens.animPanelSlide,
                               curve: Curves.easeInOut,
-                              offset: widget.isOpen ? Offset.zero : closedOffset,
+                              offset:
+                                  widget.isOpen ? Offset.zero : closedOffset,
                               child: _buildResizeHandle(paneOnRight, false),
                             ),
                           ),

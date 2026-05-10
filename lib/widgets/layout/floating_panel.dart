@@ -87,14 +87,14 @@ class FloatingPanel extends StatelessWidget {
   /// דריסת צבע הפאנל (אופציונלי)
   final Color? color;
 
-  /// דריסת צבע הצל (אופציונלי) — ברירת מחדל: shadow עם 10% אופקסיטי
+  /// דריסת צבע הצל (אופציונלי) — ברירת מחדל: shadow עם [AppTokens.panelFloatingShadowAlpha] אופקסיטי
   final Color? shadowColor;
 
   const FloatingPanel({
     super.key,
     required this.child,
     this.borderRadius,
-    this.elevation = 2,
+    this.elevation = AppSurfaces.panelElevation,
     this.padding,
     this.color,
     this.shadowColor,
@@ -114,7 +114,7 @@ class FloatingPanel extends StatelessWidget {
     return Material(
       color: panelColor,
       elevation: elevation,
-      shadowColor: shadowColor ?? Theme.of(context).colorScheme.shadow.withValues(alpha: 0.10),
+      shadowColor: shadowColor ?? AppSurfaces.panelShadow(context),
       surfaceTintColor: Colors.transparent,
       borderRadius: effectiveBorderRadius,
       clipBehavior: Clip.antiAlias,

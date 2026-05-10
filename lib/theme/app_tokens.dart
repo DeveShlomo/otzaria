@@ -21,10 +21,16 @@ class AppTokens {
   static const double fontLG = 16; // רוב ה-ListTile titles
   static const double fontXL = 18;
 
-  // ── Elevation ——————————————————————————————
-  static const double elevation0 = 0;
-  static const double elevation1 = 1;
-  static const double elevation2 = 3;
+  // ── Elevation levels ———————————————————————
+  static const double elevationNone = 0;
+  static const double elevationLow = 1;    // כרטיסים, שורות
+  static const double elevationMedium = 4; // פאנלים צפים, סרגלי ניווט
+  static const double elevationHigh = 8;   // דיאלוגים, bottom sheets
+
+  // ── Shadow Alpha levels ————————————————————
+  static const double shadowAlphaSubtle = 0.10;  // צל עדין
+  static const double shadowAlphaMedium = 0.22;  // צל בינוני
+  static const double shadowAlphaStrong = 0.38;  // צל חזק
 
   // ── Animation Durations ————————————————————
   static const Duration animFast = Duration(milliseconds: 150);

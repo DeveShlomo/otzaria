@@ -211,7 +211,8 @@ class _ContextOverlayPanelState extends State<ContextOverlayPanel> {
                     ? Offset.zero
                     : (isLeft ? const Offset(-1, 0) : const Offset(1, 0)),
                 child: FloatingPanel(
-                  elevation: 8,
+                  elevation: AppSurfaces.panelElevation,
+                  shadowColor: AppSurfaces.panelShadow(context),
                   color: effectiveBackgroundColor,
                   borderRadius: BorderRadius.circular(AppTokens.radiusPanel),
                   child: SizedBox(
