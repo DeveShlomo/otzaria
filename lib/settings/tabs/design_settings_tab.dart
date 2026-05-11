@@ -11,6 +11,8 @@ import 'package:otzaria/settings/search/settings_search_models.dart';
 import 'package:otzaria/settings/services/per_book_settings_service.dart';
 import 'package:otzaria/settings/settings_card.dart';
 import 'package:otzaria/settings/view/settings_screen.dart';
+import 'package:otzaria/theme/app_seed_colors.dart';
+import 'package:otzaria/settings/dialogs/settings_dialogs_exports.dart';
 import 'package:otzaria/widgets/widgets_exports.dart';
 
 enum _SidebarMode { pinned, openOnBook, closed }
@@ -219,31 +221,26 @@ class DesignSettingsTab extends StatelessWidget {
                                   .add(UpdateDarkMode(value));
                             },
                     ),
-                    ClipRect(
-                      child: Align(
-                        alignment: Alignment.topCenter,
-                        heightFactor: 0.92,
-                        child: ColorPickerSettingsTile(
-                          key: ValueKey(
-                              'color-picker-${state.isDarkMode ? 'dark' : 'light'}'),
-                          title: 'צבע בסיס',
-                          leading: const Icon(FluentIcons.color_24_regular),
-                          settingKey: state.isDarkMode
-                              ? 'key-dark-swatch-color'
-                              : 'key-swatch-color',
-                          onChange: (color) {
-                            if (state.isDarkMode) {
-                              context
-                                  .read<SettingsBloc>()
-                                  .add(UpdateDarkSeedColor(color));
-                            } else {
-                              context
-                                  .read<SettingsBloc>()
-                                  .add(UpdateSeedColor(color));
-                            }
-                          },
-                        ),
-                      ),
+                    ColorPickerTile(
+                      key: ValueKey(
+                          'color-picker-${state.isDarkMode ? 'dark' : 'light'}'),
+                      currentColor: state.isDarkMode
+                          ? state.darkSeedColor
+                          : state.seedColor,
+                      defaultColor: state.isDarkMode
+                          ? AppSeedColors.defaultDark
+                          : AppSeedColors.defaultLight,
+                      onChanged: (color) {
+                        if (state.isDarkMode) {
+                          context
+                              .read<SettingsBloc>()
+                              .add(UpdateDarkSeedColor(color));
+                        } else {
+                          context
+                              .read<SettingsBloc>()
+                              .add(UpdateSeedColor(color));
+                        }
+                      },
                     ),
                   ],
                   ),
