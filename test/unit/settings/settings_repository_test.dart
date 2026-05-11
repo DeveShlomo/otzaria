@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:otzaria/shortcuts/shortcut_validator.dart';
 import 'package:otzaria/settings/engine/settings_repository.dart';
-import 'package:otzaria/utils/ui/color_utils.dart';
+import 'package:otzaria/theme/theme_exports.dart';
 import '../../unit/mocks/mock_settings_wrapper.mocks.dart';
 
 void main() {
@@ -89,9 +89,8 @@ void main() {
       // Verify default values are returned
       expect(settings['isDarkMode'], false);
       expect(settings['followSystemTheme'], false);
-      expect(settings['seedColor'], ColorUtils.colorFromString('#ff2c1b02'));
-      expect(
-          settings['darkSeedColor'], ColorUtils.colorFromString('#ffce93d8'));
+      expect(settings['seedColor'], AppSeedColors.defaultLight);
+      expect(settings['darkSeedColor'], AppSeedColors.defaultDark);
       expect(settings['textMaxWidth'], -1.0);
       expect(settings['fontSize'], 25.0);
       expect(settings['fontFamily'], 'FrankRuhlCLM');
@@ -179,9 +178,8 @@ void main() {
       // Verify custom values are returned
       expect(settings['isDarkMode'], true);
       expect(settings['followSystemTheme'], true);
-      expect(settings['seedColor'], ColorUtils.colorFromString('#ff0000ff'));
-      expect(
-          settings['darkSeedColor'], ColorUtils.colorFromString('#ffce93d8'));
+      expect(settings['seedColor'], const Color(0xff0000ff));
+      expect(settings['darkSeedColor'], AppSeedColors.defaultDark);
       expect(settings['textMaxWidth'], 800.0);
       expect(settings['fontSize'], 20.0);
       expect(settings['fontFamily'], 'Rubik');
@@ -215,7 +213,7 @@ void main() {
       const color = Colors.red;
       await repository.updateSeedColor(color);
       verify(mockSettingsWrapper.setValue(SettingsRepository.keySwatchColor,
-              ColorUtils.colorToString(color)))
+              color.toARGB32()))
           .called(1);
     });
 
