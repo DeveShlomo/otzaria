@@ -1,4 +1,4 @@
-import 'package:otzaria/core/app_paths.dart';
+import 'package:otzaria/core/storage/app_paths.dart';
 import 'package:otzaria/data/cache/acronyms_cache.dart';
 import 'package:otzaria/data/cache/books_cache.dart';
 import 'package:otzaria/data/data_providers/file_system_data_provider.dart';

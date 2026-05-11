@@ -2,7 +2,7 @@ import 'dart:io';
 import 'dart:convert';
 import 'package:path/path.dart' as p;
 import 'package:archive/archive_io.dart';
-import 'package:otzaria/core/app_paths.dart';
+import 'package:otzaria/core/storage/app_paths.dart';
 import 'package:otzaria/plugins/models/installed_plugin.dart';
 import 'package:otzaria/plugins/models/plugin_manifest.dart';
 import 'package:package_info_plus/package_info_plus.dart';

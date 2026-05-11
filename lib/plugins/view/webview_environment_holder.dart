@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter/services.dart';
 import 'package:path/path.dart' as p;
-import 'package:otzaria/core/app_paths.dart';
+import 'package:otzaria/core/storage/app_paths.dart';
 
 /// מחזיק את ה-WebViewEnvironment הסינגלטוני עם userDataFolder הניתן לכתיבה.
 ///

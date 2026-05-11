@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:hive_ce/hive.dart';
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
-import 'package:otzaria/core/app_paths.dart';
+import 'package:otzaria/core/storage/app_paths.dart';
 
 /// A cache access provider class for shared preferences using Hive library
 class HiveCache extends CacheProvider {

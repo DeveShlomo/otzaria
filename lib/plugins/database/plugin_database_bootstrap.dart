@@ -1,5 +1,5 @@
 import 'package:path/path.dart' as p;
-import 'package:otzaria/core/app_paths.dart';
+import 'package:otzaria/core/storage/app_paths.dart';
 import 'plugin_database_registry.dart';
 import 'plugin_database_source.dart';
 

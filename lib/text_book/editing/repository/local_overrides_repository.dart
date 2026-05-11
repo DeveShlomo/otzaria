@@ -3,7 +3,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:path/path.dart' as path;
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
-import 'package:otzaria/core/app_paths.dart';
+import 'package:otzaria/core/storage/app_paths.dart';
 import 'package:otzaria/settings/settings_exports.dart';
 
 import 'overrides_repository.dart';

@@ -6,14 +6,13 @@ import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:logging/logging.dart';
 import 'package:otzaria/bookmarks/repository/bookmark_repository.dart';
 import 'package:otzaria/bookmarks/models/bookmark.dart';
-import 'package:otzaria/data/data_providers/hive_data_provider.dart';
+import 'package:otzaria/core/storage/storage_exports.dart';
 import 'package:otzaria/history/history_repository.dart';
 import 'package:otzaria/settings/engine/settings_engine_exports.dart';
 import 'package:otzaria/workspaces/workspace_repository.dart';
 import 'package:otzaria/workspaces/workspace.dart';
 import 'package:otzaria/personal_notes/storage/personal_notes_database.dart';
 import 'package:otzaria/personal_notes/models/personal_note.dart';
-import 'package:otzaria/core/app_paths.dart';
 
 /// Service for backing up and restoring app data
 class BackupService {

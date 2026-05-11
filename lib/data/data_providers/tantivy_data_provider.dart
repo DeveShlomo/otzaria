@@ -5,7 +5,7 @@ import 'package:hive_ce/hive.dart';
 import 'package:otzaria/search/search_repository.dart';
 import 'package:otzaria/search/models/search_configuration.dart';
 import 'package:otzaria/search/search_query_builder.dart';
-import 'package:otzaria/core/app_paths.dart';
+import 'package:otzaria/core/storage/app_paths.dart';
 
 /// A singleton class that manages search functionality using Tantivy search engine.
 ///

@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:hive_ce/hive.dart';
-import 'package:otzaria/data/data_providers/hive_data_provider.dart';
+import 'package:otzaria/core/storage/hive_data_provider.dart';
 import 'package:otzaria/personal_notes/models/personal_note.dart';
 
 class PersonalNoteDraft {

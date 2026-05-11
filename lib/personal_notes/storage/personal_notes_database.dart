@@ -1,6 +1,6 @@
 import 'package:sqlite3/sqlite3.dart';
 
-import 'package:otzaria/core/app_paths.dart';
+import 'package:otzaria/core/storage/app_paths.dart';
 import 'package:otzaria/personal_notes/models/personal_note.dart';
 import 'package:otzaria/migration/database/sql/sqlite3_utils.dart';
 
