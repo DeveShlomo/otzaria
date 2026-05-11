@@ -57,6 +57,7 @@ class AppThemeData {
       visualDensity: VisualDensity.adaptivePlatformDensity,
       fontFamily: 'Roboto',
       colorScheme: colorScheme,
+      scaffoldBackgroundColor: colorScheme.surface,
       textTheme: const TextTheme(
         bodyMedium: TextStyle(fontSize: 18.0, fontFamily: 'candara'),
       ),

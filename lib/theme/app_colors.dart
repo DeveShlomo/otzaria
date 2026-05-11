@@ -21,8 +21,11 @@ class AppColors {
   AppColors._();
 
   // ── Dark Mode Surfaces ──────────────────────────────────────────────────
-  /// רקע ה-Scaffold במצב כהה
+  /// רקע ה-Scaffold במצב כהה — רקע חלק (plain)
   static const Color darkScaffold = Color(0xFF242424);
+
+  /// רקע מסכים משניים במצב כהה — רקע כהה יותר עם גוון (tinted)
+  static const Color darkScreenTinted = Color(0xFF1A1A1A);
 
   /// צבע כרטיסים ורכיבי Card במצב כהה
   static const Color darkCard = Color(0xFF333333);
