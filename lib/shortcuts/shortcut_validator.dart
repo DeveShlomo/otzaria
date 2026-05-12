@@ -1,4 +1,4 @@
-import 'package:flutter_settings_screens/flutter_settings_screens.dart';
+import 'package:otzaria/core/storage/storage_exports.dart';
 
 /// Validator for keyboard shortcuts to detect conflicts
 class ShortcutValidator {

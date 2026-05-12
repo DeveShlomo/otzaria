@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:otzaria/core/storage/storage_exports.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter/services.dart';
@@ -23,7 +24,6 @@ import 'package:otzaria/utils/text/copy_utils.dart';
 import 'package:otzaria/core/ui_snack.dart';
 import 'package:super_clipboard/super_clipboard.dart';
 import 'package:otzaria/personal_notes/personal_notes_system.dart';
-import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:otzaria/settings/services/nikud_display_service.dart';
 import 'package:otzaria/tabs/models/text_tab.dart';
 import 'package:otzaria/widgets/smart_text/smart_text.dart';

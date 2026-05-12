@@ -26,14 +26,8 @@ void main() {
               SettingsRepository.keyFollowSystemTheme,
               defaultValue: false))
           .thenReturn(false);
-      when(mockSettingsWrapper.getValue<String>(
-              SettingsRepository.keySwatchColor,
-              defaultValue: '#ff2c1b02'))
-          .thenReturn('#ff2c1b02');
-      when(mockSettingsWrapper.getValue<String>(
-              SettingsRepository.keyDarkSwatchColor,
-              defaultValue: '#ffce93d8'))
-          .thenReturn('#ffce93d8');
+      when(mockSettingsWrapper.getValue<int>(SettingsRepository.keySwatchColor, defaultValue: AppSeedColors.defaultLight.toARGB32())).thenReturn(AppSeedColors.defaultLight.toARGB32());
+      when(mockSettingsWrapper.getValue<int>(SettingsRepository.keyDarkSwatchColor, defaultValue: AppSeedColors.defaultDark.toARGB32())).thenReturn(AppSeedColors.defaultDark.toARGB32());
       when(mockSettingsWrapper.getValue<double>(
               SettingsRepository.keyTextMaxWidth,
               defaultValue: -1))
@@ -115,14 +109,8 @@ void main() {
               SettingsRepository.keyFollowSystemTheme,
               defaultValue: false))
           .thenReturn(true);
-      when(mockSettingsWrapper.getValue<String>(
-              SettingsRepository.keySwatchColor,
-              defaultValue: '#ff2c1b02'))
-          .thenReturn('#ff0000ff'); // Blue
-      when(mockSettingsWrapper.getValue<String>(
-              SettingsRepository.keyDarkSwatchColor,
-              defaultValue: '#ffce93d8'))
-          .thenReturn('#ffce93d8');
+      when(mockSettingsWrapper.getValue<int>(SettingsRepository.keySwatchColor, defaultValue: AppSeedColors.defaultLight.toARGB32())).thenReturn(const Color(0xff0000ff).toARGB32()); // Blue
+      when(mockSettingsWrapper.getValue<int>(SettingsRepository.keyDarkSwatchColor, defaultValue: AppSeedColors.defaultDark.toARGB32())).thenReturn(AppSeedColors.defaultDark.toARGB32());
       when(mockSettingsWrapper.getValue<double>(
               SettingsRepository.keyTextMaxWidth,
               defaultValue: -1))
@@ -265,14 +253,8 @@ void main() {
       when(mockSettingsWrapper.getValue<bool>(SettingsRepository.keyDarkMode,
               defaultValue: false))
           .thenReturn(false);
-      when(mockSettingsWrapper.getValue<String>(
-              SettingsRepository.keySwatchColor,
-              defaultValue: '#ff2c1b02'))
-          .thenReturn('#ff2c1b02');
-      when(mockSettingsWrapper.getValue<String>(
-              SettingsRepository.keyDarkSwatchColor,
-              defaultValue: '#ffce93d8'))
-          .thenReturn('#ffce93d8');
+      when(mockSettingsWrapper.getValue<int>(SettingsRepository.keySwatchColor, defaultValue: AppSeedColors.defaultLight.toARGB32())).thenReturn(AppSeedColors.defaultLight.toARGB32());
+      when(mockSettingsWrapper.getValue<int>(SettingsRepository.keyDarkSwatchColor, defaultValue: AppSeedColors.defaultDark.toARGB32())).thenReturn(AppSeedColors.defaultDark.toARGB32());
       when(mockSettingsWrapper.getValue<double>(
               SettingsRepository.keyTextMaxWidth,
               defaultValue: -1))
@@ -322,11 +304,9 @@ void main() {
       verify(mockSettingsWrapper.setValue(
               SettingsRepository.keyDarkMode, false))
           .called(1);
-      verify(mockSettingsWrapper.setValue(
-              SettingsRepository.keySwatchColor, '#ff2c1b02'))
+      verify(mockSettingsWrapper.setValue(SettingsRepository.keySwatchColor, AppSeedColors.defaultLight.toARGB32()))
           .called(1);
-      verify(mockSettingsWrapper.setValue(
-              SettingsRepository.keyDarkSwatchColor, '#ffce93d8'))
+      verify(mockSettingsWrapper.setValue(SettingsRepository.keyDarkSwatchColor, AppSeedColors.defaultDark.toARGB32()))
           .called(1);
       verify(mockSettingsWrapper.setValue(
               SettingsRepository.keyTextMaxWidth, -1.0))
@@ -383,14 +363,8 @@ void main() {
       when(mockSettingsWrapper.getValue<bool>(SettingsRepository.keyDarkMode,
               defaultValue: false))
           .thenReturn(false);
-      when(mockSettingsWrapper.getValue<String>(
-              SettingsRepository.keySwatchColor,
-              defaultValue: '#ff2c1b02'))
-          .thenReturn('#ff2c1b02');
-      when(mockSettingsWrapper.getValue<String>(
-              SettingsRepository.keyDarkSwatchColor,
-              defaultValue: '#ffce93d8'))
-          .thenReturn('#ffce93d8');
+      when(mockSettingsWrapper.getValue<int>(SettingsRepository.keySwatchColor, defaultValue: AppSeedColors.defaultLight.toARGB32())).thenReturn(AppSeedColors.defaultLight.toARGB32());
+      when(mockSettingsWrapper.getValue<int>(SettingsRepository.keyDarkSwatchColor, defaultValue: AppSeedColors.defaultDark.toARGB32())).thenReturn(AppSeedColors.defaultDark.toARGB32());
       when(mockSettingsWrapper.getValue<double>(
               SettingsRepository.keyTextMaxWidth,
               defaultValue: -1))

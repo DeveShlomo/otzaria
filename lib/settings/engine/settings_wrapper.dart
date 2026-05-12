@@ -1,4 +1,4 @@
-import 'package:flutter_settings_screens/flutter_settings_screens.dart';
+import 'package:otzaria/core/storage/storage_exports.dart';
 
 /// A wrapper around the static Settings class to make it more testable.
 /// This allows us to mock the Settings class in tests.
@@ -16,6 +16,6 @@ class SettingsWrapper {
 
   /// Removes a value from settings.
   Future<void> remove(String key) {
-    return Settings.setValue<String?>(key, null);
+    return Settings.remove(key);
   }
 }

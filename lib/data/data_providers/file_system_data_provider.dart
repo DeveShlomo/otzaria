@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:otzaria/core/storage/storage_exports.dart';
 import 'dart:isolate';
 import 'dart:convert';
 import 'package:flutter/foundation.dart' show debugPrint, visibleForTesting;
@@ -7,7 +8,6 @@ import 'package:otzaria/core/storage/hive_data_provider.dart';
 import 'package:otzaria/data/data_providers/library_provider_manager.dart';
 import 'package:otzaria/data/data_providers/file_system_library_provider.dart';
 import 'package:otzaria/data/data_providers/database_library_provider.dart';
-import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:otzaria/utils/text/text_manipulation.dart';
 import 'package:otzaria/models/books.dart';
 import 'package:otzaria/library/models/library.dart';
@@ -511,9 +511,7 @@ class FileSystemData {
   /// Reads metadata from a JSON file and creates a structured mapping of
   /// book titles to their metadata information.
   Future<Map<String, Map<String, dynamic>>> _getMetadata() async {
-    if (!Settings.isInitialized) {
-      await Settings.init(cacheProvider: HiveCache());
-    }
+
     String metadataString = '';
     Map<String, Map<String, dynamic>> metadata = {};
     try {

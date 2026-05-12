@@ -1,6 +1,6 @@
 import 'dart:convert';
+import 'package:otzaria/core/storage/storage_exports.dart';
 
-import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:hive_ce/hive.dart';
 import 'package:otzaria/core/storage/hive_data_provider.dart';
 import 'package:otzaria/personal_notes/models/personal_note.dart';
@@ -120,7 +120,7 @@ class PersonalNoteDraftService {
   }) async {
     final key = _key(bookId,
         categoryId: categoryId, lineNumber: lineNumber, noteId: noteId);
-    await Settings.setValue<String?>(key, null);
+    await Settings.remove(key);
   }
 
   Future<PersonalNoteDraft?> loadLatestNewNoteDraft({

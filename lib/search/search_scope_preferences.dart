@@ -1,6 +1,6 @@
 import 'dart:convert';
+import 'package:otzaria/core/storage/storage_exports.dart';
 
-import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 
 class SearchScopePreferencesData {
   final bool searchAllCategories;

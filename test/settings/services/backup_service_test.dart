@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hive_ce/hive.dart';
 import 'package:otzaria/core/storage/hive_data_provider.dart';
@@ -20,8 +19,8 @@ void main() {
     tempDir = await Directory.systemTemp.createTemp('backup_service_test_');
     Hive.init(tempDir.path);
     box = await Hive.openBox<dynamic>(HiveCache.keyName);
+    HiveCache.setBoxForTesting(box);
     await Hive.openBox<dynamic>('workspaces');
-    await Settings.init(cacheProvider: HiveCache());
     await Settings.setValue<String>(
       SettingsRepository.keyBackupPath,
       p.join(tempDir.path, 'backups'),

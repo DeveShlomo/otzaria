@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:otzaria/core/storage/storage_exports.dart';
 
 import 'package:flutter/material.dart';
 import 'package:otzaria/text_book/utils/visible_index.dart';
@@ -15,7 +16,6 @@ import 'package:otzaria/tabs/models/text_tab.dart';
 import 'package:otzaria/text_book/view/commentary_list_base.dart';
 import 'package:otzaria/widgets/misc/progressive_scrolling.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
-import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:otzaria/tabs/models/tab.dart';
 import 'package:otzaria/models/books.dart';
 import 'package:otzaria/models/link_types.dart';

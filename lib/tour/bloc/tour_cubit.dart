@@ -2,9 +2,9 @@
 // docs/guided_tour_developer_guide.md
 
 import 'dart:async';
+import 'package:otzaria/core/storage/storage_exports.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:otzaria/tour/bloc/tour_state.dart';
 import 'package:otzaria/tour/models/live_tip.dart';
 import 'package:otzaria/tour/models/tour_steps.dart';

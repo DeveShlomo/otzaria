@@ -2,6 +2,7 @@
 // docs/guided_tour_developer_guide.md
 
 import 'dart:io';
+import 'package:otzaria/core/storage/storage_exports.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
@@ -20,7 +21,6 @@ import 'package:otzaria/navigation/bloc/navigation_event.dart';
 import 'package:otzaria/navigation/bloc/navigation_state.dart';
 import 'package:otzaria/navigation/startup_indexing_decision.dart';
 import 'package:otzaria/navigation/view/startup_work_gate.dart';
-import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:otzaria/empty_library/empty_library_screen.dart';
 import 'package:otzaria/empty_library/bloc/empty_library_bloc.dart';
 import 'package:otzaria/find_ref/bloc/find_ref_bloc.dart';

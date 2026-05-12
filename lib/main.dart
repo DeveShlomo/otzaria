@@ -43,7 +43,6 @@ import 'package:otzaria/workspaces/workspace_repository.dart';
 import 'package:otzaria/data/repository/data_repository.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:otzaria/app_bloc_observer.dart';
-import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:otzaria/core/storage/storage_exports.dart';
 import 'package:otzaria/data/data_providers/sqlite_data_provider.dart';
 import 'package:otzaria/personal_notes/bloc/personal_notes_bloc.dart';
@@ -448,11 +447,7 @@ Future<void> _initializeProcessSingletons() async {
   // השחרור של ה-completer חייב לקרות גם אם אחד משלבי האתחול נכשל.
   try {
     await RustLib.init();
-    try {
-      await Settings.init(cacheProvider: HiveCache());
-    } catch (_) {
-      await Settings.init(cacheProvider: SharePreferenceCache());
-    }
+    await HiveCache.init();
 
     _clearErrorLogOnVersionChange();
 

@@ -1,4 +1,4 @@
-import 'package:flutter_settings_screens/flutter_settings_screens.dart';
+import 'package:otzaria/core/storage/storage_exports.dart';
 import '../models/editor_settings.dart';
 
 /// Helper class to get editor settings from local settings storage.

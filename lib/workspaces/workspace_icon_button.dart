@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:otzaria/workspaces/bloc/workspace_bloc.dart';
 import 'package:otzaria/workspaces/bloc/workspace_state.dart';
 import 'package:otzaria/workspaces/bloc/workspace_event.dart';
 import 'package:otzaria/settings/settings_exports.dart';
 import 'dart:async';
+import 'package:otzaria/core/storage/storage_exports.dart';
 
 class WorkspaceIconButton extends StatefulWidget {
   final VoidCallback onPressed;

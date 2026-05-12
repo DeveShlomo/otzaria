@@ -1,4 +1,4 @@
-import 'package:flutter_settings_screens/flutter_settings_screens.dart';
+import 'package:otzaria/core/storage/storage_exports.dart';
 import 'package:otzaria/text_book/view/page_shape/utils/page_shape_commentary_selection.dart';
 
 /// מנהל הגדרות צורת הדף - שומר ומטעין את בחירת המפרשים

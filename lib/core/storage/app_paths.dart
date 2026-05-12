@@ -1,7 +1,7 @@
 import 'dart:io';
+import 'package:otzaria/core/storage/storage_exports.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
-import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:otzaria/settings/settings_exports.dart';
 
 enum InstallMode { systemWide, perUser }

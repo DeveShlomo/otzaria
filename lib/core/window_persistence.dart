@@ -1,7 +1,7 @@
 import 'dart:async';
+import 'package:otzaria/core/storage/storage_exports.dart';
 import 'dart:ui';
 
-import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:window_manager/window_manager.dart';
 
 class WindowPersistence {

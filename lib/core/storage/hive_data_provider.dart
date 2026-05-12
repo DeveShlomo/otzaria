@@ -1,100 +1,69 @@
 import 'package:flutter/foundation.dart';
 import 'package:hive_ce/hive.dart';
-import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:otzaria/core/storage/app_paths.dart';
 
-/// A cache access provider class for shared preferences using Hive library
-class HiveCache extends CacheProvider {
-  Box? _preferences;
+/// ניהול אחסון ה-key-value של האפליקציה דרך Hive.
+///
+/// שתי גישות שקולות לחלוטין:
+///   HiveCache.getValue('key', defaultValue: false)
+///   Settings.getValue('key', defaultValue: false)
+class HiveCache {
+  HiveCache._();
+
+  static Box? _box;
   static const String keyName = 'app_preferences';
 
-  @override
-  Future<void> init() async {
+  static Future<void> init() async {
     if (!kIsWeb) {
       final defaultDirectory = await AppPaths.getDataRootPath();
-      _preferences = await Hive.openBox<dynamic>(
-        keyName,
-        path: defaultDirectory,
-      );
+      _box = await Hive.openBox<dynamic>(keyName, path: defaultDirectory);
     }
   }
 
-  Set get keys => getKeys();
-
-  @override
-  bool? getBool(String key, {bool? defaultValue}) {
-    return _preferences?.get(key);
-  }
-
-  @override
-  double? getDouble(String key, {double? defaultValue}) {
-    return _preferences?.get(key);
-  }
-
-  @override
-  int? getInt(String key, {int? defaultValue}) {
-    return _preferences?.get(key);
-  }
-
-  @override
-  String? getString(String key, {String? defaultValue}) {
-    return _preferences?.get(key);
-  }
-
-  @override
-  Future<void> setBool(String key, bool? value) async {
-    await _preferences?.put(key, value);
-  }
-
-  @override
-  Future<void> setDouble(String key, double? value) async {
-    await _preferences?.put(key, value);
-  }
-
-  @override
-  Future<void> setInt(String key, int? value) async {
-    await _preferences?.put(key, value);
-  }
-
-  @override
-  Future<void> setString(String key, String? value) async {
-    await _preferences?.put(key, value);
-  }
-
-  @override
-  Future<void> setObject<T>(String key, T? value) async {
-    await _preferences?.put(key, value);
-  }
-
-  @override
-  bool containsKey(String key) {
-    return _preferences?.containsKey(key) ?? false;
-  }
-
-  @override
-  Set getKeys() {
-    return _preferences?.keys.toSet() ?? {};
-  }
-
-  @override
-  Future<void> remove(String key) async {
-    if (containsKey(key)) {
-      await _preferences?.delete(key);
-    }
-  }
-
-  @override
-  Future<void> removeAll() async {
-    final keys = getKeys();
-    await _preferences?.deleteAll(keys.cast<String>());
-  }
-
-  @override
-  T? getValue<T>(String key, {T? defaultValue}) {
-    var value = _preferences?.get(key);
-    if (value is T) {
-      return value;
-    }
+  static T? getValue<T>(String key, {T? defaultValue}) {
+    final value = _box?.get(key);
+    if (value is T) return value;
     return defaultValue;
   }
+
+  static Future<void> setValue<T>(String key, T value) async {
+    await _box?.put(key, value);
+  }
+
+  static Future<void> remove(String key) async {
+    await _box?.delete(key);
+  }
+
+  static Future<void> removeAll() async {
+    await _box?.deleteAll(_box!.keys);
+  }
+
+  static bool containsKey(String key) => _box?.containsKey(key) ?? false;
+
+  static Set get keys => _box?.keys.toSet() ?? {};
+
+  /// גישה ישירה ל-box — לשימוש ב-backup ובמקומות שצריכים גישה ישירה.
+  static Box? get box => _box;
+
+  /// לשימוש בטסטים בלבד — מאפשר הזרקת box פתוח ישירות.
+  @visibleForTesting
+  static void setBoxForTesting(Box box) => _box = box;
+}
+
+/// Alias ל-[HiveCache] — מאפשר להשאיר קוד קיים עם Settings.getValue/setValue
+/// ללא שינוי, ולא לייבא את flutter_settings_screens.
+class Settings {
+  Settings._();
+
+  static T? getValue<T>(String key, {T? defaultValue}) =>
+      HiveCache.getValue<T>(key, defaultValue: defaultValue);
+
+  static Future<void> setValue<T>(String key, T value) =>
+      HiveCache.setValue<T>(key, value);
+
+  static Future<void> remove(String key) => HiveCache.remove(key);
+
+  static void clearCache() => HiveCache.removeAll();
+
+  static bool get isInitialized => HiveCache.box != null;
 }

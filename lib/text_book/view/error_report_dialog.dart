@@ -1,7 +1,7 @@
+import 'package:otzaria/core/storage/storage_exports.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
-import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:html/parser.dart' as html_parser;
 import 'package:otzaria/core/ui_snack.dart';
 import 'package:otzaria/theme/theme_exports.dart';

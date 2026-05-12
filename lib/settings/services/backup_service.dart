@@ -2,7 +2,6 @@ import 'dart:io';
 import 'dart:convert';
 import 'package:hive_ce/hive.dart';
 import 'package:path/path.dart' as p;
-import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:logging/logging.dart';
 import 'package:otzaria/bookmarks/repository/bookmark_repository.dart';
 import 'package:otzaria/bookmarks/models/bookmark.dart';

@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:hive_ce/hive.dart';
 import 'package:otzaria/core/storage/hive_data_provider.dart';
 import 'package:otzaria/personal_notes/models/personal_note.dart';
@@ -14,8 +13,8 @@ void main() {
   setUp(() async {
     tempDir = await Directory.systemTemp.createTemp('hive_test_');
     Hive.init(tempDir.path);
-    await Hive.openBox<dynamic>(HiveCache.keyName);
-    await Settings.init(cacheProvider: HiveCache());
+    final box = await Hive.openBox<dynamic>(HiveCache.keyName);
+    HiveCache.setBoxForTesting(box);
   });
 
   tearDown(() async {
@@ -107,7 +106,6 @@ void main() {
 
     // פותח מחדש לתקינות tearDown
     await Hive.openBox<dynamic>(HiveCache.keyName);
-    await Settings.init(cacheProvider: HiveCache());
   });
 
   test('clearDraft מוחק את המפתח מה-Box', () async {
