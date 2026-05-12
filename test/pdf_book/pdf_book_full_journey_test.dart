@@ -11,8 +11,8 @@ library;
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart' show BlocBase;
-import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../test_helpers/memory_cache_provider.dart';
 import 'package:otzaria/models/books.dart';
 import 'package:otzaria/models/links.dart';
 import 'package:otzaria/models/pdf_headings.dart';
@@ -29,7 +29,6 @@ import 'package:otzaria/tabs/tabs_repository.dart';
 import 'package:otzaria/settings/services/per_book_settings_service.dart'
     show PdfLayoutMode;
 import 'package:pdfrx/pdfrx.dart';
-import '../helpers/memory_settings_cache.dart';
 
 // ─── fakes ───────────────────────────────────────────────────────────────────
 
@@ -143,7 +142,7 @@ List<PdfPageTextRange> _fakeMatches(int count) {
 void main() {
   setUpAll(() async {
     WidgetsFlutterBinding.ensureInitialized();
-    await Settings.init(cacheProvider: MemorySettingsCache());
+    await setUpInMemorySettings();
   });
 
   // ══════════════════════════════════════════════════════════════════════════

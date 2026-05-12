@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../../test_helpers/memory_cache_provider.dart';
+import 'package:otzaria/core/storage/hive_data_provider.dart';
 import 'package:otzaria/models/books.dart';
 import 'package:otzaria/settings/engine/settings_repository.dart';
 import 'package:otzaria/text_book/bloc/text_book_state.dart';
 import 'package:otzaria/text_book/view/error_report_dialog.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
-import '../../test_helpers/memory_cache_provider.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   setUpAll(() async {
-    await Settings.init(cacheProvider: MemoryCacheProvider());
+    await setUpInMemorySettings();
     await Settings.setValue<bool>(SettingsRepository.keyOfflineMode, false);
     await Settings.setValue<String>(
         SettingsRepository.keyFontFamily, 'candara');

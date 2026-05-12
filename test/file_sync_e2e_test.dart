@@ -3,7 +3,8 @@ import 'dart:typed_data';
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter_settings_screens/flutter_settings_screens.dart';
+import 'package:otzaria/core/storage/hive_data_provider.dart';
+import 'test_helpers/memory_cache_provider.dart';
 import 'package:otzaria/file_sync/repository/file_sync_repository.dart';
 import 'package:otzaria/data/constants/database_constants.dart';
 import 'package:otzaria/data/data_providers/sqlite_data_provider.dart';
@@ -78,7 +79,7 @@ void main() {
         await sourceDbFile.copy(workingDbPath);
         await expectedDbFile.copy(expectedCopyPath);
 
-        await Settings.init(cacheProvider: _MemoryCacheProvider());
+        await setUpInMemorySettings();
         await Settings.setValue<String>(
           SettingsRepository.keyLibraryPath,
           sandbox.path,
@@ -137,80 +138,6 @@ void main() {
     );
   });
 }
-
-class _MemoryCacheProvider extends CacheProvider {
-  final Map<String, Object?> _values = {};
-
-  @override
-  Future<void> init() async {}
-
-  @override
-  bool containsKey(String key) => _values.containsKey(key);
-
-  @override
-  Set getKeys() => _values.keys.toSet();
-
-  @override
-  bool? getBool(String key, {bool? defaultValue}) =>
-      _values[key] as bool? ?? defaultValue;
-
-  @override
-  double? getDouble(String key, {double? defaultValue}) =>
-      _values[key] as double? ?? defaultValue;
-
-  @override
-  int? getInt(String key, {int? defaultValue}) =>
-      _values[key] as int? ?? defaultValue;
-
-  @override
-  String? getString(String key, {String? defaultValue}) =>
-      _values[key] as String? ?? defaultValue;
-
-  @override
-  T? getValue<T>(String key, {T? defaultValue}) {
-    final value = _values[key];
-    if (value is T) {
-      return value;
-    }
-    return defaultValue;
-  }
-
-  @override
-  Future<void> remove(String key) async {
-    _values.remove(key);
-  }
-
-  @override
-  Future<void> removeAll() async {
-    _values.clear();
-  }
-
-  @override
-  Future<void> setBool(String key, bool? value) async {
-    _values[key] = value;
-  }
-
-  @override
-  Future<void> setDouble(String key, double? value) async {
-    _values[key] = value;
-  }
-
-  @override
-  Future<void> setInt(String key, int? value) async {
-    _values[key] = value;
-  }
-
-  @override
-  Future<void> setObject<T>(String key, T? value) async {
-    _values[key] = value;
-  }
-
-  @override
-  Future<void> setString(String key, String? value) async {
-    _values[key] = value;
-  }
-}
-
 Future<Uint8List> _decompressWithSystemZstd(Uint8List compressedBytes) async {
   final tempDir = await Directory.systemTemp.createTemp('otzaria-zstd-');
   try {

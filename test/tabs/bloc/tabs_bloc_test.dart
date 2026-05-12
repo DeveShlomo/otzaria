@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart' show FlutterError;
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter_settings_screens/flutter_settings_screens.dart';
+import '../../test_helpers/memory_cache_provider.dart';
 import 'package:otzaria/data/data_providers/file_system_data_provider.dart';
 import 'package:otzaria/models/books.dart';
 import 'package:otzaria/models/links.dart';
@@ -24,7 +24,7 @@ void main() {
 
   group('TabsBloc side-by-side', () {
     setUp(() async {
-      await Settings.init(cacheProvider: _MemoryCacheProvider());
+      await setUpInMemorySettings();
     });
 
     test('יוצר CombinedTab עם עותקים נפרדים של הטאבים', () async {
@@ -91,7 +91,7 @@ void main() {
 
   group('TabsBloc open or focus', () {
     setUp(() async {
-      await Settings.init(cacheProvider: _MemoryCacheProvider());
+      await setUpInMemorySettings();
     });
 
     test('ממקד טאב טקסט קיים כשאותו ספר פתוח באותה כותרת', () async {
@@ -312,7 +312,7 @@ void main() {
 
   group('TabsBloc deferred dispose', () {
     setUp(() async {
-      await Settings.init(cacheProvider: _MemoryCacheProvider());
+      await setUpInMemorySettings();
     });
 
     test('סגירת טאב דוחה את dispose עד אחרי עדכון ה-state', () async {
@@ -376,7 +376,7 @@ void main() {
 
   group('OpenedTab.from for search tabs', () {
     setUp(() async {
-      await Settings.init(cacheProvider: _MemoryCacheProvider());
+      await setUpInMemorySettings();
     });
 
     test('משכפל SearchingTab למופע חדש עם controllers חדשים', () {
@@ -434,7 +434,7 @@ void main() {
 
   group('OpenOrFocusTab עם pinpointHighlight על טאב קיים', () {
     setUp(() async {
-      await Settings.init(cacheProvider: _MemoryCacheProvider());
+      await setUpInMemorySettings();
     });
 
     test(
@@ -627,78 +627,5 @@ class _FakeTabsRepository extends TabsRepository {
         .toList(growable: false);
     _currentTabIndex = currentTabIndex;
     _sideBySideMode = sideBySideMode;
-  }
-}
-
-class _MemoryCacheProvider extends CacheProvider {
-  final Map<String, Object?> _values = {};
-
-  @override
-  Future<void> init() async {}
-
-  @override
-  bool containsKey(String key) => _values.containsKey(key);
-
-  @override
-  Set getKeys() => _values.keys.toSet();
-
-  @override
-  bool? getBool(String key, {bool? defaultValue}) =>
-      _values[key] as bool? ?? defaultValue;
-
-  @override
-  double? getDouble(String key, {double? defaultValue}) =>
-      _values[key] as double? ?? defaultValue;
-
-  @override
-  int? getInt(String key, {int? defaultValue}) =>
-      _values[key] as int? ?? defaultValue;
-
-  @override
-  String? getString(String key, {String? defaultValue}) =>
-      _values[key] as String? ?? defaultValue;
-
-  @override
-  T? getValue<T>(String key, {T? defaultValue}) {
-    final value = _values[key];
-    if (value is T) {
-      return value;
-    }
-    return defaultValue;
-  }
-
-  @override
-  Future<void> remove(String key) async {
-    _values.remove(key);
-  }
-
-  @override
-  Future<void> removeAll() async {
-    _values.clear();
-  }
-
-  @override
-  Future<void> setBool(String key, bool? value) async {
-    _values[key] = value;
-  }
-
-  @override
-  Future<void> setDouble(String key, double? value) async {
-    _values[key] = value;
-  }
-
-  @override
-  Future<void> setInt(String key, int? value) async {
-    _values[key] = value;
-  }
-
-  @override
-  Future<void> setObject<T>(String key, T? value) async {
-    _values[key] = value;
-  }
-
-  @override
-  Future<void> setString(String key, String? value) async {
-    _values[key] = value;
   }
 }

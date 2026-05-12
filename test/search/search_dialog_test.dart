@@ -3,9 +3,10 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:flutter_spinbox/flutter_spinbox.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../test_helpers/memory_cache_provider.dart';
+import 'package:otzaria/core/storage/hive_data_provider.dart';
 import 'package:otzaria/bookmarks/models/bookmark.dart';
 import 'package:otzaria/history/bloc/history_bloc.dart';
 import 'package:otzaria/history/bloc/history_event.dart';
@@ -22,7 +23,6 @@ import 'package:otzaria/search/models/search_configuration.dart';
 import 'package:otzaria/search/search_query_builder.dart';
 import 'package:otzaria/search/view/search_dialog.dart';
 import 'package:otzaria/tabs/models/searching_tab.dart';
-import '../test_helpers/memory_cache_provider.dart';
 
 class MockHistoryBloc extends MockBloc<HistoryEvent, HistoryState>
     implements HistoryBloc {}
@@ -55,7 +55,7 @@ Widget _buildDialogHarness({
 
 void main() {
   setUpAll(() async {
-    await Settings.init(cacheProvider: MemoryCacheProvider());
+    await setUpInMemorySettings();
   });
 
   testWidgets('מגירת ההיסטוריה משתמשת ברקע של הדיאלוג',

@@ -1,6 +1,6 @@
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter_settings_screens/flutter_settings_screens.dart';
+import '../../test_helpers/memory_cache_provider.dart';
 import 'package:otzaria/data/data_providers/file_system_data_provider.dart';
 import 'package:otzaria/models/books.dart';
 import 'package:otzaria/text_book/bloc/text_book_bloc.dart';
@@ -8,7 +8,6 @@ import 'package:otzaria/text_book/bloc/text_book_event.dart';
 import 'package:otzaria/text_book/bloc/text_book_state.dart';
 import 'package:otzaria/text_book/text_book_repository.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
-import '../../test_helpers/memory_cache_provider.dart';
 
 class _FakeTextBookRepository extends TextBookRepository {
   _FakeTextBookRepository() : super(fileSystem: FileSystemData.instance);
@@ -21,7 +20,7 @@ void main() {
   late TextBook book;
 
   setUpAll(() async {
-    await Settings.init(cacheProvider: MemoryCacheProvider());
+    await setUpInMemorySettings();
   });
 
   setUp(() {

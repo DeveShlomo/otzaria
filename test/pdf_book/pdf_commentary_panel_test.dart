@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../test_helpers/memory_cache_provider.dart';
 import 'package:otzaria/models/books.dart';
 import 'package:otzaria/models/links.dart';
 import 'package:otzaria/pdf_book/view/pdf_commentary_panel.dart';
@@ -12,7 +12,6 @@ import 'package:otzaria/settings/engine/settings_bloc.dart';
 import 'package:otzaria/settings/engine/settings_event.dart';
 import 'package:otzaria/settings/engine/settings_state.dart';
 import 'package:otzaria/tabs/models/pdf_tab.dart';
-import '../helpers/memory_settings_cache.dart';
 
 // ─── fakes ───────────────────────────────────────────────────────────────────
 
@@ -108,7 +107,7 @@ PdfCommentaryPanel _panel(
 void main() {
   setUpAll(() async {
     WidgetsFlutterBinding.ensureInitialized();
-    await Settings.init(cacheProvider: MemorySettingsCache());
+    await setUpInMemorySettings();
   });
 
   // ── לשונית קישורים ──────────────────────────────────────────────────────

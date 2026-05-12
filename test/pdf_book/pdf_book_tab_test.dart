@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../test_helpers/memory_cache_provider.dart';
 import 'package:otzaria/models/books.dart';
-import '../helpers/memory_settings_cache.dart';
 import 'package:otzaria/settings/services/per_book_settings_service.dart';
 import 'package:otzaria/tabs/models/pdf_tab.dart';
 
@@ -15,7 +14,7 @@ PdfBookTab _tab({String path = '/path/to/book.pdf', int page = 1}) =>
 void main() {
   setUpAll(() async {
     WidgetsFlutterBinding.ensureInitialized();
-    await Settings.init(cacheProvider: MemorySettingsCache());
+    await setUpInMemorySettings();
   });
 
   // ──────────────────────────────────────────────────────────────────────────

@@ -1,8 +1,9 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../test_helpers/memory_cache_provider.dart';
+import 'package:otzaria/core/storage/hive_data_provider.dart';
 import 'package:otzaria/data/cache/books_cache.dart';
 import 'package:otzaria/data/data_providers/book_composite_key.dart';
 import 'package:otzaria/data/data_providers/file_system_data_provider.dart';
@@ -16,7 +17,6 @@ import 'package:otzaria/models/links.dart';
 import 'package:otzaria/navigation/navigation_repository.dart';
 import 'package:otzaria/settings/settings_exports.dart';
 
-import '../test_helpers/memory_cache_provider.dart';
 
 class _FakeProvider implements LibraryProvider {
   @override
@@ -101,7 +101,7 @@ void main() {
   late NavigationRepository navigationRepository;
 
   setUp(() async {
-    await Settings.init(cacheProvider: MemoryCacheProvider());
+    await setUpInMemorySettings();
     navigationRepository = NavigationRepository(reopenIndex: () async {});
     providerManager.resetForTesting();
     fileSystemProvider.resetForTesting();

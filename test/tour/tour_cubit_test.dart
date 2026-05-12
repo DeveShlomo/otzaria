@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../test_helpers/memory_cache_provider.dart';
+import 'package:otzaria/core/storage/hive_data_provider.dart';
 import 'package:otzaria/tour/bloc/tour_cubit.dart';
 import 'package:otzaria/tour/models/live_tip.dart';
 import 'package:otzaria/tour/models/tour_step.dart';
 import 'package:otzaria/tour/models/tour_steps.dart';
 import 'package:otzaria/tour/view/tour_overlay_screen.dart';
 
-import '../helpers/memory_settings_cache.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   setUp(() async {
-    await Settings.init(cacheProvider: MemorySettingsCache());
+    await setUpInMemorySettings();
   });
 
   test('בונה סיור מלא עם 26 שלבים כאשר הספרייה טעונה', () {

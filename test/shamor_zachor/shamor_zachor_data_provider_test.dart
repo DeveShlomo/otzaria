@@ -1,7 +1,8 @@
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter_settings_screens/flutter_settings_screens.dart';
+import '../test_helpers/memory_cache_provider.dart';
+import 'package:otzaria/core/storage/hive_data_provider.dart';
 import 'package:otzaria/data/data_providers/sqlite_data_provider.dart';
 import 'package:otzaria/migration/database/daos/database.dart';
 import 'package:otzaria/migration/database/repository/seforim_repository.dart';
@@ -10,7 +11,6 @@ import 'package:otzaria/migration/models/category.dart';
 import 'package:otzaria/migration/models/toc_entry.dart';
 import 'package:otzaria/settings/engine/settings_repository.dart';
 import 'package:otzaria/tools/shamor_zachor/providers/shamor_zachor_data_provider.dart';
-import '../test_helpers/memory_cache_provider.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -27,7 +27,7 @@ void main() {
     await _insertFixture(repository);
     database.close();
 
-    await Settings.init(cacheProvider: MemoryCacheProvider());
+    await setUpInMemorySettings();
     await Settings.setValue<String>(SettingsRepository.keyLibraryPath, tempDir.path);
     await Settings.setValue<String>(SettingsRepository.keyLibraryFolderName, '');
     await Settings.setValue<String>(SettingsRepository.keyDbEffectivePath, '');

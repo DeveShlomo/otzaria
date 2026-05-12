@@ -1,9 +1,9 @@
 import 'package:bloc/bloc.dart';
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:flutter_test/flutter_test.dart';
-import '../helpers/memory_settings_cache.dart';
+import '../test_helpers/memory_cache_provider.dart';
+import 'package:otzaria/core/storage/hive_data_provider.dart';
 import 'package:otzaria/models/books.dart';
 import 'package:otzaria/models/links.dart';
 import 'package:otzaria/pdf_book/bloc/pdf_book_bloc.dart';
@@ -89,7 +89,7 @@ PdfBookLoaded _loaded({
 void main() {
   setUpAll(() async {
     WidgetsFlutterBinding.ensureInitialized();
-    await Settings.init(cacheProvider: MemorySettingsCache());
+    await setUpInMemorySettings();
   });
 
   // ──────────────────────────────────────────────────────────────────────────

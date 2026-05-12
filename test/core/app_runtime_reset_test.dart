@@ -1,5 +1,6 @@
-import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../test_helpers/memory_cache_provider.dart';
+import 'package:otzaria/core/storage/hive_data_provider.dart';
 import 'package:otzaria/core/app_runtime_reset.dart';
 import 'package:otzaria/data/data_providers/book_composite_key.dart';
 import 'package:otzaria/data/data_providers/file_system_data_provider.dart';
@@ -11,7 +12,6 @@ import 'package:otzaria/models/books.dart';
 import 'package:otzaria/models/links.dart';
 import 'package:otzaria/settings/settings_exports.dart';
 
-import '../test_helpers/memory_cache_provider.dart';
 
 class _FakeProvider implements LibraryProvider {
   @override
@@ -87,7 +87,7 @@ void main() {
   final fileSystemProvider = FileSystemLibraryProvider.instance;
 
   setUp(() async {
-    await Settings.init(cacheProvider: MemoryCacheProvider());
+    await setUpInMemorySettings();
     providerManager.resetForTesting();
     fileSystemProvider.resetForTesting();
   });
