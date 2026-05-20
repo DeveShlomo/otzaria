@@ -1,0 +1,279 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_settings_screens/flutter_settings_screens.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
+import 'package:otzaria/models/books.dart';
+import 'package:otzaria/navigation/bloc/navigation_bloc.dart';
+import 'package:otzaria/navigation/bloc/navigation_event.dart';
+import 'package:otzaria/navigation/bloc/navigation_state.dart';
+import 'package:otzaria/navigation/view/custom_title_bar.dart';
+import 'package:otzaria/settings/engine/settings_bloc.dart';
+import 'package:otzaria/settings/engine/settings_event.dart';
+import 'package:otzaria/settings/engine/settings_state.dart';
+import 'package:otzaria/tabs/bloc/tabs_bloc.dart';
+import 'package:otzaria/tabs/bloc/tabs_state.dart';
+import 'package:otzaria/tabs/models/text_tab.dart';
+import 'package:otzaria/text_book/bloc/text_book_bloc.dart';
+import 'package:otzaria/text_book/bloc/text_book_event.dart';
+import 'package:otzaria/text_book/bloc/text_book_state.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+import '../helpers/memory_settings_cache.dart';
+
+void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
+  setUp(() async {
+    await Settings.init(cacheProvider: MemorySettingsCache());
+  });
+
+  testWidgets('tooltip של TextBookTab כולל את כותרת המיקום בפועל',
+      (tester) async {
+    final tab = _makeTextTab('ספר א', currentTitle: 'פרק א');
+    final tabsBloc = _TestTabsBloc(
+      TabsState(tabs: [tab], currentTabIndex: 0),
+    );
+    final navigationBloc = _TestNavigationBloc(
+      const NavigationState(currentScreen: Screen.reading),
+    );
+    final settingsBloc = _TestSettingsBloc(SettingsState.initial());
+
+    addTearDown(() async {
+      tab.dispose();
+      await tabsBloc.close();
+      await navigationBloc.close();
+      await settingsBloc.close();
+    });
+
+    await _setSurfaceSize(tester, const Size(1200, 800));
+    await _pumpTitleBar(
+      tester,
+      tabsBloc: tabsBloc,
+      navigationBloc: navigationBloc,
+      settingsBloc: settingsBloc,
+    );
+
+    expect(find.byTooltip('ספר א, פרק א'), findsOneWidget);
+  });
+
+  testWidgets('אייקון pin מוצג כשהכרטיסיה מוצמדת', (tester) async {
+    final tab = _makeTextTab('ספר א');
+    tab.isPinned = true;
+    final tabsBloc = _TestTabsBloc(
+      TabsState(tabs: [tab], currentTabIndex: 0),
+    );
+    final navigationBloc = _TestNavigationBloc(
+      const NavigationState(currentScreen: Screen.reading),
+    );
+    final settingsBloc = _TestSettingsBloc(SettingsState.initial());
+
+    addTearDown(() async {
+      tab.dispose();
+      await tabsBloc.close();
+      await navigationBloc.close();
+      await settingsBloc.close();
+    });
+
+    await _setSurfaceSize(tester, const Size(1200, 800));
+    await _pumpTitleBar(
+      tester,
+      tabsBloc: tabsBloc,
+      navigationBloc: navigationBloc,
+      settingsBloc: settingsBloc,
+    );
+
+    expect(
+      find.byWidgetPredicate(
+        (w) => w is Icon && w.icon == FluentIcons.pin_24_filled,
+      ),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('אייקון pin מוסתר כשהכרטיסיה אינה מוצמדת', (tester) async {
+    final tab = _makeTextTab('ספר א');
+    // isPinned = false כברירת מחדל
+    final tabsBloc = _TestTabsBloc(
+      TabsState(tabs: [tab], currentTabIndex: 0),
+    );
+    final navigationBloc = _TestNavigationBloc(
+      const NavigationState(currentScreen: Screen.reading),
+    );
+    final settingsBloc = _TestSettingsBloc(SettingsState.initial());
+
+    addTearDown(() async {
+      tab.dispose();
+      await tabsBloc.close();
+      await navigationBloc.close();
+      await settingsBloc.close();
+    });
+
+    await _setSurfaceSize(tester, const Size(1200, 800));
+    await _pumpTitleBar(
+      tester,
+      tabsBloc: tabsBloc,
+      navigationBloc: navigationBloc,
+      settingsBloc: settingsBloc,
+    );
+
+    expect(
+      find.byWidgetPredicate(
+        (w) => w is Icon && w.icon == FluentIcons.pin_24_filled,
+      ),
+      findsNothing,
+    );
+  });
+
+  testWidgets('כרטיסיות אינן עטופות ב-SizedBox בעל רוחב קבוע', (tester) async {
+    final tab1 = _makeTextTab('ספר קצר');
+    final tab2 = _makeTextTab('ספר עם שם ארוך מאוד שנמשך הרחק');
+    final tabsBloc = _TestTabsBloc(
+      TabsState(tabs: [tab1, tab2], currentTabIndex: 0),
+    );
+    final navigationBloc = _TestNavigationBloc(
+      const NavigationState(currentScreen: Screen.reading),
+    );
+    final settingsBloc = _TestSettingsBloc(SettingsState.initial());
+
+    addTearDown(() async {
+      tab1.dispose();
+      tab2.dispose();
+      await tabsBloc.close();
+      await navigationBloc.close();
+      await settingsBloc.close();
+    });
+
+    await _setSurfaceSize(tester, const Size(900, 800));
+    await _pumpTitleBar(
+      tester,
+      tabsBloc: tabsBloc,
+      navigationBloc: navigationBloc,
+      settingsBloc: settingsBloc,
+    );
+
+    // אין SizedBox בעל רוחב קבוע עוטף Listener (שימוש ב-tabWidth שהוסר)
+    final fixedWidthBoxes = tester
+        .widgetList<SizedBox>(find.byType(SizedBox))
+        .where((box) =>
+            box.width != null &&
+            box.width! >= 72 &&
+            box.width! <= 200 &&
+            box.child is Listener)
+        .toList();
+
+    expect(fixedWidthBoxes, isEmpty,
+        reason: 'כרטיסיות צריכות להיות ברוחב טבעי, לא קבוע שוויוני');
+  });
+}
+
+Future<void> _pumpTitleBar(
+  WidgetTester tester, {
+  required TabsBloc tabsBloc,
+  required NavigationBloc navigationBloc,
+  required SettingsBloc settingsBloc,
+}) async {
+  await tester.pumpWidget(
+    MultiBlocProvider(
+      providers: [
+        BlocProvider<TabsBloc>.value(value: tabsBloc),
+        BlocProvider<NavigationBloc>.value(value: navigationBloc),
+        BlocProvider<SettingsBloc>.value(value: settingsBloc),
+      ],
+      child: MaterialApp(
+        home: Scaffold(
+          body: SizedBox(
+            width: 900,
+            child: CustomTitleBar(
+              onReadingSettingsPressed: () {},
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
+
+  await tester.pump();
+  await tester.pump(const Duration(milliseconds: 50));
+}
+
+TextBookTab _makeTextTab(String title, {String currentTitle = ''}) {
+  final book = TextBook(title: title);
+  final bloc = _TestTextBookBloc(
+    TextBookLoaded(
+      book: book,
+      showLeftPane: false,
+      content: const ['שורה א'],
+      fontSize: 18,
+      showSplitView: false,
+      activeCommentators: const [],
+      commentatorGroups: const [],
+      availableCommentators: const [],
+      links: const [],
+      visibleLinks: const [],
+      linksByLine: const {},
+      tableOfContents: const [],
+      removeNikud: false,
+      removePunctuation: false,
+      visibleIndices: const [0],
+      selectedIndex: 0,
+      pinLeftPane: false,
+      searchText: '',
+      currentTitle: currentTitle,
+      scrollController: ItemScrollController(),
+      positionsListener: ItemPositionsListener.create(),
+    ),
+  );
+
+  final tab = TextBookTab(
+    book: book,
+    index: 0,
+    blocOverride: bloc,
+  );
+  tab.currentTitle.value = currentTitle;
+  return tab;
+}
+
+class _TestTextBookBloc extends Bloc<TextBookEvent, TextBookState>
+    implements TextBookBloc {
+  _TestTextBookBloc(super.initialState) {
+    on<TextBookEvent>((event, emit) {});
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
+class _TestTabsBloc extends Cubit<TabsState> implements TabsBloc {
+  _TestTabsBloc(super.initialState);
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
+class _TestNavigationBloc extends Cubit<NavigationState>
+    implements NavigationBloc {
+  _TestNavigationBloc(super.initialState);
+
+  @override
+  void add(NavigationEvent event) {}
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
+class _TestSettingsBloc extends Bloc<SettingsEvent, SettingsState>
+    implements SettingsBloc {
+  _TestSettingsBloc(super.initialState) {
+    on<SettingsEvent>((event, emit) {});
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
+Future<void> _setSurfaceSize(WidgetTester tester, Size size) async {
+  tester.view.physicalSize = size;
+  tester.view.devicePixelRatio = 1.0;
+  addTearDown(tester.view.resetPhysicalSize);
+  addTearDown(tester.view.resetDevicePixelRatio);
+}
