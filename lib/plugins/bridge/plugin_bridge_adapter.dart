@@ -59,7 +59,6 @@ const _settingsAllowlist = {
   SettingsRepository.keyRemoveNikudFromTanach,
   SettingsRepository.keyReplaceHolyNames,
   SettingsRepository.keyLibraryViewMode,
-  SettingsRepository.keyAlignTabsToRight,
   SettingsRepository.keyCopyWithHeaders,
   SettingsRepository.keyCopyHeaderFormat,
 };
