@@ -86,26 +86,29 @@ lib/feature_name/
 ```
 
 ### Key Code Locations
+
+> ⚠️ **ארגון מחדש בתכנון** — ראה קבצי תוכנית בשורש הפרויקט: `plan_ui_separation.md`, `plan_features_reorganization.md`, `plan_commit_order.md`, `plan_test_directory.md`. הנתיבים להלן משקפים את המצב **הנוכחי**; הם יתעדכנו לאחר כל commit של הארגון מחדש.
+
 ```
 lib/
 ├── data/repository/
-│   └── books_repository.dart          # Central books management
+│   └── books_repository.dart          # Central books management (→ seforim/ בארגון חדש)
 ├── models/
 │   ├── books.dart                     # Book model (title, path, etc)
 │   └── app_model.dart                 # Main app state
 ├── widgets/
-│   ├── rtl_text_field.dart           # RTL text input (USE THIS!)
+│   ├── rtl_text_field.dart           # RTL text input (USE THIS!) (→ ui/widgets/ בארגון חדש)
 │   └── [other shared widgets]
 ├── core/
-│   └── scaffold_messenger.dart        # UiSnack for messages
+│   └── scaffold_messenger.dart        # UiSnack for messages (→ ui/core/ui_snack.dart בארגון חדש)
 ├── search/
 │   ├── bloc/                          # Search state management
 │   └── search_repository.dart         # Search engine
 ├── settings/
 │   ├── settings_repository.dart       # App settings
 │   └── bloc/
-├── bookmarks/repository/              # Bookmarks system
-├── history/                           # Reading history
+├── bookmarks/repository/              # Bookmarks system (→ reader_memory/ בארגון חדש)
+├── history/                           # Reading history (→ reader_memory/ בארגון חדש)
 ├── personal_notes/                    # User notes feature
 ├── pdf_book/                          # PDF viewer screens
 ├── text_book/                         # Text viewer screens
@@ -133,7 +136,10 @@ Icon(FluentIcons.settings_24_regular)
 
 ### 2. User Messages - ONLY via `UiSnack`
 ```dart
+// נתיב נוכחי (לפני ארגון מחדש):
 import 'package:otzaria/core/scaffold_messenger.dart';
+// נתיב עתידי (אחרי Commit 5 של הארגון מחדש):
+// import 'package:otzaria/ui/core/ui_snack.dart';
 
 UiSnack.show('הפעולה בוצעה');              // Success
 UiSnack.showError('שגיאה בביצוע');         // Error
