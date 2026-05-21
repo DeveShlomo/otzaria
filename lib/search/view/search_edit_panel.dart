@@ -2,7 +2,7 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:otzaria/core/ui_snack.dart';
+import 'package:otzaria/ui/core/ui_snack.dart';
 import 'package:otzaria/search/bloc/search_bloc.dart';
 import 'package:otzaria/search/bloc/search_event.dart';
 import 'package:otzaria/search/bloc/search_state.dart';
@@ -11,8 +11,8 @@ import 'package:otzaria/search/search_query_builder.dart';
 import 'package:otzaria/search/view/advanced_search_controls.dart';
 import 'package:otzaria/search/view/category_tree_selector.dart';
 import 'package:otzaria/tabs/models/searching_tab.dart';
-import 'package:otzaria/widgets/buttons/action_buttons.dart';
-import 'package:otzaria/widgets/text/rtl_text_field.dart';
+import 'package:otzaria/ui/widgets/buttons/action_buttons.dart';
+import 'package:otzaria/ui/widgets/text/rtl_text_field.dart';
 
 /// פאנל עריכת חיפוש - מופיע מתחת לשורת "מוצגות תוצאות של..."
 /// מאפשר עריכת החיפוש הנוכחי ללא יצירת כרטיסייה חדשה

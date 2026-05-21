@@ -9,8 +9,8 @@ import 'package:otzaria/search/search_scope_preferences.dart';
 import 'package:otzaria/search/utils/facet_helper.dart';
 import 'package:otzaria/search/utils/find_match_utils.dart';
 import 'package:otzaria/search/utils/search_catalogue_order_helper.dart';
-import 'package:otzaria/widgets/buttons/action_buttons.dart';
-import 'package:otzaria/widgets/text/rtl_text_field.dart';
+import 'package:otzaria/ui/widgets/buttons/action_buttons.dart';
+import 'package:otzaria/ui/widgets/text/rtl_text_field.dart';
 
 class SearchScopeSelector extends StatefulWidget {
   final Set<String> selectedFacets;

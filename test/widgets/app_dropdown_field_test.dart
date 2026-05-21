@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:otzaria/widgets/misc/app_dropdown_field.dart';
-import 'package:otzaria/widgets/misc/app_popup_menu.dart';
+import 'package:otzaria/ui/widgets/misc/app_dropdown_field.dart';
+import 'package:otzaria/ui/widgets/misc/app_popup_menu.dart';
 
 /// הטריגר של AppDropdownField אמור להיות תמיד AppSelectionField (לא DropdownMenu),
 /// בין אם enableSearch=false ובין אם true. enableSearch משפיע רק על תוכן ה-popup.

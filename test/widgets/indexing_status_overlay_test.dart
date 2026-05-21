@@ -5,7 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:otzaria/seforim/indexing/bloc/indexing_bloc.dart';
 import 'package:otzaria/seforim/indexing/bloc/indexing_event.dart';
 import 'package:otzaria/seforim/indexing/bloc/indexing_state.dart';
-import 'package:otzaria/widgets/feedback/indexing_status_overlay.dart';
+import 'package:otzaria/ui/widgets/feedback/indexing_status_overlay.dart';
 
 class MockIndexingBloc extends MockBloc<IndexingEvent, IndexingState>
     implements IndexingBloc {}

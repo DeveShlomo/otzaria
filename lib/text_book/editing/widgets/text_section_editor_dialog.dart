@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:otzaria/theme/app_fonts.dart';
+import 'package:otzaria/ui/theme/app_fonts.dart';
 
 import '../../bloc/text_book_bloc.dart';
 import '../../bloc/text_book_event.dart';
@@ -12,11 +12,11 @@ import '../../bloc/text_book_event.dart';
 import '../services/preview_renderer.dart';
 import '../models/editor_settings.dart';
 import 'package:otzaria/seforim/providers/file_system_data_provider.dart';
-import 'package:otzaria/core/ui_snack.dart';
-import 'package:otzaria/widgets/buttons/action_buttons.dart';
-import 'package:otzaria/widgets/dialogs/dialogs_exports.dart';
+import 'package:otzaria/ui/core/ui_snack.dart';
+import 'package:otzaria/ui/widgets/buttons/action_buttons.dart';
+import 'package:otzaria/ui/widgets/dialogs/dialogs_exports.dart';
 import 'markdown_toolbar.dart';
-import 'package:otzaria/widgets/text/rtl_text_field.dart';
+import 'package:otzaria/ui/widgets/text/rtl_text_field.dart';
 import 'package:otzaria/settings/services/safer_mode/password_verifier.dart';
 
 /// Full-screen dialog for editing text sections with split-pane interface

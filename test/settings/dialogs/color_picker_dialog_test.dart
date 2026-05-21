@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:otzaria/settings/dialogs/color_picker_dialog.dart';
-import 'package:otzaria/theme/theme_exports.dart';
+import 'package:otzaria/ui/theme/theme_exports.dart';
 
 Future<void> _pumpPicker(
   WidgetTester tester, {

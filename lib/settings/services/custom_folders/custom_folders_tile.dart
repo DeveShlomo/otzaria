@@ -7,10 +7,10 @@ import 'dart:io';
 import 'package:otzaria/seforim/providers/database_library_provider.dart';
 import 'package:otzaria/settings/services/custom_folders/custom_folder.dart';
 import 'package:otzaria/settings/services/custom_folders/bloc/custom_folders_bloc.dart';
-import 'package:otzaria/widgets/dialogs/confirmation_dialog.dart';
-import 'package:otzaria/widgets/widgets_exports.dart';
-import 'package:otzaria/core/ui_snack.dart';
-import 'package:otzaria/widgets/dialogs/zip_extraction_progress_dialog.dart';
+import 'package:otzaria/ui/widgets/dialogs/confirmation_dialog.dart';
+import 'package:otzaria/ui/widgets/widgets_exports.dart';
+import 'package:otzaria/ui/core/ui_snack.dart';
+import 'package:otzaria/ui/widgets/dialogs/zip_extraction_progress_dialog.dart';
 
 /// Widget להוספה וניהול תיקיות מותאמות אישית
 class CustomFoldersTile extends StatefulWidget {

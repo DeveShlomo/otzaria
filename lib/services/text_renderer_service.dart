@@ -1,5 +1,5 @@
 import 'package:otzaria/utils/text/text_manipulation.dart' as utils;
-import 'package:otzaria/widgets/smart_text/render_settings.dart';
+import 'package:otzaria/ui/widgets/smart_text/render_settings.dart';
 
 /// שירות מרכזי לעיבוד טקסט
 ///

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:otzaria/core/ui_snack.dart';
+import 'package:otzaria/ui/core/ui_snack.dart';
 import 'package:otzaria/settings/engine/settings_engine_exports.dart';
 import 'package:otzaria/settings/tabs/text_settings_tab.dart';
 

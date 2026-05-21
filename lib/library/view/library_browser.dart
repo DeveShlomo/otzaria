@@ -18,24 +18,24 @@ import 'package:otzaria/seforim/sync/bloc/file_sync_event.dart';
 import 'package:otzaria/seforim/sync/bloc/file_sync_state.dart';
 import 'package:otzaria/library/view/library_daf_yomi.dart';
 import 'package:otzaria/settings/services/custom_folders/bloc/custom_folders_bloc.dart';
-import 'package:otzaria/widgets/lists/filter_chips_widget.dart';
+import 'package:otzaria/ui/widgets/lists/filter_chips_widget.dart';
 import 'package:otzaria/navigation/view/main_window_screen.dart';
 import 'package:otzaria/library/view/grid_items.dart';
 import 'package:otzaria/library/view/otzar_book_dialog.dart';
 import 'package:otzaria/library/view/book_preview_panel.dart';
 import 'package:otzaria/library/services/library_panel_controller.dart';
-import 'package:otzaria/widgets/widgets_exports.dart';
-import 'package:otzaria/widgets/navigation/app_top_bar.dart';
-import 'package:otzaria/widgets/navigation/responsive_action_bar.dart';
+import 'package:otzaria/ui/widgets/widgets_exports.dart';
+import 'package:otzaria/ui/widgets/navigation/app_top_bar.dart';
+import 'package:otzaria/ui/widgets/navigation/responsive_action_bar.dart';
 import 'package:otzaria/utils/navigation/open_book.dart';
-import 'package:otzaria/widgets/layout/adaptive_side_pane.dart';
-import 'package:otzaria/widgets/layout/context_overlay_panel.dart';
+import 'package:otzaria/ui/widgets/layout/adaptive_side_pane.dart';
+import 'package:otzaria/ui/widgets/layout/context_overlay_panel.dart';
 import 'package:otzaria/navigation/bloc/navigation_bloc.dart';
 import 'package:otzaria/navigation/bloc/navigation_event.dart';
 import 'package:otzaria/navigation/bloc/navigation_state.dart';
-import 'package:otzaria/widgets/text/otzaria_search_field.dart';
+import 'package:otzaria/ui/widgets/text/otzaria_search_field.dart';
 import 'package:otzaria/settings/settings_exports.dart';
-import 'package:otzaria/theme/theme_exports.dart';
+import 'package:otzaria/ui/theme/theme_exports.dart';
 
 // ── קבועים ────────────────────────────────────────────────────────────────────
 

@@ -6,7 +6,7 @@ import 'package:otzaria/personal_notes/models/personal_note.dart';
 import 'package:otzaria/personal_notes/services/personal_note_draft_service.dart';
 import 'package:otzaria/personal_notes/widgets/personal_note_editor.dart';
 import 'package:otzaria/settings/services/safer_mode/password_verifier.dart';
-import 'package:otzaria/core/ui_snack.dart';
+import 'package:otzaria/ui/core/ui_snack.dart';
 
 class InlineNoteEditor extends StatefulWidget {
   final PersonalNote? note;

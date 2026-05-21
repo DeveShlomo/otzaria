@@ -13,7 +13,7 @@ import 'package:otzaria/plugins/repository/plugin_registry_repository.dart';
 import 'package:otzaria/plugins/models/installed_plugin.dart';
 import 'package:otzaria/plugins/models/plugin_permission_grant.dart';
 import 'package:otzaria/plugins/services/plugin_installer_service.dart';
-import 'package:otzaria/core/ui_snack.dart';
+import 'package:otzaria/ui/core/ui_snack.dart';
 
 // ────────────────────────────────────────────────
 // Fakes & helpers

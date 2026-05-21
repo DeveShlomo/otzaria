@@ -1,4 +1,4 @@
-import 'package:otzaria/widgets/smart_text/render_settings.dart';
+import 'package:otzaria/ui/widgets/smart_text/render_settings.dart';
 import 'package:otzaria/services/text_renderer_service.dart';
 
 /// מעבד שורת מקור לאותו טקסט פשוט שהמשתמש רואה בפועל במסך.

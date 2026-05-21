@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:html/parser.dart' as html_parser;
-import 'package:otzaria/core/ui_snack.dart';
-import 'package:otzaria/theme/theme_exports.dart';
+import 'package:otzaria/ui/core/ui_snack.dart';
+import 'package:otzaria/ui/theme/theme_exports.dart';
 import 'package:otzaria/models/books.dart';
 import 'package:otzaria/models/direct_error_report.dart';
 import 'package:otzaria/settings/settings_exports.dart';
@@ -14,12 +14,12 @@ import 'package:otzaria/services/data_collection_service.dart';
 import 'package:otzaria/services/direct_error_report_service.dart';
 import 'package:otzaria/services/phone_report_service.dart';
 import 'package:otzaria/services/book_details_service.dart';
-import 'package:otzaria/widgets/buttons/action_buttons.dart';
-import 'package:otzaria/widgets/dialogs/dialogs_exports.dart';
-import 'package:otzaria/widgets/dialogs/error_report_sender_email_dialog.dart';
-import 'package:otzaria/widgets/misc/phone_report_tab.dart';
+import 'package:otzaria/ui/widgets/buttons/action_buttons.dart';
+import 'package:otzaria/ui/widgets/dialogs/dialogs_exports.dart';
+import 'package:otzaria/ui/widgets/dialogs/error_report_sender_email_dialog.dart';
+import 'package:otzaria/ui/widgets/misc/phone_report_tab.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:otzaria/widgets/text/rtl_text_field.dart';
+import 'package:otzaria/ui/widgets/text/rtl_text_field.dart';
 import 'package:otzaria/utils/text/ref_helper.dart';
 
 /// נתוני הדיווח שנאספו מתיבת סימון הטקסט + פירוט הטעות שהמשתמש הקליד.

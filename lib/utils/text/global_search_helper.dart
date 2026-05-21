@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:otzaria/core/ui_snack.dart';
+import 'package:otzaria/ui/core/ui_snack.dart';
 import 'package:otzaria/reader_memory/history/bloc/history_bloc.dart';
 import 'package:otzaria/reader_memory/history/bloc/history_event.dart';
 import 'package:otzaria/tabs/bloc/tabs_bloc.dart';

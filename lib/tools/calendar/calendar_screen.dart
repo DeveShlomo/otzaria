@@ -8,12 +8,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:otzaria/printing/view/printing_screen.dart';
 import 'package:otzaria/settings/shortcuts/key_map.dart';
 import 'package:otzaria/settings/settings_exports.dart';
-import 'package:otzaria/theme/theme_exports.dart';
-import 'package:otzaria/widgets/dialogs/dialogs_exports.dart';
-import 'package:otzaria/widgets/layout/floating_panel.dart'
+import 'package:otzaria/ui/theme/theme_exports.dart';
+import 'package:otzaria/ui/widgets/dialogs/dialogs_exports.dart';
+import 'package:otzaria/ui/widgets/layout/floating_panel.dart'
     show kMainPanelMinWidth, kSideBySideMinWidth;
-import 'package:otzaria/widgets/layout/context_overlay_panel.dart';
-import 'package:otzaria/widgets/layout/adaptive_side_pane.dart';
+import 'package:otzaria/ui/widgets/layout/context_overlay_panel.dart';
+import 'package:otzaria/ui/widgets/layout/adaptive_side_pane.dart';
 import 'package:otzaria/tools/calendar/utils/calendar_cubit.dart';
 import 'package:otzaria/tools/calendar/dialogs/calendar_event_dialog.dart';
 import 'package:otzaria/tools/calendar/dialogs/calendar_print_dialog.dart';
@@ -27,7 +27,7 @@ import 'package:otzaria/tools/calendar/widgets/calendar_main_panel.dart';
 import 'package:otzaria/tools/calendar/widgets/calendar_top_bar.dart';
 import 'package:otzaria/tools/calendar/helpers/calendar_print_helpers.dart'
     as print_helper;
-import 'package:otzaria/widgets/buttons/action_buttons.dart';
+import 'package:otzaria/ui/widgets/buttons/action_buttons.dart';
 
 export 'package:otzaria/tools/calendar/utils/calendar_cubit.dart';
 

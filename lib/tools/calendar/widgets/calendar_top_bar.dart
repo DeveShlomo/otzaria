@@ -25,10 +25,10 @@ import 'package:otzaria/tools/calendar/utils/calendar_cubit.dart';
 import 'package:otzaria/tools/calendar/dialogs/jump_to_date_dialog.dart';
 import 'package:otzaria/tools/calendar/widgets/calendar_side_panel.dart';
 import 'package:otzaria/tools/calendar/helpers/calendar_date_helpers.dart';
-import 'package:otzaria/widgets/navigation/app_top_bar.dart';
-import 'package:otzaria/widgets/buttons/action_buttons.dart';
-import 'package:otzaria/core/ui_snack.dart';
-import 'package:otzaria/widgets/text/otzaria_search_field.dart';
+import 'package:otzaria/ui/widgets/navigation/app_top_bar.dart';
+import 'package:otzaria/ui/widgets/buttons/action_buttons.dart';
+import 'package:otzaria/ui/core/ui_snack.dart';
+import 'package:otzaria/ui/widgets/text/otzaria_search_field.dart';
 
 // הרוחב שמתחתיו עוברים לשורה שנייה
 const double _kTopBarNarrowBreakpoint = 540.0;

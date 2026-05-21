@@ -4,8 +4,8 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kosher_dart/kosher_dart.dart';
-import 'package:otzaria/core/ui_snack.dart';
-import 'package:otzaria/theme/theme_exports.dart';
+import 'package:otzaria/ui/core/ui_snack.dart';
+import 'package:otzaria/ui/theme/theme_exports.dart';
 import 'package:otzaria/tools/calendar/utils/calendar_cubit.dart'
     hide cityCoordinates;
 import 'package:otzaria/tools/calendar/models/calendar_location.dart';
@@ -14,8 +14,8 @@ import 'package:otzaria/tools/calendar/helpers/molad_helpers.dart';
 import 'package:otzaria/tools/calendar/helpers/zmanim_helpers.dart'
     as zmanim_helpers;
 import 'package:otzaria/tools/calendar/dialogs/calendar_zman_alert_dialog.dart';
-import 'package:otzaria/widgets/misc/app_menu_exports.dart';
-import 'package:otzaria/widgets/buttons/action_buttons.dart';
+import 'package:otzaria/ui/widgets/misc/app_menu_exports.dart';
+import 'package:otzaria/ui/widgets/buttons/action_buttons.dart';
 import 'package:timezone/timezone.dart' as tz;
 
 class CalendarTimeEntry {

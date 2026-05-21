@@ -18,15 +18,15 @@ import 'package:otzaria/navigation/bloc/navigation_bloc.dart';
 import 'package:otzaria/navigation/bloc/navigation_event.dart';
 import 'package:otzaria/settings/panels/library_settings_panel.dart';
 import 'package:otzaria/settings/services/custom_folders/custom_folders_tile.dart';
-import 'package:otzaria/widgets/dialogs/zip_extraction_progress_dialog.dart';
-import 'package:otzaria/widgets/widgets_exports.dart';
+import 'package:otzaria/ui/widgets/dialogs/zip_extraction_progress_dialog.dart';
+import 'package:otzaria/ui/widgets/widgets_exports.dart';
 import 'package:otzaria/settings/settings_card.dart';
 import 'package:otzaria/seforim/indexing/bloc/indexing_bloc.dart';
 import 'package:otzaria/seforim/indexing/bloc/indexing_event.dart';
 import 'package:otzaria/seforim/indexing/bloc/indexing_state.dart';
 import 'package:otzaria/seforim/indexing/repository/indexing_repository.dart';
 import 'package:otzaria/seforim/providers/tantivy_data_provider.dart';
-import 'package:otzaria/core/ui_snack.dart';
+import 'package:otzaria/ui/core/ui_snack.dart';
 
 /// טאב הגדרות ספרייה
 class LibrarySettingsTab extends StatefulWidget {

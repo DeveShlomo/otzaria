@@ -5,7 +5,7 @@ import 'package:otzaria/models/books.dart';
 import 'package:otzaria/library/models/library.dart';
 import 'package:pdfrx/pdfrx.dart';
 import 'package:otzaria/utils/navigation/open_book.dart';
-import 'package:otzaria/core/ui_snack.dart';
+import 'package:otzaria/ui/core/ui_snack.dart';
 
 // Cache של outlines — מפתח: title של הספר
 final Map<String, List<PdfOutlineNode>> _outlineCache = {};

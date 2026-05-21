@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
-import 'package:otzaria/widgets/text/rtl_text_field.dart';
+import 'package:otzaria/ui/widgets/text/rtl_text_field.dart';
 
 /// שדה חיפוש בהגדרות, מעל אזור התוכן.
 class SettingsSearchField extends StatefulWidget {

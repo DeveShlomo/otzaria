@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:otzaria/core/work_status/work_status_cubit.dart';
 import 'package:otzaria/core/work_status/work_status_item.dart';
-import 'package:otzaria/work_status/work_status_overlay.dart';
+import 'package:otzaria/ui/core/work_status_overlay.dart';
 
 Widget _wrap(Widget child, WorkStatusCubit cubit) {
   return MaterialApp(

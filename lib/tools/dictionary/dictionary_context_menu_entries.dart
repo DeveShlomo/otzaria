@@ -7,8 +7,8 @@ import 'package:otzaria/tools/dictionary/repository/dictionary_lookup_repository
 import 'package:otzaria/tools/dictionary/widgets/aramaic_dictionary_entry_view.dart';
 import 'package:otzaria/tour/bloc/tour_cubit.dart';
 import 'package:otzaria/tour/models/live_tip.dart';
-import 'package:otzaria/widgets/widgets_exports.dart';
-import 'package:otzaria/widgets/misc/app_menu_exports.dart';
+import 'package:otzaria/ui/widgets/widgets_exports.dart';
+import 'package:otzaria/ui/widgets/misc/app_menu_exports.dart';
 
 /// בונה פריטי תפריט הקשר למילונים על סמך הטקסט המסומן.
 List<AppContextMenuEntry> buildDictionaryContextMenuEntries({

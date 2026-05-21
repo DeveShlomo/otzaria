@@ -10,7 +10,7 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path/path.dart' as p;
 
-import 'package:otzaria/core/ui_snack.dart';
+import 'package:otzaria/ui/core/ui_snack.dart';
 import 'package:otzaria/plugins/services/webview2_compat_check.dart';
 import 'package:otzaria/reader_memory/history/bloc/history_bloc.dart';
 import 'package:otzaria/navigation/bloc/navigation_bloc.dart';
@@ -31,7 +31,7 @@ import 'package:otzaria/search/search_repository.dart';
 import 'package:otzaria/tabs/bloc/tabs_bloc.dart';
 import 'package:otzaria/tools/calendar/utils/calendar_cubit.dart';
 import 'package:otzaria/utils/navigation/book_open_coordinator.dart';
-import 'package:otzaria/widgets/dialogs/dialogs_exports.dart';
+import 'package:otzaria/ui/widgets/dialogs/dialogs_exports.dart';
 import 'package:otzaria/reader_memory/workspaces/bloc/workspace_bloc.dart';
 
 const String _backgroundInstanceId = 'background';

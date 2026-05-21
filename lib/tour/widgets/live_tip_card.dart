@@ -2,7 +2,7 @@
 
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:otzaria/widgets/widgets_exports.dart';
+import 'package:otzaria/ui/widgets/widgets_exports.dart';
 
 class LiveTipCard extends StatelessWidget {
   final String title;

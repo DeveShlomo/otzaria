@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:equatable/equatable.dart';
-import 'package:otzaria/theme/app_seed_colors.dart';
+import 'package:otzaria/ui/theme/app_seed_colors.dart';
 
 class SettingsState extends Equatable {
   final bool isDarkMode;

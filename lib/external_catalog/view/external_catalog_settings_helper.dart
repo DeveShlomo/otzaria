@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:otzaria/core/ui_snack.dart';
+import 'package:otzaria/ui/core/ui_snack.dart';
 import 'package:otzaria/seforim/repository/data_repository.dart';
 import 'package:otzaria/library/external/external_catalog_repository.dart';
 import 'package:otzaria/settings/settings_exports.dart';
-import 'package:otzaria/widgets/dialogs/dialogs_exports.dart';
+import 'package:otzaria/ui/widgets/dialogs/dialogs_exports.dart';
 
 class ExternalCatalogSettingsHelper {
   static bool _isAutoSyncInProgress = false;

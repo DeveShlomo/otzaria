@@ -14,12 +14,12 @@ import 'book_detail_screen.dart';
 import 'package:otzaria/settings/settings_exports.dart';
 import 'package:otzaria/settings/shortcuts/shortcut_validator.dart';
 import 'package:otzaria/settings/shortcuts/key_map.dart';
-import 'package:otzaria/widgets/buttons/action_buttons.dart';
-import 'package:otzaria/widgets/navigation/app_top_bar.dart';
-import 'package:otzaria/widgets/inputs/segmented_button_tile.dart';
-import 'package:otzaria/widgets/layout/adaptive_side_pane.dart';
-import 'package:otzaria/theme/theme_exports.dart';
-import 'package:otzaria/widgets/text/otzaria_search_field.dart';
+import 'package:otzaria/ui/widgets/buttons/action_buttons.dart';
+import 'package:otzaria/ui/widgets/navigation/app_top_bar.dart';
+import 'package:otzaria/ui/widgets/inputs/segmented_button_tile.dart';
+import 'package:otzaria/ui/widgets/layout/adaptive_side_pane.dart';
+import 'package:otzaria/ui/theme/theme_exports.dart';
+import 'package:otzaria/ui/widgets/text/otzaria_search_field.dart';
 
 /// Main screen for Shamor Zachor with Split View (Sidebar + Content)
 class ShamorZachorMainScreen extends StatefulWidget {

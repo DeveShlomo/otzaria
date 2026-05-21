@@ -14,15 +14,15 @@ import 'package:otzaria/settings/settings_exports.dart';
 import 'package:otzaria/settings/shortcuts/shortcut_helper.dart';
 import 'package:otzaria/settings/shortcuts/shortcut_validator.dart';
 import 'measurement_data.dart';
-import 'package:otzaria/theme/theme_exports.dart';
-import 'package:otzaria/widgets/misc/app_menu_exports.dart';
-import 'package:otzaria/widgets/navigation/app_top_bar.dart';
-import 'package:otzaria/widgets/layout/adaptive_side_pane.dart';
-import 'package:otzaria/widgets/buttons/action_buttons.dart';
-import 'package:otzaria/widgets/text/rtl_text_field.dart';
-import 'package:otzaria/widgets/navigation/sidebar_nav_item.dart';
-import 'package:otzaria/widgets/inputs/app_input_tokens.dart';
-import 'package:otzaria/core/ui_snack.dart';
+import 'package:otzaria/ui/theme/theme_exports.dart';
+import 'package:otzaria/ui/widgets/misc/app_menu_exports.dart';
+import 'package:otzaria/ui/widgets/navigation/app_top_bar.dart';
+import 'package:otzaria/ui/widgets/layout/adaptive_side_pane.dart';
+import 'package:otzaria/ui/widgets/buttons/action_buttons.dart';
+import 'package:otzaria/ui/widgets/text/rtl_text_field.dart';
+import 'package:otzaria/ui/widgets/navigation/sidebar_nav_item.dart';
+import 'package:otzaria/ui/widgets/inputs/app_input_tokens.dart';
+import 'package:otzaria/ui/core/ui_snack.dart';
 
 // START OF ADDITIONS - MODERN UNITS
 const List<String> modernLengthUnits = ['מ"מ', 'ס"מ', 'מטר', 'ק"מ'];

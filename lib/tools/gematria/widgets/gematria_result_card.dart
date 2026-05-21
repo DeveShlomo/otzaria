@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:otzaria/core/ui_snack.dart';
+import 'package:otzaria/ui/core/ui_snack.dart';
 import 'package:otzaria/models/books.dart';
 import 'package:otzaria/settings/settings_exports.dart';
-import 'package:otzaria/theme/theme_exports.dart';
+import 'package:otzaria/ui/theme/theme_exports.dart';
 import 'package:otzaria/tools/gematria/models/gematria_search_result.dart';
 import 'package:otzaria/utils/navigation/open_book.dart';
 import 'package:otzaria/utils/text/text_manipulation.dart' as utils;
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
-import 'package:otzaria/widgets/buttons/action_buttons.dart';
-import 'package:otzaria/widgets/layout/tool_result_card_shell.dart';
+import 'package:otzaria/ui/widgets/buttons/action_buttons.dart';
+import 'package:otzaria/ui/widgets/layout/tool_result_card_shell.dart';
 
 class GematriaResultCard extends StatelessWidget {
   final int number;

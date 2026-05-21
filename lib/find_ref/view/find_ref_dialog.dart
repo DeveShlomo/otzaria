@@ -13,7 +13,7 @@ import 'package:otzaria/library/models/library.dart';
 import 'package:otzaria/models/books.dart';
 import 'package:otzaria/utils/navigation/open_book.dart';
 import 'package:otzaria/tour/tour_target_keys.dart';
-import 'package:otzaria/widgets/text/rtl_text_field.dart';
+import 'package:otzaria/ui/widgets/text/rtl_text_field.dart';
 
 class FindRefDialog extends StatefulWidget {
   const FindRefDialog({super.key});

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:otzaria/widgets/misc/app_dropdown_field.dart';
-import 'package:otzaria/widgets/misc/app_popup_menu.dart';
+import 'package:otzaria/ui/widgets/misc/app_dropdown_field.dart';
+import 'package:otzaria/ui/widgets/misc/app_popup_menu.dart';
 
 /// בודק את הסינון של "מ-/עד-" — בתפריט ההדפסה הסינון נעשה ע"י .where()
 /// על entries לפני העברתם ל-AppDropdownField.

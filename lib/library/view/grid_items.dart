@@ -3,12 +3,12 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:otzaria/library/models/library.dart';
 import 'package:otzaria/models/books.dart';
 import 'package:otzaria/seforim/providers/file_system_data_provider.dart';
-import 'package:otzaria/widgets/misc/app_menu_exports.dart';
+import 'package:otzaria/ui/widgets/misc/app_menu_exports.dart';
 import 'dart:math';
-import 'package:otzaria/core/ui_snack.dart';
+import 'package:otzaria/ui/core/ui_snack.dart';
 import 'package:otzaria/seforim/book_locator.dart';
-import 'package:otzaria/theme/theme_exports.dart';
-import 'package:otzaria/widgets/dialogs/dialogs_exports.dart';
+import 'package:otzaria/ui/theme/theme_exports.dart';
+import 'package:otzaria/ui/widgets/dialogs/dialogs_exports.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  הנחיות עיצוב:

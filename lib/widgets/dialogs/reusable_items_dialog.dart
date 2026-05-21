@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
-import 'package:otzaria/theme/theme_exports.dart';
+import 'package:otzaria/ui/theme/theme_exports.dart';
 
 class ReusableItemsDialog extends StatelessWidget {
   final String title;

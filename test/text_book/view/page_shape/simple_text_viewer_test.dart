@@ -19,10 +19,10 @@ import 'package:otzaria/text_book/bloc/text_book_event.dart';
 import 'package:otzaria/text_book/bloc/text_book_state.dart';
 import 'package:otzaria/text_book/view/page_shape/simple_text_viewer.dart';
 import 'package:otzaria/text_book/view/selection/selection_sync_controller.dart';
-import 'package:otzaria/widgets/misc/app_context_menu.dart';
+import 'package:otzaria/ui/widgets/misc/app_context_menu.dart';
 import 'package:otzaria/text_book/view/selection/selection_persistence.dart';
 import 'package:otzaria/text_book/view/widgets/continuous_reading_paragraph.dart';
-import 'package:otzaria/widgets/smart_text/smart_text.dart';
+import 'package:otzaria/ui/widgets/smart_text/smart_text.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import '../../../test_helpers/memory_cache_provider.dart';
 

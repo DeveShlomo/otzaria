@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:otzaria/widgets/smart_text/render_settings.dart';
+import 'package:otzaria/ui/widgets/smart_text/render_settings.dart';
 
 void main() {
   group('RenderSettings equality', () {

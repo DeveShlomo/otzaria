@@ -6,8 +6,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:otzaria/library/empty/bloc/empty_library_bloc.dart';
 import 'package:otzaria/library/empty/bloc/empty_library_event.dart';
 import 'package:otzaria/library/empty/bloc/empty_library_state.dart';
-import 'package:otzaria/core/ui_snack.dart';
-import 'package:otzaria/widgets/dialogs/dialogs_exports.dart';
+import 'package:otzaria/ui/core/ui_snack.dart';
+import 'package:otzaria/ui/widgets/dialogs/dialogs_exports.dart';
 
 class EmptyLibraryScreen extends StatelessWidget {
   final Future<void> Function() onLibraryLoaded;

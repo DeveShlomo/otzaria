@@ -3,7 +3,7 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:otzaria/models/books.dart';
-import 'package:otzaria/widgets/misc/app_menu_exports.dart';
+import 'package:otzaria/ui/widgets/misc/app_menu_exports.dart';
 import 'package:otzaria/models/links.dart';
 import 'package:otzaria/settings/settings_exports.dart';
 import 'package:otzaria/settings/services/nikud_display_service.dart';
@@ -11,12 +11,12 @@ import 'package:otzaria/tabs/models/tab.dart';
 import 'package:otzaria/tabs/models/text_tab.dart';
 import 'package:otzaria/text_book/bloc/text_book_state.dart';
 import 'package:otzaria/text_book/widgets/text_book_state_builder.dart';
-import 'package:otzaria/widgets/feedback/app_future_builder.dart';
+import 'package:otzaria/ui/widgets/feedback/app_future_builder.dart';
 import 'package:otzaria/utils/text/text_manipulation.dart' as utils;
-import 'package:otzaria/utils/ui/context_menu_utils.dart';
+import 'package:otzaria/ui/widgets/misc/context_menu_builder.dart';
 import 'package:otzaria/services/commentary_copy_service.dart';
-import 'package:otzaria/widgets/text/rtl_text_field.dart';
-import 'package:otzaria/widgets/smart_text/smart_text.dart';
+import 'package:otzaria/ui/widgets/text/rtl_text_field.dart';
+import 'package:otzaria/ui/widgets/smart_text/smart_text.dart';
 import 'package:otzaria/text_book/view/selection/selection_sync_controller.dart';
 
 @visibleForTesting

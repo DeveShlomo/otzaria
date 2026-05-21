@@ -15,9 +15,9 @@ import 'package:otzaria/search/view/tantivy_search_results.dart';
 import 'package:otzaria/search/view/full_text_facet_filtering.dart';
 import 'package:otzaria/search/view/search_edit_panel.dart';
 import 'package:otzaria/settings/settings_exports.dart';
-import 'package:otzaria/widgets/layout/resizable_facet_filtering.dart';
-import 'package:otzaria/widgets/feedback/indexing_warning.dart';
-import 'package:otzaria/widgets/misc/thin_divider.dart';
+import 'package:otzaria/ui/widgets/layout/resizable_facet_filtering.dart';
+import 'package:otzaria/ui/widgets/feedback/indexing_warning.dart';
+import 'package:otzaria/ui/widgets/misc/thin_divider.dart';
 
 class TantivyFullTextSearch extends StatefulWidget {
   final SearchingTab tab;

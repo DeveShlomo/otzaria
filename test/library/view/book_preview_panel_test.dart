@@ -18,7 +18,7 @@ import 'package:otzaria/models/books.dart';
 import 'package:otzaria/settings/engine/settings_bloc.dart';
 import 'package:otzaria/settings/engine/settings_event.dart';
 import 'package:otzaria/settings/engine/settings_state.dart';
-import 'package:otzaria/widgets/buttons/action_buttons.dart';
+import 'package:otzaria/ui/widgets/buttons/action_buttons.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

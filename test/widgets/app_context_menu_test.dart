@@ -1,8 +1,8 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:otzaria/widgets/misc/app_context_menu.dart';
-import 'package:otzaria/widgets/misc/app_popup_menu.dart';
+import 'package:otzaria/ui/widgets/misc/app_context_menu.dart';
+import 'package:otzaria/ui/widgets/misc/app_popup_menu.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

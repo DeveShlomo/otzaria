@@ -14,7 +14,7 @@ import 'package:otzaria/text_book/view/tabbed_commentary_panel.dart';
 import 'package:otzaria/text_book/widgets/text_book_state_builder.dart';
 import 'package:otzaria/tour/bloc/tour_cubit.dart';
 import 'package:otzaria/tour/models/live_tip.dart';
-import 'package:otzaria/widgets/layout/adaptive_side_pane.dart';
+import 'package:otzaria/ui/widgets/layout/adaptive_side_pane.dart';
 
 class SplitedViewScreen extends StatefulWidget {
   const SplitedViewScreen({

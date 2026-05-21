@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:otzaria/widgets/layout/dual_adaptive_reader_pane.dart';
+import 'package:otzaria/ui/widgets/layout/dual_adaptive_reader_pane.dart';
 
 void main() {
   Widget buildPane({

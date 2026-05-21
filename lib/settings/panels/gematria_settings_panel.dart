@@ -6,8 +6,8 @@ import 'package:otzaria/settings/search/settings_anchor.dart';
 import 'package:otzaria/settings/search/settings_search_models.dart';
 import 'package:otzaria/settings/settings_card.dart';
 import 'package:otzaria/settings/view/settings_screen.dart';
-import 'package:otzaria/widgets/misc/app_menu_exports.dart';
-import 'package:otzaria/widgets/widgets_exports.dart';
+import 'package:otzaria/ui/widgets/misc/app_menu_exports.dart';
+import 'package:otzaria/ui/widgets/widgets_exports.dart';
 
 /// טאב הגדרות גימטריה
 class GematriaSettingsTab extends StatefulWidget {

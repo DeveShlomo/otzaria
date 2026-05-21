@@ -6,7 +6,7 @@ import 'package:otzaria/settings/engine/settings_engine_exports.dart';
 import 'package:otzaria/settings/search/settings_search_models.dart';
 import 'package:otzaria/settings/settings_card.dart';
 import 'package:otzaria/settings/view/settings_screen.dart';
-import 'package:otzaria/widgets/widgets_exports.dart';
+import 'package:otzaria/ui/widgets/widgets_exports.dart';
 
 /// פאנל הגדרות תצוגת ספרייה
 class LibrarySettingsPanel extends StatelessWidget {

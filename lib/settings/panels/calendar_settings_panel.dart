@@ -5,13 +5,13 @@ import 'package:otzaria/settings/engine/settings_bloc.dart';
 import 'package:otzaria/settings/search/settings_anchor.dart';
 import 'package:otzaria/settings/search/settings_search_models.dart';
 import 'package:otzaria/settings/view/settings_screen.dart';
-import 'package:otzaria/core/ui_snack.dart';
-import 'package:otzaria/widgets/text/otzaria_search_field.dart';
+import 'package:otzaria/ui/core/ui_snack.dart';
+import 'package:otzaria/ui/widgets/text/otzaria_search_field.dart';
 import 'package:otzaria/tools/calendar/utils/calendar_cubit.dart';
 import 'package:otzaria/settings/settings_card.dart';
-import 'package:otzaria/widgets/widgets_exports.dart';
-import 'package:otzaria/theme/theme_exports.dart';
-import 'package:otzaria/widgets/misc/app_menu_exports.dart';
+import 'package:otzaria/ui/widgets/widgets_exports.dart';
+import 'package:otzaria/ui/theme/theme_exports.dart';
+import 'package:otzaria/ui/widgets/misc/app_menu_exports.dart';
 
 /// טאב הגדרות לוח שנה
 class CalendarSettingsTab extends StatefulWidget {

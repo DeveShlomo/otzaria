@@ -1,5 +1,5 @@
 import 'package:flutter/services.dart';
-import 'package:otzaria/core/ui_snack.dart';
+import 'package:otzaria/ui/core/ui_snack.dart';
 
 export 'package:otzaria/utils/book_link_builder.dart';
 

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:otzaria/settings/search/settings_search_models.dart';
 import 'package:otzaria/settings/view/settings_screen.dart';
-import 'package:otzaria/theme/layout_tokens.dart';
-import 'package:otzaria/widgets/misc/rtl_icon.dart';
+import 'package:otzaria/ui/theme/layout_tokens.dart';
+import 'package:otzaria/ui/widgets/misc/rtl_icon.dart';
 
 /// תצוגת תוצאות חיפוש בהגדרות — מוצגת באזור התוכן כאשר השאילתה אינה ריקה.
 class SettingsSearchResultsView extends StatelessWidget {

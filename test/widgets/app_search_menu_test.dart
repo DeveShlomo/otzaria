@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:otzaria/widgets/misc/app_menu_exports.dart';
+import 'package:otzaria/ui/widgets/misc/app_menu_exports.dart';
 
 /// בודק את התנהגות `showAnchoredAppSearchMenu` — תפריט עם שדה חיפוש מוצמד.
 ///

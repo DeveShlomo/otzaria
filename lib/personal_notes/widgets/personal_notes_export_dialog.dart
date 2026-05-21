@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:otzaria/personal_notes/models/personal_note.dart';
-import 'package:otzaria/widgets/misc/app_menu_exports.dart';
-import 'package:otzaria/widgets/widgets_exports.dart';
-import 'package:otzaria/widgets/text/rtl_text_field.dart';
+import 'package:otzaria/ui/widgets/misc/app_menu_exports.dart';
+import 'package:otzaria/ui/widgets/widgets_exports.dart';
+import 'package:otzaria/ui/widgets/text/rtl_text_field.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 
 enum NotesExportMode {

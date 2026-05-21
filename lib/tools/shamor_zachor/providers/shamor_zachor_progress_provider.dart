@@ -6,7 +6,7 @@ import '../models/progress_model.dart';
 import '../models/book_model.dart';
 import '../models/error_model.dart';
 import '../services/progress_service.dart';
-import 'package:otzaria/core/ui_snack.dart';
+import 'package:otzaria/ui/core/ui_snack.dart';
 
 /// Events emitted when significant progress milestones are reached
 enum CompletionEventType {
