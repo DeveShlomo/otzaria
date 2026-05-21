@@ -6,7 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:otzaria/library/empty/bloc/empty_library_bloc.dart';
 import 'package:otzaria/library/empty/bloc/empty_library_event.dart';
 import 'package:otzaria/library/empty/bloc/empty_library_state.dart';
-import 'package:otzaria/empty_library/empty_library_screen.dart';
+import 'package:otzaria/ui/library/empty/empty_library_screen.dart';
 
 class MockEmptyLibraryBloc
     extends MockBloc<EmptyLibraryEvent, EmptyLibraryState>

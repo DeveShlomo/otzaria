@@ -11,8 +11,8 @@ import 'package:otzaria/settings/engine/settings_bloc.dart';
 import 'package:otzaria/settings/engine/settings_event.dart';
 import 'package:otzaria/settings/engine/settings_repository.dart';
 import 'package:otzaria/settings/engine/settings_state.dart';
-import 'package:otzaria/settings/search/settings_search_field.dart';
-import 'package:otzaria/settings/view/settings_screen.dart';
+import 'package:otzaria/ui/settings/search/settings_search_field.dart';
+import 'package:otzaria/ui/settings/view/settings_screen.dart';
 import 'package:otzaria/ui/widgets/navigation/sidebar_nav_item.dart';
 
 import '../../test_helpers/memory_cache_provider.dart';

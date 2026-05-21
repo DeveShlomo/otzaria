@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:otzaria/settings/engine/settings_engine_exports.dart';
-import 'package:otzaria/settings/services/safer_mode/password_verification_dialog.dart';
+import 'package:otzaria/ui/settings/services/safer_mode/password_verification_dialog.dart';
 
 /// פונקציה עוזרת לבדיקה האם צריך הגנה
 bool shouldProtectSettings(BuildContext context) {

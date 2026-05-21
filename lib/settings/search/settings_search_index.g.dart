@@ -4,15 +4,15 @@
 // הצהרות `static const searchEntries` בקבצים תחת lib/settings/.
 
 import 'package:otzaria/settings/search/settings_search_models.dart';
-import 'package:otzaria/settings/panels/calendar_settings_panel.dart';
-import 'package:otzaria/settings/panels/gematria_settings_panel.dart';
-import 'package:otzaria/settings/panels/library_settings_panel.dart';
-import 'package:otzaria/settings/tabs/about_dev_tab.dart';
-import 'package:otzaria/settings/tabs/design_settings_tab.dart';
-import 'package:otzaria/settings/tabs/library_settings_tab.dart';
-import 'package:otzaria/settings/tabs/shortcuts_settings_tab.dart';
-import 'package:otzaria/settings/tabs/system_settings_tab.dart';
-import 'package:otzaria/settings/tabs/text_settings_tab.dart';
+import 'package:otzaria/ui/settings/panels/calendar_settings_panel.dart';
+import 'package:otzaria/ui/settings/panels/gematria_settings_panel.dart';
+import 'package:otzaria/ui/settings/panels/library_settings_panel.dart';
+import 'package:otzaria/ui/settings/tabs/about_dev_tab.dart';
+import 'package:otzaria/ui/settings/tabs/design_settings_tab.dart';
+import 'package:otzaria/ui/settings/tabs/library_settings_tab.dart';
+import 'package:otzaria/ui/settings/tabs/shortcuts_settings_tab.dart';
+import 'package:otzaria/ui/settings/tabs/system_settings_tab.dart';
+import 'package:otzaria/ui/settings/tabs/text_settings_tab.dart';
 
 /// כל פריטי החיפוש שנאספו מהטאבים והפנלים.
 const List<SettingsSearchEntry> kGeneratedSettingsSearchEntries = [

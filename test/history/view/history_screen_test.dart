@@ -8,7 +8,7 @@ import 'package:otzaria/reader_memory/bookmarks/models/bookmark.dart';
 import 'package:otzaria/reader_memory/history/bloc/history_bloc.dart';
 import 'package:otzaria/reader_memory/history/bloc/history_event.dart';
 import 'package:otzaria/reader_memory/history/bloc/history_state.dart';
-import 'package:otzaria/history/view/history_screen.dart';
+import 'package:otzaria/ui/reader_memory/history/history_screen.dart';
 import 'package:otzaria/models/books.dart';
 
 class MockHistoryBloc extends MockBloc<HistoryEvent, HistoryState>

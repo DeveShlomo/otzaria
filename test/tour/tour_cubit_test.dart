@@ -6,7 +6,7 @@ import 'package:otzaria/tour/bloc/tour_cubit.dart';
 import 'package:otzaria/tour/models/live_tip.dart';
 import 'package:otzaria/tour/models/tour_step.dart';
 import 'package:otzaria/tour/models/tour_steps.dart';
-import 'package:otzaria/tour/view/tour_overlay_screen.dart';
+import 'package:otzaria/ui/tour/view/tour_overlay_screen.dart';
 
 import '../helpers/memory_settings_cache.dart';
 

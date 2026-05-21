@@ -1,4 +1,4 @@
-import 'package:otzaria/settings/view/settings_screen.dart';
+import 'package:otzaria/ui/settings/view/settings_screen.dart';
 
 /// פריט בודד באינדקס החיפוש של ההגדרות.
 ///

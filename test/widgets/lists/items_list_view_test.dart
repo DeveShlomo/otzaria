@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:otzaria/widgets/lists/items_list_view.dart';
+import 'package:otzaria/ui/reader_memory/items_list_view.dart';
 
 class _Book {
   final String title;

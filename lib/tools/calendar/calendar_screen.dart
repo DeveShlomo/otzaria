@@ -5,7 +5,7 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:otzaria/printing/view/printing_screen.dart';
+import 'package:otzaria/ui/printing/printing_screen.dart';
 import 'package:otzaria/settings/shortcuts/key_map.dart';
 import 'package:otzaria/settings/settings_exports.dart';
 import 'package:otzaria/ui/theme/theme_exports.dart';

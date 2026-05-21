@@ -4,7 +4,7 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:otzaria/seforim/providers/file_system_data_provider.dart';
 import 'package:otzaria/library/models/library.dart';
-import 'package:otzaria/library/view/grid_items.dart';
+import 'package:otzaria/ui/library/grid_items.dart';
 import 'package:otzaria/models/books.dart';
 
 class _FakeFileSystemData extends FileSystemData {

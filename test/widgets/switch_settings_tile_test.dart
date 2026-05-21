@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:otzaria/settings/widgets/switch_settings_tile.dart';
+import 'package:otzaria/ui/settings/widgets/switch_settings_tile.dart';
 
 void main() {
   testWidgets('SwitchSettingsTile toggles when tapping the row',

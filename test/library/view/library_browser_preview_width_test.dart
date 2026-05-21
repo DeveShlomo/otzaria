@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:otzaria/library/view/library_browser.dart';
+import 'package:otzaria/ui/library/library_browser.dart';
 
 void main() {
   test('preview pane widths stay valid below preferred minimum width', () {

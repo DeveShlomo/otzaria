@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:otzaria/settings/search/settings_search_models.dart';
-import 'package:otzaria/settings/view/settings_screen.dart';
+import 'package:otzaria/ui/settings/view/settings_screen.dart';
 
 /// בקשת ניווט לתוצאת חיפוש — נשלחת מ-SearchResults אל מסך ההגדרות.
 class SettingsSearchNavigationRequest {

@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:otzaria/settings/view/settings_screen.dart';
+import 'package:otzaria/ui/settings/view/settings_screen.dart';
 
 void main() {
   group('SettingsScreenController', () {

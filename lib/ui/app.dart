@@ -6,7 +6,7 @@ import 'package:otzaria/ui/theme/theme_exports.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:otzaria/ui/core/ui_snack.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:otzaria/navigation/view/main_window_screen.dart';
+import 'package:otzaria/ui/screens/main_window_screen.dart';
 import 'package:otzaria/settings/settings_exports.dart';
 import 'package:window_manager/window_manager.dart';
 

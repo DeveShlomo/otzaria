@@ -7,7 +7,7 @@
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:otzaria/library/view/book_preview_pdf_logic.dart';
+import 'package:otzaria/ui/library/book_preview_pdf_logic.dart';
 
 void main() {
   group('computePdfReaderTargetPage', () {

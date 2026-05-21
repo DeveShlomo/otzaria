@@ -9,7 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:otzaria/ui/widgets/misc/app_menu_exports.dart';
 import 'package:otzaria/reader_memory/bookmarks/bloc/bookmark_bloc.dart';
-import 'package:otzaria/bookmarks/view/bookmark_screen.dart';
+import 'package:otzaria/ui/reader_memory/bookmarks/bookmark_screen.dart';
 import 'package:otzaria/ui/core/ui_snack.dart';
 import 'package:otzaria/seforim/repository/data_repository.dart';
 import 'package:otzaria/models/books.dart';
@@ -52,7 +52,7 @@ import 'package:otzaria/utils/text/text_manipulation.dart' as utils;
 import 'package:otzaria/models/pdf_headings.dart';
 import 'package:otzaria/text_book/models/commentator_group.dart';
 import 'package:otzaria/printing/printing_helpers.dart';
-import 'package:otzaria/printing/view/printing_screen.dart';
+import 'package:otzaria/ui/printing/printing_screen.dart';
 import 'package:otzaria/settings/shortcuts/shortcut_helper.dart';
 import 'package:otzaria/utils/link_helpers.dart';
 

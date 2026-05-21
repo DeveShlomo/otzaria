@@ -27,7 +27,7 @@ import 'package:otzaria/plugins/utils/fluent_icon_resolver.dart';
 import 'package:otzaria/plugins/models/installed_plugin.dart';
 import 'package:otzaria/settings/engine/settings_bloc.dart';
 import 'package:otzaria/settings/engine/settings_state.dart';
-import 'package:otzaria/settings/settings_card.dart';
+import 'package:otzaria/ui/settings/settings_card.dart';
 import 'package:otzaria/tour/tour_target_keys.dart';
 
 /// מזהה הכלי שפעיל כרגע ב-ToolsScreen, או `null` אם המסך לא מוצג.

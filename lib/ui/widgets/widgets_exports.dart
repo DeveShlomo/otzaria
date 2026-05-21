@@ -19,7 +19,7 @@
 export 'package:otzaria/ui/widgets/dialogs/app_dialogs.dart';
 export 'package:otzaria/ui/widgets/buttons/action_buttons.dart';
 export 'package:otzaria/ui/widgets/inputs/segmented_button_tile.dart';
-export 'package:otzaria/settings/widgets/switch_settings_tile.dart';
+export 'package:otzaria/ui/settings/widgets/switch_settings_tile.dart';
 export 'package:otzaria/ui/widgets/misc/tool_ui_helpers.dart';
 
 import 'package:flutter/material.dart';
