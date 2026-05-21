@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:otzaria/workspaces/workspace.dart';
+import 'package:otzaria/reader_memory/workspaces/workspace.dart';
 
 /// State for the WorkspaceBloc.
 ///

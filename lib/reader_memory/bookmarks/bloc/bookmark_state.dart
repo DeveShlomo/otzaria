@@ -1,4 +1,4 @@
-import 'package:otzaria/bookmarks/models/bookmark.dart';
+import 'package:otzaria/reader_memory/bookmarks/models/bookmark.dart';
 
 class BookmarkState {
   final List<Bookmark> bookmarks;

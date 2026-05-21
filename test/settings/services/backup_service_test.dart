@@ -7,7 +7,7 @@ import 'package:hive_ce/hive.dart';
 import 'package:otzaria/seforim/providers/hive_data_provider.dart';
 import 'package:otzaria/settings/engine/settings_repository.dart';
 import 'package:otzaria/settings/services/backup_service.dart';
-import 'package:otzaria/workspaces/workspace_repository.dart';
+import 'package:otzaria/reader_memory/workspaces/workspace_repository.dart';
 import 'package:path/path.dart' as p;
 
 void main() {

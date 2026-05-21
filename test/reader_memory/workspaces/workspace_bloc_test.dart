@@ -3,10 +3,10 @@ import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:otzaria/models/books.dart';
 import 'package:otzaria/tabs/models/tab.dart';
 import 'package:otzaria/tabs/models/text_tab.dart';
-import 'package:otzaria/workspaces/bloc/workspace_bloc.dart';
-import 'package:otzaria/workspaces/bloc/workspace_event.dart';
-import 'package:otzaria/workspaces/workspace.dart';
-import 'package:otzaria/workspaces/workspace_repository.dart';
+import 'package:otzaria/reader_memory/workspaces/bloc/workspace_bloc.dart';
+import 'package:otzaria/reader_memory/workspaces/bloc/workspace_event.dart';
+import 'package:otzaria/reader_memory/workspaces/workspace.dart';
+import 'package:otzaria/reader_memory/workspaces/workspace_repository.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

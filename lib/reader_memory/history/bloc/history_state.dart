@@ -1,4 +1,4 @@
-import 'package:otzaria/bookmarks/models/bookmark.dart';
+import 'package:otzaria/reader_memory/bookmarks/models/bookmark.dart';
 
 abstract class HistoryState {
   final List<Bookmark> history;

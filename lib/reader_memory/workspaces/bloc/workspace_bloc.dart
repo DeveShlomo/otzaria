@@ -1,9 +1,9 @@
 import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:otzaria/workspaces/bloc/workspace_event.dart';
-import 'package:otzaria/workspaces/bloc/workspace_state.dart';
-import 'package:otzaria/workspaces/workspace.dart';
-import 'package:otzaria/workspaces/workspace_repository.dart';
+import 'package:otzaria/reader_memory/workspaces/bloc/workspace_event.dart';
+import 'package:otzaria/reader_memory/workspaces/bloc/workspace_state.dart';
+import 'package:otzaria/reader_memory/workspaces/workspace.dart';
+import 'package:otzaria/reader_memory/workspaces/workspace_repository.dart';
 import 'package:otzaria/tabs/models/tab.dart';
 
 /// Bloc for managing workspaces.

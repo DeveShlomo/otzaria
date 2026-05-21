@@ -3,7 +3,7 @@ import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:kosher_dart/kosher_dart.dart';
 import 'package:mockito/mockito.dart';
 import 'package:otzaria/models/books.dart';
-import 'package:otzaria/history/bloc/history_bloc.dart';
+import 'package:otzaria/reader_memory/history/bloc/history_bloc.dart';
 import 'package:otzaria/navigation/bloc/navigation_bloc.dart';
 import 'package:otzaria/personal_notes/repository/personal_notes_repository.dart';
 import 'package:otzaria/plugins/bridge/plugin_bridge_adapter.dart';
@@ -19,7 +19,7 @@ import 'package:otzaria/tabs/models/text_tab.dart';
 import 'package:otzaria/text_book/bloc/text_book_state.dart';
 import 'package:otzaria/tools/calendar/utils/calendar_cubit.dart';
 import 'package:otzaria/utils/navigation/book_open_coordinator.dart';
-import 'package:otzaria/workspaces/bloc/workspace_bloc.dart';
+import 'package:otzaria/reader_memory/workspaces/bloc/workspace_bloc.dart';
 
 class _MockHistoryBloc extends Mock implements HistoryBloc {}
 

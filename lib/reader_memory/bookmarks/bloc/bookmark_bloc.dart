@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:otzaria/bookmarks/bloc/bookmark_state.dart';
-import 'package:otzaria/bookmarks/models/bookmark.dart';
-import 'package:otzaria/bookmarks/repository/bookmark_repository.dart';
+import 'package:otzaria/reader_memory/bookmarks/bloc/bookmark_state.dart';
+import 'package:otzaria/reader_memory/bookmarks/models/bookmark.dart';
+import 'package:otzaria/reader_memory/bookmarks/repository/bookmark_repository.dart';
 import 'package:otzaria/models/books.dart';
 
 class BookmarkBloc extends Cubit<BookmarkState> {

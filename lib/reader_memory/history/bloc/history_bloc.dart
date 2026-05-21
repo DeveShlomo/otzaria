@@ -1,12 +1,12 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:otzaria/bookmarks/models/bookmark.dart';
+import 'package:otzaria/reader_memory/bookmarks/models/bookmark.dart';
 import 'package:otzaria/core/pre_close_registry.dart';
 import 'package:otzaria/models/books.dart';
-import 'package:otzaria/history/bloc/history_event.dart';
-import 'package:otzaria/history/bloc/history_state.dart';
-import 'package:otzaria/history/history_repository.dart';
+import 'package:otzaria/reader_memory/history/bloc/history_event.dart';
+import 'package:otzaria/reader_memory/history/bloc/history_state.dart';
+import 'package:otzaria/reader_memory/history/history_repository.dart';
 import 'package:otzaria/tabs/models/pdf_tab.dart';
 import 'package:otzaria/tabs/models/searching_tab.dart';
 import 'package:otzaria/tabs/models/tab.dart';

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:otzaria/workspaces/bloc/workspace_bloc.dart';
-import 'package:otzaria/workspaces/bloc/workspace_event.dart';
-import 'package:otzaria/workspaces/bloc/workspace_state.dart';
-import 'package:otzaria/workspaces/workspace.dart';
+import 'package:otzaria/reader_memory/workspaces/bloc/workspace_bloc.dart';
+import 'package:otzaria/reader_memory/workspaces/bloc/workspace_event.dart';
+import 'package:otzaria/reader_memory/workspaces/bloc/workspace_state.dart';
+import 'package:otzaria/reader_memory/workspaces/workspace.dart';
 import 'package:otzaria/tabs/bloc/tabs_bloc.dart';
 import 'package:otzaria/tabs/bloc/tabs_state.dart';
 import 'package:otzaria/tools/calendar/helpers/calendar_date_helpers.dart';

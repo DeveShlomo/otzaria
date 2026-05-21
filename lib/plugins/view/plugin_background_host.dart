@@ -12,7 +12,7 @@ import 'package:path/path.dart' as p;
 
 import 'package:otzaria/core/ui_snack.dart';
 import 'package:otzaria/plugins/services/webview2_compat_check.dart';
-import 'package:otzaria/history/bloc/history_bloc.dart';
+import 'package:otzaria/reader_memory/history/bloc/history_bloc.dart';
 import 'package:otzaria/navigation/bloc/navigation_bloc.dart';
 import 'package:otzaria/personal_notes/repository/personal_notes_repository.dart';
 import 'package:otzaria/plugins/bloc/plugin_system_bloc.dart';
@@ -32,7 +32,7 @@ import 'package:otzaria/tabs/bloc/tabs_bloc.dart';
 import 'package:otzaria/tools/calendar/utils/calendar_cubit.dart';
 import 'package:otzaria/utils/navigation/book_open_coordinator.dart';
 import 'package:otzaria/widgets/dialogs/dialogs_exports.dart';
-import 'package:otzaria/workspaces/bloc/workspace_bloc.dart';
+import 'package:otzaria/reader_memory/workspaces/bloc/workspace_bloc.dart';
 
 const String _backgroundInstanceId = 'background';
 

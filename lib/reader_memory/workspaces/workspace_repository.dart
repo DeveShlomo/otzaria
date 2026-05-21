@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:developer' as developer;
 import 'package:hive_ce/hive.dart';
 import 'package:otzaria/utils/file/hive_utils.dart';
-import 'package:otzaria/workspaces/workspace.dart';
+import 'package:otzaria/reader_memory/workspaces/workspace.dart';
 
 /// Repository for persisting and loading workspaces.
 ///

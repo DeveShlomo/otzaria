@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:otzaria/history/bloc/history_bloc.dart';
+import 'package:otzaria/reader_memory/history/bloc/history_bloc.dart';
 import 'package:otzaria/navigation/bloc/navigation_bloc.dart';
 import 'package:otzaria/tabs/bloc/tabs_bloc.dart';
 import 'package:otzaria/models/books.dart';
