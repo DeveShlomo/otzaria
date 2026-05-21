@@ -1,8 +1,8 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart';
-import 'package:otzaria/data/data_providers/book_database_resolver.dart';
-import 'package:otzaria/data/data_providers/file_system_data_provider.dart';
-import 'package:otzaria/data/data_providers/sqlite_data_provider.dart';
+import 'package:otzaria/seforim/providers/book_database_resolver.dart';
+import 'package:otzaria/seforim/providers/file_system_data_provider.dart';
+import 'package:otzaria/seforim/providers/sqlite_data_provider.dart';
 import 'package:otzaria/models/books.dart';
 
 /// מעשיר מידע קטגוריה לספר ברקע משלוש מקורות: DB, metadata, ונתיב.

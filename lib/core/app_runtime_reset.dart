@@ -1,10 +1,10 @@
 import 'package:otzaria/core/app_paths.dart';
-import 'package:otzaria/data/cache/acronyms_cache.dart';
-import 'package:otzaria/data/cache/books_cache.dart';
-import 'package:otzaria/data/data_providers/file_system_data_provider.dart';
-import 'package:otzaria/data/data_providers/library_provider_manager.dart';
-import 'package:otzaria/data/data_providers/sqlite_data_provider.dart';
-import 'package:otzaria/data/repository/data_repository.dart';
+import 'package:otzaria/seforim/cache/acronyms_cache.dart';
+import 'package:otzaria/seforim/cache/books_cache.dart';
+import 'package:otzaria/seforim/providers/file_system_data_provider.dart';
+import 'package:otzaria/seforim/providers/library_provider_manager.dart';
+import 'package:otzaria/seforim/providers/sqlite_data_provider.dart';
+import 'package:otzaria/seforim/repository/data_repository.dart';
 import 'package:otzaria/find_ref/repository/reference_books_cache.dart';
 import 'package:otzaria/plugins/services/plugin_runtime_dispatcher.dart';
 

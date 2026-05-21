@@ -21,11 +21,11 @@ import 'package:otzaria/settings/services/custom_folders/custom_folders_tile.dar
 import 'package:otzaria/widgets/dialogs/zip_extraction_progress_dialog.dart';
 import 'package:otzaria/widgets/widgets_exports.dart';
 import 'package:otzaria/settings/settings_card.dart';
-import 'package:otzaria/indexing/bloc/indexing_bloc.dart';
-import 'package:otzaria/indexing/bloc/indexing_event.dart';
-import 'package:otzaria/indexing/bloc/indexing_state.dart';
-import 'package:otzaria/indexing/repository/indexing_repository.dart';
-import 'package:otzaria/data/data_providers/tantivy_data_provider.dart';
+import 'package:otzaria/seforim/indexing/bloc/indexing_bloc.dart';
+import 'package:otzaria/seforim/indexing/bloc/indexing_event.dart';
+import 'package:otzaria/seforim/indexing/bloc/indexing_state.dart';
+import 'package:otzaria/seforim/indexing/repository/indexing_repository.dart';
+import 'package:otzaria/seforim/providers/tantivy_data_provider.dart';
 import 'package:otzaria/core/ui_snack.dart';
 
 /// טאב הגדרות ספרייה

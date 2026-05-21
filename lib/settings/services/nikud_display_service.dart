@@ -1,4 +1,4 @@
-import 'package:otzaria/data/data_providers/file_system_data_provider.dart';
+import 'package:otzaria/seforim/providers/file_system_data_provider.dart';
 import 'package:otzaria/settings/engine/settings_state.dart';
 
 /// מחזיר האם יש להסיר ניקוד עבור ספר נתון.

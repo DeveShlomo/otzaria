@@ -2,12 +2,12 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
-import 'package:otzaria/data/data_providers/sqlite_data_provider.dart';
-import 'package:otzaria/migration/database/daos/database.dart';
-import 'package:otzaria/migration/database/repository/seforim_repository.dart';
-import 'package:otzaria/migration/models/book.dart' as migration;
-import 'package:otzaria/migration/models/category.dart';
-import 'package:otzaria/migration/models/toc_entry.dart';
+import 'package:otzaria/seforim/providers/sqlite_data_provider.dart';
+import 'package:otzaria/seforim/migration/database/daos/database.dart';
+import 'package:otzaria/seforim/migration/database/repository/seforim_repository.dart';
+import 'package:otzaria/seforim/migration/models/book.dart' as migration;
+import 'package:otzaria/seforim/migration/models/category.dart';
+import 'package:otzaria/seforim/migration/models/toc_entry.dart';
 import 'package:otzaria/settings/engine/settings_repository.dart';
 import 'package:otzaria/tools/shamor_zachor/providers/shamor_zachor_data_provider.dart';
 import '../test_helpers/memory_cache_provider.dart';

@@ -1,11 +1,11 @@
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
-import 'package:otzaria/data/data_providers/sqlite_data_provider.dart';
+import 'package:otzaria/seforim/providers/sqlite_data_provider.dart';
 import 'package:otzaria/search/search_query_builder.dart';
 import 'package:otzaria/search/utils/regex_patterns.dart';
-import 'package:otzaria/data/book_locator.dart';
-import 'package:otzaria/data/data_providers/file_system_data_provider.dart';
+import 'package:otzaria/seforim/book_locator.dart';
+import 'package:otzaria/seforim/providers/file_system_data_provider.dart';
 
 String stripHtmlIfNeeded(String text) {
   // Replace whitespace HTML entities with actual spaces before stripping,

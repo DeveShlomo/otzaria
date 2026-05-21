@@ -4,7 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
-import 'package:otzaria/data/repository/hive_list_repository.dart';
+import 'package:otzaria/seforim/repository/hive_list_repository.dart';
 import 'package:otzaria/models/direct_error_report.dart';
 import 'package:otzaria/settings/engine/settings_repository.dart';
 import 'package:otzaria/services/direct_error_report_service.dart';

@@ -1,7 +1,7 @@
 import 'dart:io';
 
-import 'package:otzaria/data/data_providers/book_database_resolver.dart';
-import 'package:otzaria/migration/models/book.dart' as migration_models;
+import 'package:otzaria/seforim/providers/book_database_resolver.dart';
+import 'package:otzaria/seforim/migration/models/book.dart' as migration_models;
 import 'package:otzaria/models/books.dart';
 
 /// שירות מרכזי להפקת פרטי ספר לתצוגה/דיווח מתוך DB.

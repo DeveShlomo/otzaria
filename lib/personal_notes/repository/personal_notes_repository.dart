@@ -1,8 +1,8 @@
 import 'dart:io';
 
-import 'package:otzaria/data/book_locator.dart';
-import 'package:otzaria/data/data_providers/file_system_data_provider.dart';
-import 'package:otzaria/data/data_providers/sqlite_data_provider.dart';
+import 'package:otzaria/seforim/book_locator.dart';
+import 'package:otzaria/seforim/providers/file_system_data_provider.dart';
+import 'package:otzaria/seforim/providers/sqlite_data_provider.dart';
 import 'package:otzaria/personal_notes/models/personal_note.dart';
 import 'package:otzaria/personal_notes/services/personal_notes_service.dart';
 import 'package:otzaria/personal_notes/storage/personal_notes_database.dart';

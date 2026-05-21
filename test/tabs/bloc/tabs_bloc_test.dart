@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart' show FlutterError;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
-import 'package:otzaria/data/data_providers/file_system_data_provider.dart';
+import 'package:otzaria/seforim/providers/file_system_data_provider.dart';
 import 'package:otzaria/models/books.dart';
 import 'package:otzaria/models/links.dart';
 import 'package:otzaria/tabs/bloc/tabs_bloc.dart';

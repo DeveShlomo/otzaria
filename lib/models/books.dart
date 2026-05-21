@@ -1,4 +1,4 @@
-import 'package:otzaria/data/data_providers/library_provider_manager.dart';
+import 'package:otzaria/seforim/providers/library_provider_manager.dart';
 import 'package:otzaria/library/models/library.dart';
 import 'package:otzaria/models/links.dart';
 //import 'package:pdfrx/pdfrx.dart';

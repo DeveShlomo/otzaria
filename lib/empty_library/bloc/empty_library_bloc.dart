@@ -11,7 +11,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:otzaria/core/http_client_registry.dart';
-import 'package:otzaria/data/constants/database_constants.dart';
+import 'package:otzaria/seforim/constants/database_constants.dart';
 import 'package:otzaria/empty_library/bloc/empty_library_event.dart';
 import 'package:otzaria/empty_library/bloc/empty_library_state.dart';
 import 'package:otzaria/settings/settings_exports.dart';

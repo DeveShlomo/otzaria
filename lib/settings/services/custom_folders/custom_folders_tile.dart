@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:file_picker/file_picker.dart';
 import 'dart:io';
 
-import 'package:otzaria/data/data_providers/database_library_provider.dart';
+import 'package:otzaria/seforim/providers/database_library_provider.dart';
 import 'package:otzaria/settings/services/custom_folders/custom_folder.dart';
 import 'package:otzaria/settings/services/custom_folders/bloc/custom_folders_bloc.dart';
 import 'package:otzaria/widgets/dialogs/confirmation_dialog.dart';

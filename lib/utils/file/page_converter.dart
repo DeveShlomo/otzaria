@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:otzaria/data/repository/data_repository.dart';
+import 'package:otzaria/seforim/repository/data_repository.dart';
 import 'package:otzaria/models/books.dart';
 import 'package:otzaria/utils/file/page_map_builder.dart';
 import 'package:pdfrx/pdfrx.dart';

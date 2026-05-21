@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
-import 'package:otzaria/data/cache/books_cache.dart';
-import 'package:otzaria/data/cache/acronyms_cache.dart';
-import 'package:otzaria/data/data_providers/book_composite_key.dart';
-import 'package:otzaria/data/data_providers/file_system_library_provider.dart';
+import 'package:otzaria/seforim/cache/books_cache.dart';
+import 'package:otzaria/seforim/cache/acronyms_cache.dart';
+import 'package:otzaria/seforim/providers/book_composite_key.dart';
+import 'package:otzaria/seforim/providers/file_system_library_provider.dart';
 import 'package:otzaria/utils/text/text_manipulation.dart';
 import 'package:pdfrx/pdfrx.dart';
 

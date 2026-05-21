@@ -1,4 +1,4 @@
-import 'package:otzaria/indexing/repository/indexing_repository.dart';
+import 'package:otzaria/seforim/indexing/repository/indexing_repository.dart';
 import 'package:otzaria/models/books.dart';
 import 'package:otzaria/search/book_facet.dart';
 

@@ -30,8 +30,8 @@ import 'package:printing/printing.dart';
 import 'package:pdf/pdf.dart' hide PdfDocument;
 import 'package:pdf/widgets.dart' as pw;
 import 'package:otzaria/models/books.dart';
-import 'package:otzaria/data/data_providers/database_library_provider.dart';
-import 'package:otzaria/data/data_providers/library_provider_manager.dart';
+import 'package:otzaria/seforim/providers/database_library_provider.dart';
+import 'package:otzaria/seforim/providers/library_provider_manager.dart';
 
 enum _PrintRangeMode { headers, altHeaders, lines }
 

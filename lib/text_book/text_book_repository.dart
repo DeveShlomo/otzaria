@@ -1,10 +1,10 @@
-import 'package:otzaria/data/data_providers/file_system_data_provider.dart';
-import 'package:otzaria/data/data_providers/sqlite_data_provider.dart';
-import 'package:otzaria/data/data_providers/library_provider_manager.dart';
-import 'package:otzaria/data/data_providers/database_library_provider.dart';
+import 'package:otzaria/seforim/providers/file_system_data_provider.dart';
+import 'package:otzaria/seforim/providers/sqlite_data_provider.dart';
+import 'package:otzaria/seforim/providers/library_provider_manager.dart';
+import 'package:otzaria/seforim/providers/database_library_provider.dart';
 import 'package:otzaria/models/books.dart';
 import 'package:otzaria/models/links.dart';
-import 'package:otzaria/data/book_locator.dart';
+import 'package:otzaria/seforim/book_locator.dart';
 import 'package:otzaria/utils/file/docx_to_otzaria.dart';
 import 'package:otzaria/utils/file/toc_parser.dart';
 import 'package:otzaria/utils/text/text_manipulation.dart' as utils;

@@ -1,4 +1,4 @@
-import 'package:otzaria/data/data_providers/tantivy_data_provider.dart';
+import 'package:otzaria/seforim/providers/tantivy_data_provider.dart';
 import 'package:otzaria/search/models/search_configuration.dart';
 import 'package:otzaria/search/search_query_builder.dart';
 import 'package:search_engine/search_engine.dart';

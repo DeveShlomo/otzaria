@@ -2,12 +2,12 @@ import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'dart:convert';
-import 'package:otzaria/data/data_providers/book_database_resolver.dart';
-import 'package:otzaria/data/data_providers/sqlite_data_provider.dart';
-import 'package:otzaria/migration/database/repository/seforim_repository.dart';
-import 'package:otzaria/migration/models/category.dart' as db_models;
-import 'package:otzaria/migration/models/book.dart' as db_models;
-import 'package:otzaria/migration/models/toc_entry.dart' as db_models;
+import 'package:otzaria/seforim/providers/book_database_resolver.dart';
+import 'package:otzaria/seforim/providers/sqlite_data_provider.dart';
+import 'package:otzaria/seforim/migration/database/repository/seforim_repository.dart';
+import 'package:otzaria/seforim/migration/models/category.dart' as db_models;
+import 'package:otzaria/seforim/migration/models/book.dart' as db_models;
+import 'package:otzaria/seforim/migration/models/toc_entry.dart' as db_models;
 
 import '../models/book_model.dart';
 import '../models/error_model.dart';

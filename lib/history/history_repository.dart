@@ -1,5 +1,5 @@
 import 'package:otzaria/bookmarks/models/bookmark.dart';
-import 'package:otzaria/data/repository/base_list_repository.dart';
+import 'package:otzaria/seforim/repository/base_list_repository.dart';
 
 class HistoryRepository extends BaseListRepository<Bookmark> {
   HistoryRepository()

@@ -11,7 +11,7 @@ import '../../bloc/text_book_event.dart';
 
 import '../services/preview_renderer.dart';
 import '../models/editor_settings.dart';
-import 'package:otzaria/data/data_providers/file_system_data_provider.dart';
+import 'package:otzaria/seforim/providers/file_system_data_provider.dart';
 import 'package:otzaria/core/ui_snack.dart';
 import 'package:otzaria/widgets/buttons/action_buttons.dart';
 import 'package:otzaria/widgets/dialogs/dialogs_exports.dart';

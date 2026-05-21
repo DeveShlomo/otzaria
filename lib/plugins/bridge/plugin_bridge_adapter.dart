@@ -8,7 +8,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:otzaria/plugins/models/installed_plugin.dart';
 import 'package:otzaria/plugins/repository/plugin_registry_repository.dart';
-import 'package:otzaria/data/repository/data_repository.dart';
+import 'package:otzaria/seforim/repository/data_repository.dart';
 import 'package:otzaria/personal_notes/repository/personal_notes_repository.dart';
 import 'package:otzaria/personal_notes/models/personal_note.dart';
 import 'package:otzaria/core/http_client_registry.dart';

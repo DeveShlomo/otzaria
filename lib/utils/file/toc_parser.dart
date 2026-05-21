@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:otzaria/models/books.dart';
-import 'package:otzaria/data/data_providers/library_provider_manager.dart';
+import 'package:otzaria/seforim/providers/library_provider_manager.dart';
 
 /// Shared TOC parsing utilities used by both the TextBook navigator and
 /// the Shamor Zachor scanner. This ensures a single source of truth for

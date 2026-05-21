@@ -1,14 +1,14 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
-import 'package:otzaria/data/data_providers/database_library_provider.dart';
-import 'package:otzaria/data/data_providers/sqlite_data_provider.dart';
-import 'package:otzaria/data/data_providers/user_books_database_holder.dart';
+import 'package:otzaria/seforim/providers/database_library_provider.dart';
+import 'package:otzaria/seforim/providers/sqlite_data_provider.dart';
+import 'package:otzaria/seforim/providers/user_books_database_holder.dart';
 import 'package:otzaria/library/bloc/library_bloc.dart';
 import 'package:otzaria/library/bloc/library_event.dart';
-import 'package:otzaria/migration/models/category.dart';
-import 'package:otzaria/migration/sync/background_db_sync_worker.dart';
-import 'package:otzaria/migration/sync/file_sync_service.dart' show FileSyncResult;
+import 'package:otzaria/seforim/migration/models/category.dart';
+import 'package:otzaria/seforim/migration/sync/background_db_sync_worker.dart';
+import 'package:otzaria/seforim/migration/sync/file_sync_service.dart' show FileSyncResult;
 import 'package:otzaria/settings/engine/settings_repository.dart';
 import 'package:otzaria/settings/services/custom_folders/custom_folder.dart';
 

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:otzaria/data/data_providers/tantivy_data_provider.dart';
-import 'package:otzaria/indexing/bloc/indexing_bloc.dart';
-import 'package:otzaria/indexing/bloc/indexing_state.dart';
+import 'package:otzaria/seforim/providers/tantivy_data_provider.dart';
+import 'package:otzaria/seforim/indexing/bloc/indexing_bloc.dart';
+import 'package:otzaria/seforim/indexing/bloc/indexing_state.dart';
 
 /// מצב אזהרת האינדקס המוצג למשתמש.
 enum IndexingWarningMode {

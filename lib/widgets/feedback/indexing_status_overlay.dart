@@ -1,8 +1,8 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:otzaria/indexing/bloc/indexing_bloc.dart';
-import 'package:otzaria/indexing/bloc/indexing_state.dart';
+import 'package:otzaria/seforim/indexing/bloc/indexing_bloc.dart';
+import 'package:otzaria/seforim/indexing/bloc/indexing_state.dart';
 
 class IndexingStatusOverlay extends StatefulWidget {
   const IndexingStatusOverlay({super.key, this.onTap});

@@ -1,12 +1,12 @@
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:otzaria/indexing/repository/indexing_repository.dart';
+import 'package:otzaria/seforim/indexing/repository/indexing_repository.dart';
 import 'package:otzaria/search/bloc/search_event.dart';
 import 'package:otzaria/search/bloc/search_state.dart';
 import 'package:otzaria/search/models/search_configuration.dart';
-import 'package:otzaria/data/data_providers/tantivy_data_provider.dart';
-import 'package:otzaria/data/repository/data_repository.dart';
+import 'package:otzaria/seforim/providers/tantivy_data_provider.dart';
+import 'package:otzaria/seforim/repository/data_repository.dart';
 import 'package:otzaria/library/models/library.dart';
 import 'package:otzaria/models/books.dart';
 import 'package:otzaria/search/search_repository.dart';

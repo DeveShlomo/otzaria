@@ -1,6 +1,6 @@
 import 'package:otzaria/models/links.dart';
 import 'package:otzaria/utils/text/text_manipulation.dart' as utils;
-import 'package:otzaria/data/data_providers/sqlite_data_provider.dart';
+import 'package:otzaria/seforim/providers/sqlite_data_provider.dart';
 import 'dart:isolate';
 
 /// מייצג קבוצת קטעי פירוש רצופים מאותו ספר

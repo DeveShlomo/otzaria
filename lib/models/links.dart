@@ -1,6 +1,6 @@
 /* represents links between two books in the library*/
 
-import 'package:otzaria/data/data_providers/library_provider_manager.dart';
+import 'package:otzaria/seforim/providers/library_provider_manager.dart';
 import 'package:otzaria/models/books.dart';
 import 'package:otzaria/utils/text/ref_helper.dart';
 import 'package:otzaria/utils/text/text_manipulation.dart' as utils;

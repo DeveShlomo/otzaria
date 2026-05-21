@@ -7,7 +7,7 @@ import 'package:otzaria/models/link_types.dart';
 import 'package:otzaria/utils/text/text_manipulation.dart' as utils;
 import 'package:otzaria/utils/text/text_manipulation.dart'
     show normalizeCategoryPath;
-import 'package:otzaria/data/data_providers/file_system_data_provider.dart';
+import 'package:otzaria/seforim/providers/file_system_data_provider.dart';
 
 /// מחלקה לניהול ברירות מחדל של מפרשים לפי סוג הספר
 /// ההגדרות נטענות מקובץ JSON חיצוני

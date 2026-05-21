@@ -11,7 +11,7 @@ import 'package:otzaria/widgets/misc/app_menu_exports.dart';
 import 'package:otzaria/bookmarks/bloc/bookmark_bloc.dart';
 import 'package:otzaria/bookmarks/view/bookmark_screen.dart';
 import 'package:otzaria/core/ui_snack.dart';
-import 'package:otzaria/data/repository/data_repository.dart';
+import 'package:otzaria/seforim/repository/data_repository.dart';
 import 'package:otzaria/models/books.dart';
 import 'package:otzaria/models/links.dart' as otz_links;
 import 'package:otzaria/pdf_book/bloc/pdf_book_bloc.dart';

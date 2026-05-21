@@ -5,7 +5,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:http/http.dart' as http;
-import 'package:otzaria/data/repository/hive_list_repository.dart';
+import 'package:otzaria/seforim/repository/hive_list_repository.dart';
 import 'package:otzaria/models/direct_error_report.dart';
 import 'package:otzaria/settings/engine/settings_repository.dart';
 
