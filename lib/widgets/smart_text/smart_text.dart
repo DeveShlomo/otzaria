@@ -11,4 +11,4 @@ library;
 
 export 'render_settings.dart';
 export 'smart_text_widget.dart';
-export 'text_renderer_service.dart';
+export 'package:otzaria/services/text_renderer_service.dart';

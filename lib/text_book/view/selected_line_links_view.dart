@@ -14,6 +14,7 @@ import 'package:otzaria/text_book/widgets/text_book_state_builder.dart';
 import 'package:otzaria/widgets/feedback/app_future_builder.dart';
 import 'package:otzaria/utils/text/text_manipulation.dart' as utils;
 import 'package:otzaria/utils/ui/context_menu_utils.dart';
+import 'package:otzaria/services/commentary_copy_service.dart';
 import 'package:otzaria/widgets/text/rtl_text_field.dart';
 import 'package:otzaria/widgets/smart_text/smart_text.dart';
 import 'package:otzaria/text_book/view/selection/selection_sync_controller.dart';
@@ -503,7 +504,7 @@ class _SelectedLineLinksViewState extends State<SelectedLineLinksView> {
           openBookCallback: widget.openBookCallback,
           fontSize: widget.fontSize,
           savedSelectedText: _savedSelectedText,
-          onCopySelected: () => ContextMenuUtils.copyFormattedText(
+          onCopySelected: () => copyFormattedText(
             context: menuCtx,
             savedSelectedText: _savedSelectedText,
             fontSize: widget.fontSize,

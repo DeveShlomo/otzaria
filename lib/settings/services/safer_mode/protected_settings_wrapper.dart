@@ -190,31 +190,3 @@ class _ProtectedSettingsWrapperState extends State<ProtectedSettingsWrapper> {
   }
 }
 
-/// פונקציה עוזרת לבדיקה האם צריך הגנה
-bool shouldProtectSettings(BuildContext context) {
-  final state = context.read<SettingsBloc>().state;
-  final repository = context.read<SettingsRepository>();
-  return state.protectedModeEnabled && repository.hasProtectedModePassword();
-}
-
-/// פונקציה עוזרת לאימות סיסמה
-Future<bool> verifyPasswordForAction(BuildContext context) async {
-  if (!shouldProtectSettings(context)) {
-    return true; // אין הגנה - מאושר
-  }
-
-  final repository = context.read<SettingsRepository>();
-
-  final verified = await showDialog<bool>(
-    context: context,
-    builder: (context) => PasswordVerificationDialog(
-      title: 'אמת סיסמה',
-      hint: 'הנך במצב מוגן.\nהזן את הסיסמה כדי לבצע פעולה זו',
-      onVerify: (password) async {
-        return repository.verifyProtectedModePassword(password);
-      },
-    ),
-  );
-
-  return verified == true;
-}

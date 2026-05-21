@@ -18,7 +18,7 @@ import 'package:otzaria/settings/search/settings_anchor.dart';
 import 'package:otzaria/settings/search/settings_search_models.dart';
 import 'package:otzaria/settings/view/settings_screen.dart';
 import 'package:otzaria/settings/services/safer_mode/password_verification_dialog.dart';
-import 'package:otzaria/settings/services/safer_mode/protected_settings_wrapper.dart';
+import 'package:otzaria/settings/services/safer_mode/password_verifier.dart';
 import 'package:otzaria/settings/services/backup_service.dart';
 import 'package:otzaria/core/ui_snack.dart';
 import 'package:otzaria/library/empty/bloc/empty_library_bloc.dart';

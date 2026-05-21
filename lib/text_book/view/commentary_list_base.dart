@@ -19,6 +19,7 @@ import 'package:otzaria/widgets/misc/progressive_scrolling.dart';
 import 'package:otzaria/settings/settings_exports.dart';
 import 'package:otzaria/utils/text/text_manipulation.dart' as utils;
 import 'package:otzaria/utils/ui/context_menu_utils.dart';
+import 'package:otzaria/services/commentary_copy_service.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:otzaria/widgets/text/rtl_text_field.dart';
 import 'package:otzaria/widgets/feedback/app_future_builder.dart';
@@ -701,7 +702,7 @@ class CommentaryListBaseState extends State<CommentaryListBase> {
                           _CopyCommentaryIntent:
                               CallbackAction<_CopyCommentaryIntent>(
                             onInvoke: (_) {
-                              ContextMenuUtils.copyFormattedText(
+                              copyFormattedText(
                                 context: context,
                                 savedSelectedText: _savedSelectedText.value,
                                 fontSize: widget.fontSize,
@@ -1325,7 +1326,7 @@ class _CollapsibleCommentaryGroupState
                               savedSelectedText:
                                   widget.savedSelectedTextListenable.value,
                               onCopySelected: () =>
-                                  ContextMenuUtils.copyFormattedText(
+                                  copyFormattedText(
                                 context: menuCtx,
                                 savedSelectedText:
                                     widget.savedSelectedTextListenable.value,

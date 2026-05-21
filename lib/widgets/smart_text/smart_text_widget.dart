@@ -4,7 +4,7 @@ import 'package:html/dom.dart' as dom;
 import 'package:otzaria/tabs/models/tab.dart';
 import 'package:otzaria/utils/text/html_link_handler.dart';
 import 'package:otzaria/widgets/smart_text/render_settings.dart';
-import 'package:otzaria/widgets/smart_text/text_renderer_service.dart';
+import 'package:otzaria/services/text_renderer_service.dart';
 
 /// ווידג'ט חכם להצגת טקסט עברי
 ///

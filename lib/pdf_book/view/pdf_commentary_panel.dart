@@ -18,6 +18,7 @@ import 'package:otzaria/settings/settings_exports.dart';
 import 'package:otzaria/settings/services/per_book_settings_service.dart';
 import 'package:otzaria/utils/text/text_manipulation.dart' as utils;
 import 'package:otzaria/utils/ui/context_menu_utils.dart';
+import 'package:otzaria/services/commentary_copy_service.dart';
 import 'package:otzaria/widgets/text/rtl_text_field.dart';
 import 'package:otzaria/widgets/misc/app_menu_exports.dart';
 import 'package:otzaria/widgets/navigation/panel_tab_header.dart';
@@ -303,7 +304,7 @@ class _PdfCommentaryPanelState extends State<PdfCommentaryPanel>
 
   /// העתקת טקסט מעוצב (HTML) ללוח
   Future<void> _copyFormattedText() async {
-    await ContextMenuUtils.copyFormattedText(
+    await copyFormattedText(
       context: context,
       savedSelectedText: _savedSelectedText,
       fontSize: widget.fontSize,

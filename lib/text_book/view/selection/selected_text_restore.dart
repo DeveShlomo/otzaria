@@ -1,5 +1,5 @@
 import 'package:otzaria/widgets/smart_text/render_settings.dart';
-import 'package:otzaria/widgets/smart_text/text_renderer_service.dart';
+import 'package:otzaria/services/text_renderer_service.dart';
 
 /// מעבד שורת מקור לאותו טקסט פשוט שהמשתמש רואה בפועל במסך.
 String renderSelectionLine({
