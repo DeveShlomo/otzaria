@@ -86,6 +86,7 @@ android/app/google-services.json
 build/
 fonts/
 external/
+!lib/library/external/
 
 pubspec.lock
 flutter/

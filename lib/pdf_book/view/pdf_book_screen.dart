@@ -53,7 +53,7 @@ import 'package:otzaria/models/pdf_headings.dart';
 import 'package:otzaria/text_book/models/commentator_group.dart';
 import 'package:otzaria/printing/printing_helpers.dart';
 import 'package:otzaria/printing/view/printing_screen.dart';
-import 'package:otzaria/shortcuts/shortcut_helper.dart';
+import 'package:otzaria/settings/shortcuts/shortcut_helper.dart';
 import 'package:otzaria/utils/link_helpers.dart';
 
 final GlobalKey pdfBookNavigationTourTargetKey = GlobalKey(

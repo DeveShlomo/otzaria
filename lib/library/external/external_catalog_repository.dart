@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
-import 'package:otzaria/core/http_client_registry.dart';
+import 'package:otzaria/core/lifecycle/http_client_registry.dart';
 import 'package:otzaria/seforim/constants/database_constants.dart';
 import 'package:otzaria/models/books.dart';
 import 'package:path/path.dart' as path;

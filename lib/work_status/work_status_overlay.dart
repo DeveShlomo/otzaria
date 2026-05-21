@@ -1,8 +1,8 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:otzaria/work_status/work_status_cubit.dart';
-import 'package:otzaria/work_status/work_status_item.dart';
+import 'package:otzaria/core/work_status/work_status_cubit.dart';
+import 'package:otzaria/core/work_status/work_status_item.dart';
 
 class WorkStatusOverlay extends StatelessWidget {
   const WorkStatusOverlay({super.key, this.onTap});

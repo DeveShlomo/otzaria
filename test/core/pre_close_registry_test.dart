@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:otzaria/core/pre_close_registry.dart';
+import 'package:otzaria/core/lifecycle/pre_close_registry.dart';
 
 void main() {
   group('PreCloseRegistry', () {

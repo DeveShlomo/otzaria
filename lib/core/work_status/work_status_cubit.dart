@@ -1,5 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:otzaria/work_status/work_status_item.dart';
+import 'package:otzaria/core/work_status/work_status_item.dart';
 
 class WorkStatusState {
   final Map<String, WorkStatusItem> items;

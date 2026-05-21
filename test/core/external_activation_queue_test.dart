@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:otzaria/core/external_activation_queue.dart';
+import 'package:otzaria/core/activation/external_activation_queue.dart';
 import 'package:path/path.dart' as p;
 
 void main() {

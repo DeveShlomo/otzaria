@@ -8,8 +8,8 @@ import 'package:otzaria/seforim/sync/bloc/file_sync_state.dart';
 import 'package:otzaria/seforim/sync/repository/file_sync_repository.dart';
 import 'package:otzaria/seforim/sync/library_diff_sync_worker.dart';
 import 'package:otzaria/settings/settings_exports.dart';
-import 'package:otzaria/work_status/work_status_cubit.dart';
-import 'package:otzaria/work_status/work_status_item.dart';
+import 'package:otzaria/core/work_status/work_status_cubit.dart';
+import 'package:otzaria/core/work_status/work_status_item.dart';
 
 const _kSyncTaskId = 'library-db-sync';
 

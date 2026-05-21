@@ -1,6 +1,6 @@
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:otzaria/core/app_runtime_reset.dart';
+import 'package:otzaria/core/lifecycle/app_runtime_reset.dart';
 import 'package:otzaria/seforim/providers/book_composite_key.dart';
 import 'package:otzaria/seforim/providers/file_system_data_provider.dart';
 import 'package:otzaria/seforim/providers/file_system_library_provider.dart';

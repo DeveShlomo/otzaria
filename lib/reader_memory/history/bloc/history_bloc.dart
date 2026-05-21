@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:otzaria/reader_memory/bookmarks/models/bookmark.dart';
-import 'package:otzaria/core/pre_close_registry.dart';
+import 'package:otzaria/core/lifecycle/pre_close_registry.dart';
 import 'package:otzaria/models/books.dart';
 import 'package:otzaria/reader_memory/history/bloc/history_event.dart';
 import 'package:otzaria/reader_memory/history/bloc/history_state.dart';

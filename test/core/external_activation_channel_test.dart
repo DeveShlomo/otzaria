@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:otzaria/core/external_activation_channel.dart';
+import 'package:otzaria/core/activation/external_activation_channel.dart';
 
 void main() {
   group('ExternalActivationChannel', () {

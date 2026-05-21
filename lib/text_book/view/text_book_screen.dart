@@ -43,8 +43,8 @@ import 'package:otzaria/utils/text/ref_helper.dart';
 import 'package:otzaria/text_book/view/book_source_dialog.dart';
 // [EDITING DISABLED] import 'package:otzaria/text_book/editing/helpers/editor_settings_helper.dart';
 import 'package:otzaria/personal_notes/personal_notes_system.dart';
-import 'package:otzaria/shortcuts/shortcut_helper.dart';
-import 'package:otzaria/shortcuts/shortcut_validator.dart';
+import 'package:otzaria/settings/shortcuts/shortcut_helper.dart';
+import 'package:otzaria/settings/shortcuts/shortcut_validator.dart';
 import 'package:otzaria/utils/ui/fullscreen_helper.dart';
 
 import 'package:otzaria/widgets/navigation/responsive_action_bar.dart';

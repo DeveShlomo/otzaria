@@ -7,7 +7,7 @@ import 'package:otzaria/seforim/sync/bloc/file_sync_event.dart';
 import 'package:otzaria/seforim/sync/repository/file_sync_repository.dart';
 import 'package:otzaria/seforim/sync/bloc/file_sync_state.dart';
 import 'package:otzaria/settings/engine/settings_repository.dart';
-import 'package:otzaria/work_status/work_status_cubit.dart';
+import 'package:otzaria/core/work_status/work_status_cubit.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

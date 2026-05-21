@@ -3,9 +3,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:otzaria/empty_library/bloc/empty_library_bloc.dart';
-import 'package:otzaria/empty_library/bloc/empty_library_event.dart';
-import 'package:otzaria/empty_library/bloc/empty_library_state.dart';
+import 'package:otzaria/library/empty/bloc/empty_library_bloc.dart';
+import 'package:otzaria/library/empty/bloc/empty_library_event.dart';
+import 'package:otzaria/library/empty/bloc/empty_library_state.dart';
 import 'package:otzaria/core/ui_snack.dart';
 import 'package:otzaria/widgets/dialogs/dialogs_exports.dart';
 

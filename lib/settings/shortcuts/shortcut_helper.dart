@@ -1,6 +1,6 @@
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:otzaria/shortcuts/key_map.dart';
+import 'package:otzaria/settings/shortcuts/key_map.dart';
 
 /// פונקציות עזר לטיפול בקיצורי מקשים.
 ///

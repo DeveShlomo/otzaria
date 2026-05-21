@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:otzaria/core/external_uri_router.dart';
+import 'package:otzaria/core/activation/external_uri_router.dart';
 import 'package:otzaria/navigation/bloc/navigation_state.dart';
 
 void main() {

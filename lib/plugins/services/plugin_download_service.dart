@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:http/http.dart' as http;
-import 'package:otzaria/core/http_client_registry.dart';
+import 'package:otzaria/core/lifecycle/http_client_registry.dart';
 import 'package:path/path.dart' as p;
 
 class PluginDownloadService {

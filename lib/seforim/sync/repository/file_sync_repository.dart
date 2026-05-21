@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:developer' as developer;
 import 'dart:typed_data';
 import 'package:http/http.dart' as http;
-import 'package:otzaria/core/http_client_registry.dart';
+import 'package:otzaria/core/lifecycle/http_client_registry.dart';
 import 'package:otzaria/seforim/constants/database_constants.dart';
 import 'package:otzaria/seforim/providers/sqlite_data_provider.dart';
 import 'package:otzaria/services/data_collection_service.dart';

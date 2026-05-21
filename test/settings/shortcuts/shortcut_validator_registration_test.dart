@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:otzaria/shortcuts/shortcut_validator.dart';
+import 'package:otzaria/settings/shortcuts/shortcut_validator.dart';
 
 void main() {
   group('ShortcutValidator - רישום קיצורי החלוניות', () {

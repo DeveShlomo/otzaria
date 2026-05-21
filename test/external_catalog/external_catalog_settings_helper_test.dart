@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:otzaria/external_catalog/repository/external_catalog_repository.dart';
+import 'package:otzaria/library/external/external_catalog_repository.dart';
 import 'package:otzaria/external_catalog/view/external_catalog_settings_helper.dart';
 import 'package:otzaria/settings/engine/settings_state.dart';
 

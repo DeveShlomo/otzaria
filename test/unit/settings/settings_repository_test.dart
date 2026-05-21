@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
-import 'package:otzaria/shortcuts/shortcut_validator.dart';
+import 'package:otzaria/settings/shortcuts/shortcut_validator.dart';
 import 'package:otzaria/settings/engine/settings_repository.dart';
 import 'package:otzaria/theme/theme_exports.dart';
 import '../../unit/mocks/mock_settings_wrapper.mocks.dart';

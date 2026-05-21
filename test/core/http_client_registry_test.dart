@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:otzaria/core/http_client_registry.dart';
+import 'package:otzaria/core/lifecycle/http_client_registry.dart';
 
 void main() {
   // HttpClientRegistry קריטי לסגירת התוכנה ב-Windows admin install: socket
