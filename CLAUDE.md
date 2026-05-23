@@ -87,7 +87,9 @@ lib/feature_name/
 
 ### Key Code Locations
 
-> ⚠️ **ארגון מחדש בתכנון** — ראה קבצי תוכנית בשורש הפרויקט: `plan_ui_separation.md`, `plan_features_reorganization.md`, `plan_commit_order.md`, `plan_test_directory.md`. הנתיבים להלן משקפים את המצב **הנוכחי**; הם יתעדכנו לאחר כל commit של הארגון מחדש.
+> ⚠️ **ארגון מחדש בתכנון** — ראה קבצי תוכנית בשורש הפרויקט: `plan_ui_separation.md`, `plan_features_reorganization.md`, `plan_commit_order.md`, `plan_test_directory.md`, `plan_phase2_ui_separation.md`, `plan_lib_structure.md` (מפת כל תיקיות lib/ ללא ui/). הנתיבים להלן משקפים את המצב **הנוכחי**; הם יתעדכנו לאחר כל commit של הארגון מחדש.
+>
+> **Phase 2 (בתכנון):** יצירת `lib/reading/` ללוגיקת text_book/pdf_book/search/personal_notes/tabs, ו-`lib/ui/reading/` לכל UI הקריאה. מקביל ל-`lib/reader_memory/` + `lib/ui/reader_memory/` שנוצרו ב-Phase 1.
 
 ```
 lib/
@@ -109,9 +111,11 @@ lib/
 │   └── bloc/
 ├── bookmarks/repository/              # Bookmarks system (→ reader_memory/ בארגון חדש)
 ├── history/                           # Reading history (→ reader_memory/ בארגון חדש)
-├── personal_notes/                    # User notes feature
-├── pdf_book/                          # PDF viewer screens
-├── text_book/                         # Text viewer screens
+├── personal_notes/                    # User notes feature (→ reading/personal_notes/ בPhase 2)
+├── pdf_book/                          # PDF viewer (→ reading/pdf_book/ + ui/reading/pdf_book/ בPhase 2)
+├── text_book/                         # Text viewer (→ reading/text_book/ + ui/reading/text_book/ בPhase 2)
+├── search/                            # Search engine (→ reading/search/ + ui/reading/search/ בPhase 2)
+├── tabs/                              # Tab management (→ reading/tabs/ + ui/reading/ בPhase 2)
 └── utils/
     └── open_book.dart                 # Book opening logic
 ```
