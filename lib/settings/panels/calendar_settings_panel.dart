@@ -206,8 +206,7 @@ class _CalendarSettingsTabState extends State<CalendarSettingsTab> {
                   title: 'עיר נבחרת',
                   subtitle: 'בחירת עיר לחישובי זמני היום והלוח',
                   value: state.selectedCity,
-                  minFieldWidth: 220,
-                  maxFieldWidth: 320,
+                  fieldWidth: 220,
                   enableSearch: true,
                   entries: _cityNames
                       .map(
@@ -261,8 +260,7 @@ class _CalendarSettingsTabState extends State<CalendarSettingsTab> {
                     title: 'זמן תזכורת לפני האירוע',
                     subtitle: 'כמה זמן לפני תחילת האירוע תופיע התראה',
                     value: state.calendarNotificationTime,
-                    minFieldWidth: 180,
-                    maxFieldWidth: 240,
+                    fieldWidth: 180,
                     entries: const [
                       AppMenuEntry(value: 60, label: 'שעה'),
                       AppMenuEntry(value: 720, label: '12 שעות'),
@@ -465,73 +463,21 @@ class _CalendarSettingsTabState extends State<CalendarSettingsTab> {
     required List<AppMenuEntry<T>> entries,
     required ValueChanged<T?> onSelected,
     bool enableSearch = false,
-    double minFieldWidth = 220,
-    double maxFieldWidth = 320,
+    double fieldWidth = 220,
   }) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          final isCompact = constraints.maxWidth < 620;
-          final fieldWidth = isCompact
-              ? constraints.maxWidth
-              : constraints.maxWidth.clamp(minFieldWidth, maxFieldWidth);
-
-          final info = Expanded(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Icon(icon),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(title, style: kSettingsTitleStyle),
-                      const SizedBox(height: 4),
-                      Text(subtitle, style: kSettingsSubtitleStyle),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          );
-
-          final field = SizedBox(
-            width: fieldWidth,
-            child: AppDropdownField<T>(
-              value: value,
-              enableSearch: enableSearch,
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                isDense: true,
-              ),
-              entries: entries,
-              onSelected: onSelected,
-            ),
-          );
-
-          if (isCompact) {
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Row(children: [info]),
-                const SizedBox(height: 12),
-                field,
-              ],
-            );
-          }
-
-          return Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              info,
-              const SizedBox(width: 16),
-              Flexible(
-                  child: Align(alignment: Alignment.centerLeft, child: field)),
-            ],
-          );
-        },
+    return ListTile(
+      leading: Icon(icon),
+      title: Text(title, style: kSettingsTitleStyle),
+      subtitle: Text(subtitle, style: kSettingsSubtitleStyle),
+      trailing: SizedBox(
+        width: fieldWidth,
+        child: AppDropdownField<T>(
+          value: value,
+          enableSearch: enableSearch,
+          isExpanded: true,
+          entries: entries,
+          onSelected: onSelected,
+        ),
       ),
     );
   }

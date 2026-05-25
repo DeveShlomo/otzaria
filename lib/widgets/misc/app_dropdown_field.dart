@@ -1,45 +1,27 @@
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:otzaria/theme/theme_exports.dart';
-import 'package:otzaria/widgets/inputs/app_input_tokens.dart';
-
 import 'package:otzaria/widgets/misc/app_popup_menu.dart';
 
 // ═══════════════════════════════════════════════════════════════════════════
 // AppSelectionField — שדה-בחירה (trigger לתפריט נפתח)
 //
-// עיצוב: זהה לשורת הטריגר של DropdownMenu עם חיפוש
-// • ללא גבול במצב רגיל
-// • גבול עדין בעת hover
+// עיצוב: FilledButton.tonal קומפקטי — זהה ל-NeutralActionButton
+// • secondaryContainer / onSecondaryContainer — אוטומטי מהתמה
+// • hover / press / focus / disabled מנוהלים ע"י ButtonStyle (M3)
+// • גובה מינימלי 32dp, IntrinsicWidth כשלא מורחב
 // ═══════════════════════════════════════════════════════════════════════════
 
-const double _dropdownFieldRadius = AppInputTokens.compactRadius;
-const double _dropdownFieldIdleFillAlpha = AppInputTokens.unfocusedAlpha;
-const double _dropdownFieldDisabledFillAlpha = AppInputTokens.disabledAlpha;
-const double _dropdownFieldHoverFillAlpha = 0.10;
-const double _dropdownFieldBorderWidth = 1.4;
-const double _dropdownFieldMinHeight = 40.0;
-const EdgeInsets _dropdownFieldContentPadding =
-    EdgeInsets.symmetric(horizontal: 10, vertical: 5);
 
-Color _dropdownFieldBorderColor(BuildContext context) {
-  final theme = Theme.of(context);
-  final cs = theme.colorScheme;
-  return theme.brightness == Brightness.light
-      ? cs.primary.withValues(alpha: 0.22)
-      : cs.primary.withValues(alpha: 0.40);
-}
-
-class AppSelectionField extends StatefulWidget {
+class AppSelectionField extends StatelessWidget {
   final Widget child;
   final InputDecoration? decoration;
   final bool enabled;
   final VoidCallback? onTap;
   final Widget? leading;
-  final bool isSelected;
+  final Widget? trailing;
   final FocusNode? focusNode;
-
-  /// `null` = ברירת מחדל (40px/20px), `true` = compact (36px/20px), `false` = רגיל (48px/28px)
-  final bool? slim;
+  final bool isExpanded;
 
   const AppSelectionField({
     super.key,
@@ -48,110 +30,31 @@ class AppSelectionField extends StatefulWidget {
     this.enabled = true,
     this.onTap,
     this.leading,
-    this.isSelected = false,
+    this.trailing,
     this.focusNode,
-    this.slim,
+    this.isExpanded = false,
   });
 
   @override
-  State<AppSelectionField> createState() => _AppSelectionFieldState();
-}
-
-class _AppSelectionFieldState extends State<AppSelectionField> {
-  bool _isHovering = false;
-  bool _isFocused = false;
-
-  static const Duration _animDuration = Duration(milliseconds: 120);
-
-  double get _effectiveRadius =>
-      widget.slim == false ? 28.0 : _dropdownFieldRadius;
-
-  double get _effectiveMinHeight {
-    if (widget.slim == false) return 48.0;
-    if (widget.slim == true) return 36.0;
-    return _dropdownFieldMinHeight;
-  }
-
-  BoxDecoration _buildFieldDecoration(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-    final r = _effectiveRadius;
-
-    if (_isFocused && widget.enabled) {
-      return BoxDecoration(
-        color: cs.onSurface.withValues(alpha: _dropdownFieldHoverFillAlpha),
-        borderRadius: BorderRadius.circular(r),
-        border: Border.all(
-          color: _dropdownFieldBorderColor(context),
-          width: _dropdownFieldBorderWidth,
-        ),
-      );
-    }
-    if (_isHovering && widget.enabled) {
-      return BoxDecoration(
-        color: cs.onSurface.withValues(alpha: _dropdownFieldHoverFillAlpha),
-        borderRadius: BorderRadius.circular(r),
-      );
-    }
-    return BoxDecoration(
-      color: cs.onSurface.withValues(
-        alpha: widget.enabled
-            ? _dropdownFieldIdleFillAlpha
-            : _dropdownFieldDisabledFillAlpha,
-      ),
-      borderRadius: BorderRadius.circular(r),
-    );
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final contentPadding =
-        widget.decoration?.contentPadding ?? _dropdownFieldContentPadding;
-
-    final content = Padding(
-      padding: contentPadding,
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          if (widget.leading != null) ...[
-            widget.leading!,
-            const SizedBox(width: 8),
-          ],
-          Flexible(child: widget.child),
-          // ללא חץ — המראה הוויזואלי של הכרטיס מספיק כ-affordance
-        ],
-      ),
+    final row = Row(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        if (leading != null) ...[leading!, const SizedBox(width: 6)],
+        child,
+        if (trailing != null) ...[const SizedBox(width: 6), trailing!],
+      ],
     );
 
-    return MouseRegion(
-      onEnter: (_) => setState(() => _isHovering = true),
-      onExit: (_) => setState(() => _isHovering = false),
-      cursor:
-          widget.enabled ? SystemMouseCursors.click : SystemMouseCursors.basic,
-      child: AnimatedContainer(
-        duration: _animDuration,
-        curve: Curves.easeOut,
-        decoration: _buildFieldDecoration(context),
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
-            onTap: widget.enabled ? widget.onTap : null,
-            focusNode: widget.focusNode,
-            canRequestFocus: widget.enabled,
-            onFocusChange: (isFocused) {
-              if (_isFocused != isFocused) {
-                setState(() => _isFocused = isFocused);
-              }
-            },
-            borderRadius: BorderRadius.circular(_effectiveRadius),
-            hoverColor: Colors.transparent,
-            splashColor: Colors.transparent,
-            child: ConstrainedBox(
-              constraints: BoxConstraints(minHeight: _effectiveMinHeight),
-              child: content,
-            ),
-          ),
-        ),
+    return FilledButton.tonal(
+      onPressed: enabled ? onTap : null,
+      focusNode: focusNode,
+      style: FilledButton.styleFrom(
+        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
       ),
+      child: row,
     );
   }
 }
@@ -160,8 +63,9 @@ class _AppSelectionFieldState extends State<AppSelectionField> {
 // AppDropdownField — שדה בחירה עם תפריט נפתח
 //
 // • enableSearch: false → AppSelectionField + popup menu
-// • enableSearch: true  → DropdownMenu עם חיפוש + auto-select בפתיחה
-//   ההבדל היחיד: האם ניתן להקליד ולסנן
+// • enableSearch: true  → popup menu עם חיפוש + auto-select בפתיחה
+// • isExpanded: false (ברירת מחדל) → IntrinsicWidth — רוחב לפי תוכן
+// • isExpanded: true → מתרחב למלא את רוחב ההורה
 // ═══════════════════════════════════════════════════════════════════════════
 
 class AppDropdownField<T> extends StatefulWidget {
@@ -182,7 +86,7 @@ class AppDropdownField<T> extends StatefulWidget {
     required this.onSelected,
     this.decoration,
     this.enabled = true,
-    this.isExpanded = true,
+    this.isExpanded = false,
     this.enableSearch = false,
     this.selectedBuilder,
     this.labelBuilder,
@@ -200,6 +104,7 @@ class _AppDropdownFieldState<T> extends State<AppDropdownField<T>> {
   String _menuVisibleText = '';
   bool _isSyncingControllerText = false;
   bool _restoreTextAfterNavigation = false;
+  bool _isMenuOpen = false;
 
   @override
   void initState() {
@@ -253,7 +158,6 @@ class _AppDropdownFieldState<T> extends State<AppDropdownField<T>> {
 
   void _handleFocusChanged() {
     if (_focusNode.hasFocus) {
-      // בחירת כל הטקסט אוטומטית בפתיחה — סעיף 6
       Future.microtask(() {
         if (mounted && _focusNode.hasFocus) {
           _controller.selection = TextSelection(
@@ -276,10 +180,7 @@ class _AppDropdownFieldState<T> extends State<AppDropdownField<T>> {
     _menuVisibleText = selectedLabel;
   }
 
-  void _setControllerText(
-    String text, {
-    TextSelection? selection,
-  }) {
+  void _setControllerText(String text, {TextSelection? selection}) {
     _isSyncingControllerText = true;
     _controller.value = TextEditingValue(
       text: text,
@@ -316,6 +217,8 @@ class _AppDropdownFieldState<T> extends State<AppDropdownField<T>> {
     final anchorContext = _selectionAnchorKey.currentContext;
     if (anchorContext == null) return;
 
+    setState(() => _isMenuOpen = true);
+
     final Future<T?> menuFuture = widget.enableSearch
         ? showAnchoredAppSearchMenu<T>(
             context: context,
@@ -345,82 +248,81 @@ class _AppDropdownFieldState<T> extends State<AppDropdownField<T>> {
 
     if (!mounted) return;
 
+    setState(() => _isMenuOpen = false);
     _focusNode.requestFocus();
     if (selected != null) {
       widget.onSelected?.call(selected);
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     final metrics = Theme.of(context).extension<AppMenuMetrics>() ??
         AppMenuMetrics.create(compactMenus: false);
-    final isCompact = metrics.compactMenus;
     final effectiveEnabled = widget.enabled &&
         widget.onSelected != null &&
         widget.entries.isNotEmpty;
     final cs = Theme.of(context).colorScheme;
-    final width = widget.isExpanded ? double.infinity : null;
 
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final resolvedWidth =
-            width == double.infinity && constraints.hasBoundedWidth
-                ? constraints.maxWidth
-                : width;
-
-        // טריגר אחיד: AppSelectionField. enableSearch רק משפיע על תוכן ה-popup.
-        final selectedEntry = _selectedEntry;
-        final displayText =
-            widget.selectedBuilder?.call(context, widget.value) ??
-                Text(
-                  _selectedLabel,
-                  style: TextStyle(
-                    fontFamily: 'Roboto',
-                    fontSize: metrics.fontSize,
-                    fontWeight: metrics.itemFontWeight,
-                    color: cs.onSurface,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  textAlign: TextAlign.center,
-                  textDirection: TextDirection.rtl,
-                );
-
-        final fieldContent = selectedEntry?.icon == null
-            ? displayText
-            : Row(
-                children: [
-                  Icon(
-                    selectedEntry!.icon,
-                    size: metrics.iconSize,
-                    color: cs.onSurfaceVariant,
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(child: displayText),
-                ],
-              );
-
-        return SizedBox(
-          width: resolvedWidth,
-          child: KeyedSubtree(
-            key: _selectionAnchorKey,
-            child: AppSelectionField(
-              enabled: effectiveEnabled,
-              focusNode: _focusNode,
-              onTap: _openSelectionMenu,
-              decoration: widget.decoration,
-              isSelected: widget.value != null,
-              slim: isCompact ? true : false,
-              child: SizedBox(
-                width: double.infinity,
-                child: fieldContent,
-              ),
-            ),
+    final selectedEntry = _selectedEntry;
+    final displayText = widget.selectedBuilder?.call(context, widget.value) ??
+        Text(
+          _selectedLabel,
+          style: TextStyle(
+            fontSize: metrics.fontSize,
+            fontWeight: metrics.itemFontWeight,
           ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          textAlign: TextAlign.center,
         );
-      },
+
+    final fieldContent = selectedEntry?.icon == null
+        ? displayText
+        : Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                selectedEntry!.icon,
+                size: metrics.iconSize,
+                color: cs.onSecondaryContainer,
+              ),
+              const SizedBox(width: 6),
+              displayText,
+            ],
+          );
+
+    final chevron = AnimatedRotation(
+      turns: _isMenuOpen ? 0.5 : 0.0,
+      duration: const Duration(milliseconds: 200),
+      child: Icon(
+        FluentIcons.chevron_down_24_regular,
+        size: 16,
+        color: cs.onSecondaryContainer,
+      ),
     );
+
+    final field = KeyedSubtree(
+      key: _selectionAnchorKey,
+      child: AppSelectionField(
+        enabled: effectiveEnabled,
+        focusNode: _focusNode,
+        onTap: _openSelectionMenu,
+        decoration: widget.decoration,
+        trailing: chevron,
+        isExpanded: widget.isExpanded,
+        child: fieldContent,
+      ),
+    );
+
+    if (widget.isExpanded) {
+      return LayoutBuilder(
+        builder: (context, constraints) => SizedBox(
+          width: constraints.hasBoundedWidth ? constraints.maxWidth : null,
+          child: field,
+        ),
+      );
+    }
+    return IntrinsicWidth(child: field);
   }
 }

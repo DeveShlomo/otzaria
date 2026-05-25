@@ -80,86 +80,28 @@ class _ShortcutDropDownTileState extends State<ShortcutDropDownTile> {
           currentValue.toUpperCase().replaceAll('+', ' + ');
     }
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          final isCompact = constraints.maxWidth < 620;
-          final field = SizedBox(
-            width: isCompact ? double.infinity : 220,
-            child: AppDropdownField<String>(
-              key: ValueKey('${widget.settingKey}_$currentValue'),
-              value: currentValue,
-              entries: availableShortcuts.entries
-                  .map(
-                    (entry) => AppMenuEntry<String>(
-                      value: entry.key,
-                      label: entry.value,
-                    ),
-                  )
-                  .toList(),
-              onSelected: _handleSelection,
-            ),
-          );
-
-          final titleSection = Expanded(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (widget.leading != null) ...[
-                  widget.leading!,
-                  const SizedBox(width: 12),
-                ],
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        widget.title,
-                        style: kSettingsTitleStyle,
-                        textDirection: TextDirection.rtl,
-                      ),
-                      if (widget.subtitle != null &&
-                          widget.subtitle!.trim().isNotEmpty) ...[
-                        const SizedBox(height: 4),
-                        Text(
-                          widget.subtitle!,
-                          style: kSettingsSubtitleStyle,
-                          textDirection: TextDirection.rtl,
-                        ),
-                      ],
-                    ],
-                  ),
+    return ListTile(
+      leading: widget.leading,
+      title: Text(widget.title, style: kSettingsTitleStyle, textDirection: TextDirection.rtl),
+      subtitle: widget.subtitle != null && widget.subtitle!.trim().isNotEmpty
+          ? Text(widget.subtitle!, style: kSettingsSubtitleStyle, textDirection: TextDirection.rtl)
+          : null,
+      trailing: SizedBox(
+        width: 220,
+        child: AppDropdownField<String>(
+          key: ValueKey('${widget.settingKey}_$currentValue'),
+          value: currentValue,
+          isExpanded: true,
+          entries: availableShortcuts.entries
+              .map(
+                (entry) => AppMenuEntry<String>(
+                  value: entry.key,
+                  label: entry.value,
                 ),
-              ],
-            ),
-          );
-
-          if (isCompact) {
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Row(children: [titleSection]),
-                const SizedBox(height: 12),
-                field,
-              ],
-            );
-          }
-
-          return Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              titleSection,
-              const SizedBox(width: 16),
-              Flexible(
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: field,
-                ),
-              ),
-            ],
-          );
-        },
+              )
+              .toList(),
+          onSelected: _handleSelection,
+        ),
       ),
     );
   }

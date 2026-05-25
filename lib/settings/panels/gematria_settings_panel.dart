@@ -161,10 +161,6 @@ class _GematriaSettingsTabState extends State<GematriaSettingsTab> {
                           'key-gematria-max-results', value);
                     }
                   },
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    isDense: true,
-                  ),
                 ),
               ),
             ),
