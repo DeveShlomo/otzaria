@@ -6,6 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:otzaria/theme/theme_exports.dart';
 import 'package:otzaria/widgets/text/rtl_text_field.dart';
 
+// רוחב מקסימלי של תפריט על שולחן עבודה — מונע תפריטים רחבים מדי
+const double _kDesktopMenuMaxWidth = 280.0;
+
 // ═══════════════════════════════════════════════════════════════════════════
 // AppMenuEntry — נתוני פריט בתפריט
 // ═══════════════════════════════════════════════════════════════════════════
@@ -274,13 +277,18 @@ Future<T?> showAnchoredAppMenu<T>({
     Offset.zero & overlay.size,
   );
 
+  // רוחב מינימלי = רוחב הטריגר, אך לא יחרוג מ-_kDesktopMenuMaxWidth
+  final minW = targetRect.width.clamp(0.0, _kDesktopMenuMaxWidth);
+
   return showMenu<T>(
     context: context,
     position: anchorRect,
     items: items,
     initialValue: initialValue,
-    // מינימום רוחב תואם רוחב הטריגר — סעיף 4
-    constraints: BoxConstraints(minWidth: targetRect.width),
+    constraints: BoxConstraints(
+      minWidth: minW,
+      maxWidth: _kDesktopMenuMaxWidth,
+    ),
   );
 }
 
@@ -328,20 +336,22 @@ Future<T?> showAnchoredAppSearchMenu<T>({
       : !(spaceAbove >= maxMenuHeight || spaceAbove >= spaceBelow);
 
   final availableHeight = shouldOpenBelow ? spaceBelow : spaceAbove;
-  // אל תחרוג ממה שזמין; קח את המינימום בין הזמין לבין הגובה המבוקש.
-  // הרשימה הפנימית גלילה, אז גם תפריט נמוך נשאר שמיש.
   final menuHeight = min(availableHeight, maxMenuHeight);
 
   final menuTop = shouldOpenBelow
       ? targetRect.bottom + offset.dy
       : targetRect.top - menuHeight - offset.dy;
 
+  // רוחב תפריט חיפוש: מינימום רוחב טריגר, מקסימום _kDesktopMenuMaxWidth
+  final menuWidth =
+      targetRect.width.clamp(metrics.menuMinWidth, _kDesktopMenuMaxWidth);
+
   return Navigator.of(context).push<T>(
     _AnchoredSearchMenuRoute<T>(
       anchorRect: Rect.fromLTWH(
         targetRect.left,
         menuTop,
-        targetRect.width,
+        menuWidth,
         menuHeight,
       ),
       entries: entries,
@@ -534,12 +544,17 @@ class _AnchoredSearchMenuContentState<T>
                       ),
                     ),
                   ),
+                  // מפריד דק בין שדה החיפוש לרשימה
+                  _AppMenuCrispDivider(
+                    color: cs.outlineVariant.withValues(alpha: 0.5),
+                  ),
                   // רשימה נגללת
                   Expanded(
                     child: filtered.isEmpty
                         ? Center(
                             child: Text(
                               'אין תוצאות',
+                              textDirection: TextDirection.rtl,
                               style: TextStyle(
                                 color: cs.onSurfaceVariant,
                                 fontSize: widget.metrics.fontSize,
@@ -560,25 +575,16 @@ class _AnchoredSearchMenuContentState<T>
                                         Navigator.of(context).pop(entry.value)
                                     : null,
                                 child: SizedBox(
-                                  width: double.infinity,
                                   height: widget.metrics.itemHeight,
-                                  child: LayoutBuilder(
-                                    // המרת הרוחב הזמין למקסימום שלוקח buildAppMenuRowContent.
-                                    // הוא יחסר את itemPadding פנימית לחישוב labelMaxWidth,
-                                    // ולכן מוסיפים בחזרה את הפדינג כך שהחישוב יהיה נכון.
-                                    builder: (ctx, constraints) =>
-                                        buildAppMenuRowContent(
-                                      context,
-                                      widget.metrics,
-                                      label: entry.label,
-                                      maxWidth: constraints.maxWidth +
-                                          widget.metrics.itemPadding.horizontal,
-                                      icon: entry.icon,
-                                      trailing: entry.trailing,
-                                      isSelected: isSelected,
-                                      isDestructive: entry.isDestructive,
-                                      enabled: entry.enabled,
-                                    ),
+                                  child: buildAppMenuRowContent(
+                                    context,
+                                    widget.metrics,
+                                    label: entry.label,
+                                    icon: entry.icon,
+                                    trailing: entry.trailing,
+                                    isSelected: isSelected,
+                                    isDestructive: entry.isDestructive,
+                                    enabled: entry.enabled,
                                   ),
                                 ),
                               );
@@ -596,11 +602,33 @@ class _AnchoredSearchMenuContentState<T>
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
+// _AppMenuCrispDivider — מפריד דק ומדויק לתפריטים
+// ═══════════════════════════════════════════════════════════════════════════
+
+class _AppMenuCrispDivider extends StatelessWidget {
+  final Color? color;
+
+  const _AppMenuCrispDivider({this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    final dividerColor =
+        color ?? Theme.of(context).colorScheme.outlineVariant;
+    return Divider(
+      height: 1,
+      thickness: 1,
+      color: dividerColor,
+    );
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
 // buildAppMenuRowContent — בניית שורת תוכן בתפריט
 //
-// שינויים:
-// • הרקע הנבחר ממלא שורה שלמה (ללא borderRadius, ללא גבול)
-// • סימן ✓ תמיד מופיע לפריט נבחר
+// • label מקבל Expanded — לוקח את כל המקום הפנוי, לא גולש
+// • trailing מיושר לקצה ימין ללא Spacer
+// • RTL מוגדר על כל הכיוון הטקסטואלי
+// • mainAxisSize: max תמיד — יישור עקבי של trailing
 // ═══════════════════════════════════════════════════════════════════════════
 
 Widget buildAppMenuRowContent(
@@ -616,7 +644,6 @@ Widget buildAppMenuRowContent(
   bool enabled = true,
 }) {
   final colorScheme = Theme.of(context).colorScheme;
-  // M3: selectedContainer = primaryContainer (ללא גבול, ממלא שורה שלמה)
   final selectedBackground =
       colorScheme.primaryContainer.withValues(alpha: 0.95);
   final foregroundColor = !enabled
@@ -628,12 +655,6 @@ Widget buildAppMenuRowContent(
               : colorScheme.onSurface;
 
   final hasTrailingWidget = isSelected || trailing != null;
-  final labelMaxWidth = calculateAppMenuLabelMaxWidth(
-    metrics,
-    maxWidth: maxWidth,
-    hasLeadingIcon: icon != null,
-    hasTrailingWidget: hasTrailingWidget,
-  );
   final labelTextStyle = TextStyle(
     fontFamily: 'Roboto',
     fontSize: metrics.fontSize,
@@ -648,26 +669,48 @@ Widget buildAppMenuRowContent(
         textDirection: TextDirection.rtl,
       );
 
+  // כאשר maxWidth סופק (שימוש בתפריט הקשר / MenuItemButton) — מגבילים
+  // את ה-label באמצעות ConstrainedBox מפורש, כי _MenuItemLabel מעביר
+  // אילוצים בלתי-מוגבלים לצורך חישוב intrinsic width.
+  // כאשר maxWidth לא סופק (PopupMenuItem / ListView) — ה-parent מוגבל
+  // ומאפשר שימוש ב-Expanded שנותן ל-label עדיפות מלאה.
+  final bool useExpanded = maxWidth == null;
+
+  final labelWrapped = Directionality(
+    textDirection: TextDirection.rtl,
+    child: DefaultTextStyle.merge(
+      style: labelTextStyle,
+      child: labelChild,
+    ),
+  );
+
+  Widget labelSection;
+  if (useExpanded) {
+    labelSection = Expanded(child: labelWrapped);
+  } else {
+    final labelMaxWidth = calculateAppMenuLabelMaxWidth(
+      metrics,
+      maxWidth: maxWidth,
+      hasLeadingIcon: icon != null,
+      hasTrailingWidget: hasTrailingWidget,
+    );
+    labelSection = labelMaxWidth != null
+        ? ConstrainedBox(
+            constraints: BoxConstraints(maxWidth: labelMaxWidth),
+            child: labelWrapped,
+          )
+        : labelWrapped;
+  }
+
   final row = Row(
-    mainAxisSize: trailing != null ? MainAxisSize.max : MainAxisSize.min,
+    // Expanded דורש MainAxisSize.max; ConstrainedBox בטוח גם עם min.
+    mainAxisSize: useExpanded ? MainAxisSize.max : MainAxisSize.min,
     children: [
       if (icon != null) ...[
         Icon(icon, size: metrics.iconSize, color: foregroundColor),
         const SizedBox(width: 8),
       ],
-      Directionality(
-        textDirection: TextDirection.rtl,
-        child: DefaultTextStyle.merge(
-          style: labelTextStyle,
-          child: labelMaxWidth == null
-              ? labelChild
-              : ConstrainedBox(
-                  constraints: BoxConstraints(maxWidth: labelMaxWidth),
-                  child: labelChild,
-                ),
-        ),
-      ),
-      // סימן ✓ לפריט נבחר (תמיד, בכל סוג תפריט)
+      labelSection,
       if (isSelected) ...[
         const SizedBox(width: 8),
         Icon(
@@ -676,14 +719,19 @@ Widget buildAppMenuRowContent(
           color: foregroundColor,
         ),
       ] else if (trailing != null) ...[
-        const Spacer(),
+        // Expanded מדחיק את ה-trailing לקצה; ConstrainedBox משתמש ב-Spacer
+        if (useExpanded) const SizedBox(width: 8) else const Spacer(),
         IconTheme.merge(
           data: IconThemeData(
             size: metrics.iconSize,
             color: foregroundColor,
           ),
           child: DefaultTextStyle.merge(
-            style: TextStyle(color: foregroundColor),
+            style: TextStyle(
+              color: foregroundColor,
+              // אינדיקטורים קצרים (kbd shortcuts, מונים) — קטנים מעט
+              fontSize: metrics.fontSize * 0.85,
+            ),
             child: trailing,
           ),
         ),
@@ -696,7 +744,7 @@ Widget buildAppMenuRowContent(
       minWidth: metrics.menuMinWidth,
       minHeight: metrics.itemHeight,
     ),
-    // צבע מלא שורה — ללא עיגול פינות וללא גבול
+    // צבע מלא שורה — ללא עיגול פינות
     color: isSelected ? selectedBackground : null,
     padding: metrics.itemPadding,
     alignment: AlignmentDirectional.centerStart,
@@ -736,7 +784,6 @@ PopupMenuEntry<T> buildAppPopupMenuItem<T>(BuildContext context,
     enabled: entry.enabled,
     height: metrics.itemHeight,
     // padding: EdgeInsets.zero — הריפוד מנוהל ב-buildAppMenuRowContent
-    // כדי שהצבע הנבחר יכסה שורה שלמה
     padding: EdgeInsets.zero,
     child: buildAppMenuRowContent(
       context,
@@ -769,6 +816,48 @@ PopupMenuEntry<T> buildAppCustomPopupMenuItem<T>({
     padding: padding,
     child: child,
   );
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// buildAppMenuDivider — מפריד דק ומדויק לרשימת popup
+// ═══════════════════════════════════════════════════════════════════════════
+
+/// מחזיר מפריד אופקי דק (1px) לשימוש בין קבוצות פריטים בתפריט.
+/// הצבע נגזר מ-[colorScheme.outlineVariant] — ללא צבעים קבועים.
+PopupMenuEntry<T> buildAppMenuDivider<T>(AppMenuMetrics metrics) {
+  return _AppMenuDividerEntry<T>(height: metrics.dividerHeight);
+}
+
+class _AppMenuDividerEntry<T> extends PopupMenuEntry<T> {
+  final double _height;
+
+  const _AppMenuDividerEntry({required double height}) : _height = height;
+
+  @override
+  double get height => _height;
+
+  @override
+  bool represents(T? value) => false;
+
+  @override
+  State<_AppMenuDividerEntry<T>> createState() =>
+      _AppMenuDividerEntryState<T>();
+}
+
+class _AppMenuDividerEntryState<T> extends State<_AppMenuDividerEntry<T>> {
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: widget.height,
+      child: Center(
+        child: Divider(
+          height: 1,
+          thickness: 1,
+          color: Theme.of(context).colorScheme.outlineVariant,
+        ),
+      ),
+    );
+  }
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -855,7 +944,6 @@ PopupMenuEntry<T> buildAppSubmenuPopupMenuItem<T>({
                   renderBox.getTransformTo(overlay),
                   Offset.zero & renderBox.size,
                 );
-                // חשב את צד הפתיחה לפי מיקום הפריט במסך:
                 // אם הפריט בחצי הימני של המסך — פתח שמאלה, אחרת ימינה
                 final openToRight = itemRect.center.dx < overlaySize.width / 2;
                 final xPos = openToRight ? itemRect.right : itemRect.left;
@@ -868,10 +956,7 @@ PopupMenuEntry<T> buildAppSubmenuPopupMenuItem<T>({
                   items: menuChildren,
                 );
                 if (selected != null) {
-                  // סוגרים קודם את התפריט הראשי, ורק אז מריצים את הפעולה.
-                  // הסדר ההפוך עלול לפוצץ דיאלוגים שה-callback פותח
-                  // (showBookSourceDialog, _handlePrintPress וכד'),
-                  // כי ה-pop היה סוגר את הדיאלוג במקום את התפריט.
+                  // סוגרים תחילה את התפריט הראשי, רק אז מריצים את הפעולה
                   if (innerContext.mounted) {
                     Navigator.of(innerContext).pop();
                   }
@@ -885,7 +970,6 @@ PopupMenuEntry<T> buildAppSubmenuPopupMenuItem<T>({
           label: label,
           icon: icon,
           trailing: Icon(
-            // החץ מצביע לכיוון פתיחת התת-תפריט (ימינה)
             FluentIcons.chevron_right_24_regular,
             size: metrics.iconSize * 0.75,
           ),
@@ -914,5 +998,10 @@ Future<T?> showAppMenu<T>({
           (entry) => buildAppPopupMenuItem<T>(context, entry, metrics, null),
         )
         .toList(),
+    // מגביל רוחב מקסימלי על שולחן עבודה למניעת תפריטים רחבים מדי
+    constraints: BoxConstraints(
+      minWidth: metrics.menuMinWidth,
+      maxWidth: _kDesktopMenuMaxWidth,
+    ),
   );
 }
