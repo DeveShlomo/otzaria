@@ -40,16 +40,20 @@ class AppContextMenuRegion extends StatefulWidget {
   State<AppContextMenuRegion> createState() => _AppContextMenuRegionState();
 }
 
-class _AppContextMenuRegionState extends State<AppContextMenuRegion> {
+class _AppContextMenuRegionState extends State<AppContextMenuRegion>
+    with SingleTickerProviderStateMixin {
   static const double _contextMenuScreenPadding = 8;
   static const double _contextMenuMaxWidth = 320;
 
   bool _isMenuOpen = false;
-  bool _isMenuVisible = false;
   OverlayEntry? _menuOverlayEntry;
   final GlobalKey _menuPanelKey = GlobalKey();
   Offset? _currentMenuOffset;
   double? _menuAnchorX;
+
+  late final AnimationController _menuAnimationController;
+  late final Animation<double> _scaleAnimation;
+  late final Animation<double> _fadeAnimation;
 
   bool get _supportsLongPressContextMenu {
     return switch (defaultTargetPlatform) {
@@ -59,7 +63,27 @@ class _AppContextMenuRegionState extends State<AppContextMenuRegion> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _menuAnimationController = AnimationController(
+      duration: const Duration(milliseconds: 220),
+      reverseDuration: const Duration(milliseconds: 150),
+      vsync: this,
+    );
+    _scaleAnimation = Tween<double>(begin: 0.88, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _menuAnimationController,
+        curve: Curves.easeOutCubic,
+      ),
+    );
+    _fadeAnimation = _menuAnimationController.drive(
+      CurveTween(curve: Curves.easeOutCubic),
+    );
+  }
+
+  @override
   void dispose() {
+    _menuAnimationController.dispose();
     _removeContextMenuOverlay();
     super.dispose();
   }
@@ -69,14 +93,13 @@ class _AppContextMenuRegionState extends State<AppContextMenuRegion> {
     _menuOverlayEntry = null;
     _currentMenuOffset = null;
     _menuAnchorX = null;
-    _isMenuVisible = false;
   }
 
-  void _closeContextMenu() {
+  Future<void> _closeContextMenu() async {
+    if (!_isMenuOpen) return;
+    if (mounted) setState(() => _isMenuOpen = false);
+    await _menuAnimationController.reverse();
     _removeContextMenuOverlay();
-    if (_isMenuOpen && mounted) {
-      setState(() => _isMenuOpen = false);
-    }
   }
 
   void closeMenu() {
@@ -181,12 +204,13 @@ class _AppContextMenuRegionState extends State<AppContextMenuRegion> {
     );
 
     _currentMenuOffset = adjustedOffset;
-    _isMenuVisible = true;
     _menuOverlayEntry?.markNeedsBuild();
+    _menuAnimationController.forward(from: 0);
   }
 
   Future<void> _openContextMenu(Offset globalPosition) async {
-    final entries = _normalizeEntries(widget.menuBuilder(context, globalPosition));
+    final entries =
+        _normalizeEntries(widget.menuBuilder(context, globalPosition));
     if (entries.isEmpty) return;
 
     final overlay = Overlay.of(context, rootOverlay: true);
@@ -228,6 +252,7 @@ class _AppContextMenuRegionState extends State<AppContextMenuRegion> {
 
     _removeContextMenuOverlay();
     _currentMenuOffset = menuOffset;
+    _menuAnimationController.reset();
 
     _menuOverlayEntry = OverlayEntry(
       builder: (overlayContext) {
@@ -256,25 +281,26 @@ class _AppContextMenuRegionState extends State<AppContextMenuRegion> {
               Positioned(
                 left: currentMenuOffset.dx,
                 top: currentMenuOffset.dy,
-                child: Visibility(
-                  visible: _isMenuVisible,
-                  maintainSize: false,
-                  maintainAnimation: false,
-                  maintainState: true,
-                  child: _AppContextMenuPanel(
-                    key: _menuPanelKey,
-                    entries: entries,
-                    metrics: metrics,
-                    menuStyle: menuStyle,
-                    maxWidth: maxMenuWidth,
-                    maxHeight: maxMenuHeight,
-                    buildChildren: (panelContext, panelEntries) =>
-                        _buildMenuPanelChildren(
-                      panelContext,
-                      panelEntries,
-                      metrics,
-                      maxMenuWidth,
-                      submenuControllers,
+                child: FadeTransition(
+                  opacity: _fadeAnimation,
+                  child: ScaleTransition(
+                    scale: _scaleAnimation,
+                    alignment: Alignment.topCenter,
+                    child: _AppContextMenuPanel(
+                      key: _menuPanelKey,
+                      entries: entries,
+                      metrics: metrics,
+                      menuStyle: menuStyle,
+                      maxWidth: maxMenuWidth,
+                      maxHeight: maxMenuHeight,
+                      buildChildren: (panelContext, panelEntries) =>
+                          _buildMenuPanelChildren(
+                        panelContext,
+                        panelEntries,
+                        metrics,
+                        maxMenuWidth,
+                        submenuControllers,
+                      ),
                     ),
                   ),
                 ),
@@ -811,6 +837,8 @@ class _AppContextMenuPanel extends StatelessWidget {
   final MenuStyle? menuStyle;
   final double maxWidth;
   final double maxHeight;
+  // ignore: unused_element_parameter — intentionally isolated for later injection
+  final Color? backgroundColor;
   final List<Widget> Function(BuildContext, List<AppContextMenuEntry>)
       buildChildren;
 
@@ -822,6 +850,7 @@ class _AppContextMenuPanel extends StatelessWidget {
     required this.maxWidth,
     required this.maxHeight,
     required this.buildChildren,
+    this.backgroundColor, // ignore: unused_element_parameter
   });
 
   @override
@@ -836,11 +865,10 @@ class _AppContextMenuPanel extends StatelessWidget {
         skipTraversal: true,
         descendantsAreFocusable: false,
         child: Material(
-          color: menuStyle?.backgroundColor?.resolve(const <WidgetState>{}) ??
+          color: backgroundColor ??
+              menuStyle?.backgroundColor?.resolve(const <WidgetState>{}) ??
               colorScheme.surfaceContainer,
-          elevation: menuStyle?.elevation
-                  ?.resolve(const <WidgetState>{})?.toDouble() ??
-              3,
+          elevation: 2,
           shape: menuStyle?.shape?.resolve(const <WidgetState>{}) ??
               RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(metrics.menuBorderRadius),

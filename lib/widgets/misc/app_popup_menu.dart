@@ -387,7 +387,7 @@ class _AnchoredSearchMenuRoute<T> extends PopupRoute<T> {
   String? get barrierLabel => 'Dismiss';
 
   @override
-  Duration get transitionDuration => const Duration(milliseconds: 100);
+  Duration get transitionDuration => const Duration(milliseconds: 220);
 
   @override
   Widget buildPage(
@@ -395,13 +395,23 @@ class _AnchoredSearchMenuRoute<T> extends PopupRoute<T> {
     Animation<double> animation,
     Animation<double> secondaryAnimation,
   ) {
-    return _AnchoredSearchMenuContent<T>(
-      anchorRect: anchorRect,
-      entries: entries,
-      initialValue: initialValue,
-      searchHint: searchHint,
-      metrics: metrics,
-      animation: animation,
+    final curvedAnim = CurvedAnimation(
+      parent: animation,
+      curve: Curves.easeOutCubic,
+    );
+    return FadeTransition(
+      opacity: curvedAnim,
+      child: ScaleTransition(
+        scale: Tween<double>(begin: 0.88, end: 1.0).animate(curvedAnim),
+        alignment: Alignment.topCenter,
+        child: _AnchoredSearchMenuContent<T>(
+          anchorRect: anchorRect,
+          entries: entries,
+          initialValue: initialValue,
+          searchHint: searchHint,
+          metrics: metrics,
+        ),
+      ),
     );
   }
 }
@@ -412,7 +422,6 @@ class _AnchoredSearchMenuContent<T> extends StatefulWidget {
   final T? initialValue;
   final String searchHint;
   final AppMenuMetrics metrics;
-  final Animation<double> animation;
 
   const _AnchoredSearchMenuContent({
     required this.anchorRect,
@@ -420,7 +429,6 @@ class _AnchoredSearchMenuContent<T> extends StatefulWidget {
     required this.initialValue,
     required this.searchHint,
     required this.metrics,
-    required this.animation,
   });
 
   @override
@@ -499,100 +507,96 @@ class _AnchoredSearchMenuContentState<T>
           top: widget.anchorRect.top,
           width: widget.anchorRect.width,
           height: widget.anchorRect.height,
-          child: FadeTransition(
-            opacity: widget.animation,
-            child: Material(
-              elevation: 8,
-              borderRadius:
-                  BorderRadius.circular(widget.metrics.menuBorderRadius),
-              color: menuColor,
-              clipBehavior: Clip.antiAlias,
-              child: Column(
-                children: [
-                  // שדה חיפוש מוצמד בראש
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(8, 8, 8, 4),
-                    child: RtlTextField(
-                      controller: _searchController,
-                      focusNode: _searchFocus,
-                      style: TextStyle(
+          child: Material(
+            elevation: 2,
+            borderRadius:
+                BorderRadius.circular(widget.metrics.menuBorderRadius),
+            color: menuColor,
+            clipBehavior: Clip.antiAlias,
+            child: Column(
+              children: [
+                // שדה חיפוש מוצמד בראש
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(8, 8, 8, 4),
+                  child: RtlTextField(
+                    controller: _searchController,
+                    focusNode: _searchFocus,
+                    style: TextStyle(
+                      fontSize: widget.metrics.fontSize,
+                      color: cs.onSurface,
+                    ),
+                    decoration: InputDecoration(
+                      hintText: widget.searchHint,
+                      hintStyle: TextStyle(
+                        color: cs.onSurfaceVariant,
                         fontSize: widget.metrics.fontSize,
-                        color: cs.onSurface,
                       ),
-                      decoration: InputDecoration(
-                        hintText: widget.searchHint,
-                        hintStyle: TextStyle(
-                          color: cs.onSurfaceVariant,
-                          fontSize: widget.metrics.fontSize,
-                        ),
-                        isDense: true,
-                        prefixIcon: Icon(
-                          FluentIcons.search_24_regular,
-                          size: widget.metrics.iconSize,
-                          color: cs.onSurfaceVariant,
-                        ),
-                        filled: true,
-                        fillColor: cs.onSurface.withValues(alpha: 0.06),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 8,
-                        ),
+                      isDense: true,
+                      prefixIcon: Icon(
+                        FluentIcons.search_24_regular,
+                        size: widget.metrics.iconSize,
+                        color: cs.onSurfaceVariant,
+                      ),
+                      filled: true,
+                      fillColor: cs.onSurface.withValues(alpha: 0.06),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide.none,
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 8,
                       ),
                     ),
                   ),
-                  // מפריד דק בין שדה החיפוש לרשימה
-                  _AppMenuCrispDivider(
-                    color: cs.outlineVariant.withValues(alpha: 0.5),
-                  ),
-                  // רשימה נגללת
-                  Expanded(
-                    child: filtered.isEmpty
-                        ? Center(
-                            child: Text(
-                              'אין תוצאות',
-                              textDirection: TextDirection.rtl,
-                              style: TextStyle(
-                                color: cs.onSurfaceVariant,
-                                fontSize: widget.metrics.fontSize,
-                              ),
+                ),
+                // מפריד דק בין שדה החיפוש לרשימה
+                _AppMenuCrispDivider(
+                  color: cs.outlineVariant.withValues(alpha: 0.5),
+                ),
+                // רשימה נגללת
+                Expanded(
+                  child: filtered.isEmpty
+                      ? Center(
+                          child: Text(
+                            'אין תוצאות',
+                            textDirection: TextDirection.rtl,
+                            style: TextStyle(
+                              color: cs.onSurfaceVariant,
+                              fontSize: widget.metrics.fontSize,
                             ),
-                          )
-                        : ListView.builder(
-                            controller: _scrollController,
-                            padding: widget.metrics.menuPadding,
-                            itemCount: filtered.length,
-                            itemBuilder: (ctx, i) {
-                              final entry = filtered[i];
-                              final isSelected = widget.initialValue != null &&
-                                  entry.value == widget.initialValue;
-                              return InkWell(
-                                onTap: entry.enabled
-                                    ? () =>
-                                        Navigator.of(context).pop(entry.value)
-                                    : null,
-                                child: SizedBox(
-                                  height: widget.metrics.itemHeight,
-                                  child: buildAppMenuRowContent(
-                                    context,
-                                    widget.metrics,
-                                    label: entry.label,
-                                    icon: entry.icon,
-                                    trailing: entry.trailing,
-                                    isSelected: isSelected,
-                                    isDestructive: entry.isDestructive,
-                                    enabled: entry.enabled,
-                                  ),
-                                ),
-                              );
-                            },
                           ),
-                  ),
-                ],
-              ),
+                        )
+                      : ListView.builder(
+                          controller: _scrollController,
+                          padding: widget.metrics.menuPadding,
+                          itemCount: filtered.length,
+                          itemBuilder: (ctx, i) {
+                            final entry = filtered[i];
+                            final isSelected = widget.initialValue != null &&
+                                entry.value == widget.initialValue;
+                            return InkWell(
+                              onTap: entry.enabled
+                                  ? () => Navigator.of(context).pop(entry.value)
+                                  : null,
+                              child: SizedBox(
+                                height: widget.metrics.itemHeight,
+                                child: buildAppMenuRowContent(
+                                  context,
+                                  widget.metrics,
+                                  label: entry.label,
+                                  icon: entry.icon,
+                                  trailing: entry.trailing,
+                                  isSelected: isSelected,
+                                  isDestructive: entry.isDestructive,
+                                  enabled: entry.enabled,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                ),
+              ],
             ),
           ),
         ),
@@ -612,8 +616,7 @@ class _AppMenuCrispDivider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final dividerColor =
-        color ?? Theme.of(context).colorScheme.outlineVariant;
+    final dividerColor = color ?? Theme.of(context).colorScheme.outlineVariant;
     return Divider(
       height: 1,
       thickness: 1,
