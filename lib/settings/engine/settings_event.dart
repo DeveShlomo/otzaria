@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
+import 'package:otzaria/theme/app_theme_options.dart';
 
 abstract class SettingsEvent extends Equatable {
   const SettingsEvent();
@@ -448,4 +449,22 @@ class UpdateBuiltInToolsPinnedToNavRail extends SettingsEvent {
 
   @override
   List<Object?> get props => [builtInToolsPinnedToNavRail];
+}
+
+class UpdateLightReaderBackground extends SettingsEvent {
+  final LightReaderBackground value;
+
+  const UpdateLightReaderBackground(this.value);
+
+  @override
+  List<Object?> get props => [value];
+}
+
+class UpdateDarkReaderBackground extends SettingsEvent {
+  final DarkReaderBackground value;
+
+  const UpdateDarkReaderBackground(this.value);
+
+  @override
+  List<Object?> get props => [value];
 }

@@ -11,6 +11,7 @@ import 'package:otzaria/settings/services/per_book_settings_service.dart';
 import 'package:otzaria/settings/view/settings_screen.dart';
 import 'package:otzaria/settings/widgets/settings_widgets_exports.dart';
 import 'package:otzaria/theme/theme_exports.dart';
+import 'package:otzaria/widgets/misc/app_menu_exports.dart';
 import 'package:otzaria/widgets/widgets_exports.dart';
 
 enum _SidebarMode { pinned, openOnBook, closed }
@@ -69,6 +70,22 @@ class DesignSettingsTab extends StatelessWidget {
         'מופעל',
         'לא מופעל',
       ],
+    ),
+    SettingsSearchEntry(
+      id: 'design.reader_background.light',
+      title: 'רקע ספרי טקסט — מצב בהיר',
+      subtitle: 'בחירת צבע הרקע של מסך העיון במצב בהיר',
+      tab: SettingsTab.design,
+      cardId: 'design.theme',
+      keywords: ['רקע', 'טקסט', 'בהיר', 'לבן', 'surface'],
+    ),
+    SettingsSearchEntry(
+      id: 'design.reader_background.dark',
+      title: 'רקע ספרי טקסט — מצב כהה',
+      subtitle: 'בחירת צבע הרקע של מסך העיון במצב כהה',
+      tab: SettingsTab.design,
+      cardId: 'design.theme',
+      keywords: ['רקע', 'טקסט', 'כהה', 'שחור', 'אפור', 'surface'],
     ),
     SettingsSearchEntry(
       id: 'design.pdf.book_view',
@@ -174,46 +191,91 @@ class DesignSettingsTab extends StatelessWidget {
                       currentValue: state.followSystemTheme
                           ? _ThemeMode.system
                           : state.isDarkMode
-                              ? _ThemeMode.dark
-                              : _ThemeMode.light,
+                          ? _ThemeMode.dark
+                          : _ThemeMode.light,
                       onChanged: (mode) {
                         if (mode == _ThemeMode.system) {
-                          context
-                              .read<SettingsBloc>()
-                              .add(UpdateFollowSystemTheme(true));
+                          context.read<SettingsBloc>().add(
+                            UpdateFollowSystemTheme(true),
+                          );
                         } else {
-                          context
-                              .read<SettingsBloc>()
-                              .add(UpdateFollowSystemTheme(false));
-                          context
-                              .read<SettingsBloc>()
-                              .add(UpdateDarkMode(mode == _ThemeMode.dark));
+                          context.read<SettingsBloc>().add(
+                            UpdateFollowSystemTheme(false),
+                          );
+                          context.read<SettingsBloc>().add(
+                            UpdateDarkMode(mode == _ThemeMode.dark),
+                          );
                         }
                       },
                     ),
                     ColorPickerTile(
                       key: ValueKey(
-                          'color-picker-${Theme.of(context).brightness == Brightness.dark ? 'dark' : 'light'}'),
+                        'color-picker-${Theme.of(context).brightness == Brightness.dark ? 'dark' : 'light'}',
+                      ),
                       currentColor:
                           Theme.of(context).brightness == Brightness.dark
-                              ? state.darkSeedColor
-                              : state.seedColor,
+                          ? state.darkSeedColor
+                          : state.seedColor,
                       defaultColor:
                           Theme.of(context).brightness == Brightness.dark
-                              ? AppSeedColors.defaultDark
-                              : AppSeedColors.defaultLight,
+                          ? AppSeedColors.defaultDark
+                          : AppSeedColors.defaultLight,
                       onChanged: (color) {
                         if (Theme.of(context).brightness == Brightness.dark) {
-                          context
-                              .read<SettingsBloc>()
-                              .add(UpdateDarkSeedColor(color));
+                          context.read<SettingsBloc>().add(
+                            UpdateDarkSeedColor(color),
+                          );
                         } else {
-                          context
-                              .read<SettingsBloc>()
-                              .add(UpdateSeedColor(color));
+                          context.read<SettingsBloc>().add(
+                            UpdateSeedColor(color),
+                          );
                         }
                       },
                     ),
+                    if (Theme.of(context).brightness == Brightness.dark)
+                      SettingsActionTile.dropdownTile<DarkReaderBackground>(
+                        icon: FluentIcons.weather_moon_24_regular,
+                        title: 'רקע ספרי טקסט',
+                        value: state.darkReaderBackground,
+                        entries: DarkReaderBackground.values
+                            .map(
+                              (e) => AppMenuEntry(
+                                value: e,
+                                label: e.label,
+                                subtitle: e.subtitle,
+                              ),
+                            )
+                            .toList(),
+                        onSelected: (v) {
+                          if (v != null) {
+                            context.read<SettingsBloc>().add(
+                              UpdateDarkReaderBackground(v),
+                            );
+                          }
+                        },
+                      )
+                    else
+                      SettingsActionTile.dropdownTile<LightReaderBackground>(
+                        icon: FluentIcons.weather_sunny_24_regular,
+                        title: 'רקע ספרי טקסט',
+                        value: state.lightReaderBackground,
+                        entries: LightReaderBackground.values
+                            .map(
+                              (e) => AppMenuEntry(
+                                value: e,
+                                label: e.label,
+                                subtitle: e.subtitle,
+                              ),
+                            )
+                            .toList(),
+                        onSelected: (v) {
+                          if (v != null) {
+                            context.read<SettingsBloc>().add(
+                              UpdateLightReaderBackground(v),
+                            );
+                          }
+                        },
+                      ),
                   ],
                 ),
 
@@ -242,9 +304,9 @@ class DesignSettingsTab extends StatelessWidget {
                         ],
                         currentValue: state.compactMenuMode,
                         onChanged: (value) {
-                          context
-                              .read<SettingsBloc>()
-                              .add(UpdateCompactMenuMode(value));
+                          context.read<SettingsBloc>().add(
+                            UpdateCompactMenuMode(value),
+                          );
                         },
                       ),
                     ],
@@ -261,16 +323,16 @@ class DesignSettingsTab extends StatelessWidget {
                       title: 'תצוגת ספר בPDF',
                       subtitle: state.enablePerBookSettings
                           ? state.pdfBookViewByDefault
-                              ? 'ספרי PDF ייפתחו בתצוגת ספר'
-                              : 'ספרי PDF ייפתחו בתצוגה רגילה'
+                                ? 'ספרי PDF ייפתחו בתצוגת ספר'
+                                : 'ספרי PDF ייפתחו בתצוגה רגילה'
                           : state.pdfBookViewByDefault
-                              ? 'כל ספרי ה-PDF ייפתחו בתצוגת ספר'
-                              : 'כל ספרי ה-PDF ייפתחו בתצוגה רגילה',
+                          ? 'כל ספרי ה-PDF ייפתחו בתצוגת ספר'
+                          : 'כל ספרי ה-PDF ייפתחו בתצוגה רגילה',
                       value: state.pdfBookViewByDefault,
                       onChanged: (value) {
-                        context
-                            .read<SettingsBloc>()
-                            .add(UpdatePdfBookViewByDefault(value));
+                        context.read<SettingsBloc>().add(
+                          UpdatePdfBookViewByDefault(value),
+                        );
                       },
                     ),
                     SettingsActionTile.segmentedTile<String>(
@@ -280,21 +342,23 @@ class DesignSettingsTab extends StatelessWidget {
                         SegmentOption(
                           value: 'text',
                           label: 'טקסט',
-                          subtitle: 'מסכתות הבבלי ייפתחו במהדורת הטקסט '
+                          subtitle:
+                              'מסכתות הבבלי ייפתחו במהדורת הטקסט '
                               '(מאיתור מקורות ומקישורים)',
                         ),
                         SegmentOption(
                           value: 'pdf',
                           label: 'PDF',
-                          subtitle: 'מסכתות הבבלי ייפתחו במהדורת ה-PDF '
+                          subtitle:
+                              'מסכתות הבבלי ייפתחו במהדורת ה-PDF '
                               '(צורת הדף) בדף המתאים',
                         ),
                       ],
                       currentValue: state.talmudBavliOpenFormat,
                       onChanged: (value) {
-                        context
-                            .read<SettingsBloc>()
-                            .add(UpdateTalmudBavliOpenFormat(value));
+                        context.read<SettingsBloc>().add(
+                          UpdateTalmudBavliOpenFormat(value),
+                        );
                       },
                     ),
                   ],
@@ -330,30 +394,30 @@ class DesignSettingsTab extends StatelessWidget {
                       currentValue: state.pinSidebar
                           ? _SidebarMode.pinned
                           : state.defaultSidebarOpen
-                              ? _SidebarMode.openOnBook
-                              : _SidebarMode.closed,
+                          ? _SidebarMode.openOnBook
+                          : _SidebarMode.closed,
                       onChanged: (mode) {
                         if (mode == _SidebarMode.pinned) {
-                          context
-                              .read<SettingsBloc>()
-                              .add(UpdatePinSidebar(true));
-                          context
-                              .read<SettingsBloc>()
-                              .add(const UpdateDefaultSidebarOpen(true));
+                          context.read<SettingsBloc>().add(
+                            UpdatePinSidebar(true),
+                          );
+                          context.read<SettingsBloc>().add(
+                            const UpdateDefaultSidebarOpen(true),
+                          );
                         } else if (mode == _SidebarMode.openOnBook) {
-                          context
-                              .read<SettingsBloc>()
-                              .add(UpdatePinSidebar(false));
-                          context
-                              .read<SettingsBloc>()
-                              .add(const UpdateDefaultSidebarOpen(true));
+                          context.read<SettingsBloc>().add(
+                            UpdatePinSidebar(false),
+                          );
+                          context.read<SettingsBloc>().add(
+                            const UpdateDefaultSidebarOpen(true),
+                          );
                         } else {
-                          context
-                              .read<SettingsBloc>()
-                              .add(UpdatePinSidebar(false));
-                          context
-                              .read<SettingsBloc>()
-                              .add(const UpdateDefaultSidebarOpen(false));
+                          context.read<SettingsBloc>().add(
+                            UpdatePinSidebar(false),
+                          );
+                          context.read<SettingsBloc>().add(
+                            const UpdateDefaultSidebarOpen(false),
+                          );
                         }
                       },
                     ),
@@ -362,13 +426,13 @@ class DesignSettingsTab extends StatelessWidget {
                       title: 'פתיחת פאנל המפרשים בפתיחת ספר',
                       subtitle: state.defaultCommentaryOpen
                           ? 'פאנל המפרשים ייפתח אוטומטית כשיש מפרשים נבחרים '
-                              '(מפרשים בצד ו-PDF בלבד)'
+                                '(מפרשים בצד ו-PDF בלבד)'
                           : 'פאנל המפרשים לא ייפתח אוטומטית בפתיחת ספר',
                       value: state.defaultCommentaryOpen,
                       onChanged: (value) {
-                        context
-                            .read<SettingsBloc>()
-                            .add(UpdateDefaultCommentaryOpen(value));
+                        context.read<SettingsBloc>().add(
+                          UpdateDefaultCommentaryOpen(value),
+                        );
                       },
                     ),
                     SettingsActionTile.switchTile(
@@ -378,9 +442,9 @@ class DesignSettingsTab extends StatelessWidget {
                           : 'רשימות ההערות יוצגו כשהן פתוחות',
                       value: state.personalNotesCollapsedByDefault,
                       onChanged: (value) {
-                        context
-                            .read<SettingsBloc>()
-                            .add(UpdatePersonalNotesCollapsedByDefault(value));
+                        context.read<SettingsBloc>().add(
+                          UpdatePersonalNotesCollapsedByDefault(value),
+                        );
                       },
                     ),
                     StatefulBuilder(
@@ -396,7 +460,9 @@ class DesignSettingsTab extends StatelessWidget {
                           onChanged: (value) {
                             setState(() {
                               Settings.setValue<bool>(
-                                  'key-splited-view', value);
+                                'key-splited-view',
+                                value,
+                              );
                               final settingsBloc = context.read<SettingsBloc>();
                               PerBookSettings.cleanupRedundantSettings(
                                 defaultFontSize: settingsBloc.state.fontSize,
@@ -406,7 +472,8 @@ class DesignSettingsTab extends StatelessWidget {
                                     settingsBloc.state.defaultRemovePunctuation,
                                 defaultShowSplitView: value,
                                 defaultContinuousReadingMode: settingsBloc
-                                    .state.defaultContinuousReadingMode,
+                                    .state
+                                    .defaultContinuousReadingMode,
                               );
                             });
                           },

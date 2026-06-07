@@ -90,6 +90,9 @@ class SettingsRepository {
   static const String keyBuiltInToolsPinnedToNavRail =
       'key-builtin-tools-pinned-to-nav-rail';
 
+  static const String keyLightReaderBackground = 'key-light-reader-background';
+  static const String keyDarkReaderBackground = 'key-dark-reader-background';
+
   // Protected Mode Settings
   static const String keyProtectedModeEnabled = 'key-protected-mode-enabled';
   static const String keyProtectedModePasswordHash =
@@ -332,6 +335,21 @@ class SettingsRepository {
           keyBuiltInToolsPinnedToNavRail,
           defaultValue: '',
         ),
+      ),
+
+      'lightReaderBackground': LightReaderBackground.values.firstWhere(
+        (e) =>
+            e.name ==
+            _settings.getValue<String>(keyLightReaderBackground,
+                defaultValue: ''),
+        orElse: () => LightReaderBackground.surface,
+      ),
+      'darkReaderBackground': DarkReaderBackground.values.firstWhere(
+        (e) =>
+            e.name ==
+            _settings.getValue<String>(keyDarkReaderBackground,
+                defaultValue: ''),
+        orElse: () => DarkReaderBackground.darkScaffold,
       ),
 
       // Protected Mode
@@ -598,6 +616,14 @@ class SettingsRepository {
       keyBuiltInToolsPinnedToNavRail,
       _serializeToolIdSet(value),
     );
+  }
+
+  Future<void> saveLightReaderBackground(LightReaderBackground v) async {
+    await _settings.setValue(keyLightReaderBackground, v.name);
+  }
+
+  Future<void> saveDarkReaderBackground(DarkReaderBackground v) async {
+    await _settings.setValue(keyDarkReaderBackground, v.name);
   }
 
   /// פירוק רשימת מזהי כלים מ-CSV. מתעלם מערכים ריקים ומ-whitespace.

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:equatable/equatable.dart';
 import 'package:otzaria/theme/app_seed_colors.dart';
+import 'package:otzaria/theme/app_theme_options.dart';
 
 class SettingsState extends Equatable {
   final bool isDarkMode;
@@ -72,6 +73,9 @@ class SettingsState extends Equatable {
   final Set<String> builtInToolsPinnedToNavRail;
   final bool? _softwareAndBookUpdatesEnabled;
 
+  final LightReaderBackground lightReaderBackground;
+  final DarkReaderBackground darkReaderBackground;
+
   const SettingsState({
     required this.isDarkMode,
     required this.followSystemTheme,
@@ -120,6 +124,8 @@ class SettingsState extends Equatable {
     this.hiddenBuiltInToolIds = const <String>{},
     this.builtInToolsPinnedToNavRail = const <String>{},
     this._softwareAndBookUpdatesEnabled,
+    this.lightReaderBackground = LightReaderBackground.surface,
+    this.darkReaderBackground = DarkReaderBackground.darkScaffold,
   });
 
   factory SettingsState.initial() {
@@ -216,6 +222,8 @@ class SettingsState extends Equatable {
     bool? mergeUserBooksIntoLibrary,
     Set<String>? hiddenBuiltInToolIds,
     Set<String>? builtInToolsPinnedToNavRail,
+    LightReaderBackground? lightReaderBackground,
+    DarkReaderBackground? darkReaderBackground,
     bool? softwareAndBookUpdatesEnabled,
   }) {
     return SettingsState(
@@ -279,6 +287,9 @@ class SettingsState extends Equatable {
           builtInToolsPinnedToNavRail ?? this.builtInToolsPinnedToNavRail,
       softwareAndBookUpdatesEnabled:
           softwareAndBookUpdatesEnabled ?? this.softwareAndBookUpdatesEnabled,
+      lightReaderBackground:
+          lightReaderBackground ?? this.lightReaderBackground,
+      darkReaderBackground: darkReaderBackground ?? this.darkReaderBackground,
     );
   }
 
@@ -337,5 +348,7 @@ class SettingsState extends Equatable {
     hiddenBuiltInToolIds,
     builtInToolsPinnedToNavRail,
     softwareAndBookUpdatesEnabled,
+    lightReaderBackground,
+    darkReaderBackground,
   ];
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:otzaria/theme/app_colors.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:otzaria/settings/engine/settings_bloc.dart';
 
 ColorScheme _cs(BuildContext context) => Theme.of(context).colorScheme;
 
@@ -13,9 +14,13 @@ class AppSurfaces {
   AppSurfaces._();
 
   /// נקודת ה-override היחידה לרקע מסך העיון (טקסט, PDF, חיפוש).
-  /// הכנה לערכות נושא עתידיות שייתכן וירצו להפריד בין רקע מסך עיון לרקע מסכי לוח.
-  static Color readerBackground(BuildContext context) =>
-      _cs(context).isDark ? AppColors.darkScaffold : _cs(context).surface;
+  static Color readerBackground(BuildContext context) {
+    final cs = _cs(context);
+    final state = context.watch<SettingsBloc>().state;
+    return cs.isDark
+        ? state.darkReaderBackground.color(cs)
+        : state.lightReaderBackground.color(cs);
+  }
 
   /// רקע מסכי לוח — הגדרות, ספריה, כלים וכל מסך משני
   static Color panelBackground(BuildContext context) {
@@ -23,7 +28,9 @@ class AppSurfaces {
     return cs.isDark
         ? Colors.black
         : Color.alphaBlend(
-            cs.surfaceContainerHighest.withValues(alpha: 0.475), cs.surface);
+            cs.surfaceContainerHighest.withValues(alpha: 0.475),
+            cs.surface,
+          );
   }
 
   /// נקודת ה-override לרקע מסכי לוח — הכנה לערכות נושא עתידיות.
@@ -82,8 +89,8 @@ class AppSurfaces {
   /// אגודל הסקרולבר המותאם — בולט בזמן גרירה, מעומעם במנוחה.
   static Color scrollbarThumb(ColorScheme cs, {required bool isDragging}) =>
       isDragging
-          ? cs.primary.withValues(alpha: 0.8)
-          : cs.onSurfaceVariant.withValues(alpha: 0.4);
+      ? cs.primary.withValues(alpha: 0.8)
+      : cs.onSurfaceVariant.withValues(alpha: 0.4);
 
   /// רקע מתג קומפקטי בסגנון גלולה (מתגי דיאלוג החיפוש) — מודגש כשדלוק.
   static Color togglePill(ColorScheme cs, {required bool active}) => active

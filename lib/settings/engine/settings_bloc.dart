@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:otzaria/theme/app_fonts.dart';
+import 'package:otzaria/theme/app_theme_options.dart';
 import 'package:otzaria/settings/engine/settings_event.dart';
 import 'package:otzaria/settings/engine/settings_repository.dart';
 import 'package:otzaria/settings/engine/settings_state.dart';
@@ -67,6 +68,8 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     on<ClearProtectedModePassword>(_onClearProtectedModePassword);
     on<UpdateHiddenBuiltInToolIds>(_onUpdateHiddenBuiltInToolIds);
     on<UpdateBuiltInToolsPinnedToNavRail>(_onUpdateBuiltInToolsPinnedToNavRail);
+    on<UpdateLightReaderBackground>(_onUpdateLightReaderBackground);
+    on<UpdateDarkReaderBackground>(_onUpdateDarkReaderBackground);
   }
 
   Future<void> _onLoadSettings(
@@ -139,6 +142,11 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
         builtInToolsPinnedToNavRail:
             (settings['builtInToolsPinnedToNavRail'] as Set<String>?) ??
             <String>{},
+        lightReaderBackground:
+            settings['lightReaderBackground'] ?? LightReaderBackground.surface,
+        darkReaderBackground:
+            settings['darkReaderBackground'] ??
+            DarkReaderBackground.darkScaffold,
       ),
     );
   }
@@ -598,6 +606,22 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
         shortcuts: Map<String, String>.unmodifiable(shortcuts),
       ),
     );
+  }
+
+  Future<void> _onUpdateLightReaderBackground(
+    UpdateLightReaderBackground event,
+    Emitter<SettingsState> emit,
+  ) async {
+    emit(state.copyWith(lightReaderBackground: event.value));
+    await _repository.saveLightReaderBackground(event.value);
+  }
+
+  Future<void> _onUpdateDarkReaderBackground(
+    UpdateDarkReaderBackground event,
+    Emitter<SettingsState> emit,
+  ) async {
+    emit(state.copyWith(darkReaderBackground: event.value));
+    await _repository.saveDarkReaderBackground(event.value);
   }
 
   /// ניקוי קבצי per_book_settings שהפכו למיותרים
