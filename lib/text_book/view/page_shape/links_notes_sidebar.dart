@@ -4,7 +4,8 @@ import 'package:otzaria/personal_notes/widgets/personal_notes_sidebar.dart';
 import 'package:otzaria/tabs/models/tab.dart';
 import 'package:otzaria/text_book/view/selection/selection_sync_controller.dart';
 import 'package:otzaria/text_book/view/selected_line_links_view.dart';
-import 'package:otzaria/widgets/navigation/panel_tab_header.dart';
+import 'package:otzaria/widgets/layout/side_sheet.dart';
+import 'package:otzaria/widgets/layout/side_sheet_scaffold.dart';
 
 /// חלונית פנימית עבור צורת הדף שמציגה קישורים והערות אישיות.
 class LinksNotesSidebar extends StatefulWidget {
@@ -72,41 +73,31 @@ class _LinksNotesSidebarState extends State<LinksNotesSidebar>
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        PanelTabHeader(
-          controller: _tabController,
-          onClose: widget.onClosePane,
-          tabs: const [
-            PanelTab(
-              icon: FluentIcons.link_24_regular,
-              label: 'קישורים',
-            ),
-            PanelTab(
-              icon: FluentIcons.note_24_regular,
-              label: 'הערות',
-            ),
-          ],
-        ),
-        Expanded(
-          child: TabBarView(
-            controller: _tabController,
-            children: [
-              SelectedLineLinksView(
-                openBookCallback: widget.openBookCallback,
-                fontSize: widget.fontSize,
-                selectionSyncController: widget.selectionSyncController,
-                showVisibleLinksIfNoSelection: widget.initialTabIndex == 0,
-              ),
-              PersonalNotesSidebar(
-                bookId: widget.bookId,
-                categoryId: widget.categoryId,
-                onNavigateToLine: widget.onNavigateToLine,
-              ),
-            ],
+    return SideSheetScaffold(
+      header: SideSheetHeader(
+        controller: _tabController,
+        onClose: widget.onClosePane,
+        tabs: const [
+          SideSheetTab(icon: FluentIcons.link_24_regular, label: 'קישורים'),
+          SideSheetTab(icon: FluentIcons.note_24_regular, label: 'הערות'),
+        ],
+      ),
+      body: TabBarView(
+        controller: _tabController,
+        children: [
+          SelectedLineLinksView(
+            openBookCallback: widget.openBookCallback,
+            fontSize: widget.fontSize,
+            selectionSyncController: widget.selectionSyncController,
+            showVisibleLinksIfNoSelection: widget.initialTabIndex == 0,
           ),
-        ),
-      ],
+          PersonalNotesSidebar(
+            bookId: widget.bookId,
+            categoryId: widget.categoryId,
+            onNavigateToLine: widget.onNavigateToLine,
+          ),
+        ],
+      ),
     );
   }
 }

@@ -14,7 +14,7 @@ import 'package:otzaria/text_book/widgets/text_book_state_builder.dart';
 import 'package:otzaria/utils/ui/commentary_pane_policy.dart';
 import 'package:otzaria/tour/bloc/tour_cubit.dart';
 import 'package:otzaria/tour/models/live_tip.dart';
-import 'package:otzaria/widgets/layout/adaptive_side_pane.dart';
+import 'package:otzaria/widgets/layout/side_sheet.dart';
 import 'package:otzaria/widgets/navigation/panel_tab_header.dart';
 
 class SplitedViewScreen extends StatefulWidget {
@@ -319,17 +319,16 @@ class _SplitedViewScreenState extends State<SplitedViewScreen> {
               final availableWidth = constraints.maxWidth;
               final paneWidths = _calculatePaneWidths(availableWidth);
 
-              return AdaptiveSidePane(
+              return SideSheet(
                 isOpen: _paneOpen,
                 alignment: AlignmentDirectional.centerStart,
-                paneWidth: paneWidths.paneWidth,
-                minMainContentWidth: 200,
+                width: paneWidths.paneWidth,
                 onClose: () {
                   setState(() {
                     _paneOpen = false;
                   });
                 },
-                paneContent: ValueListenableBuilder<String?>(
+                content: ValueListenableBuilder<String?>(
                   valueListenable: _savedSelectedText,
                   // אין SelectionArea חיצוני כאן: CommentaryListBase (בתוך
                   // TabbedCommentaryPanel) עוטף את הרשימה ב-SelectionArea יחיד
@@ -427,19 +426,6 @@ class _SplitedViewScreenState extends State<SplitedViewScreen> {
                       ),
                   ],
                 ),
-                isResizable: true,
-                minPaneWidth: paneWidths.minPaneWidth,
-                maxPaneWidth: paneWidths.maxPaneWidth,
-                onPaneWidthChanged: (nextWidth) {
-                  _leftPaneWidth = nextWidth;
-                },
-                onPaneResizeEnd: () {
-                  context
-                      .read<SettingsBloc>()
-                      .add(UpdateCommentaryPaneWidth(_leftPaneWidth));
-                },
-                autoHandleResponsiveVisibility: false,
-                scrollbarTopMargin: 0,
               );
             },
           );

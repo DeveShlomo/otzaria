@@ -18,7 +18,8 @@ import 'package:otzaria/tabs/bloc/tabs_event.dart';
 import 'package:otzaria/tabs/models/commentators_tab.dart';
 import 'package:otzaria/tabs/models/text_tab.dart';
 import 'package:otzaria/text_book/widgets/text_book_state_builder.dart';
-import 'package:otzaria/widgets/navigation/panel_tab_header.dart';
+import 'package:otzaria/widgets/layout/side_sheet.dart';
+import 'package:otzaria/widgets/layout/side_sheet_scaffold.dart';
 
 /// Widget שמציג כרטיסיות עם מפרשים וקישורים בחלונית הצד
 class TabbedCommentaryPanel extends StatefulWidget {
@@ -111,129 +112,121 @@ class _TabbedCommentaryPanelState extends State<TabbedCommentaryPanel>
   Widget build(BuildContext context) {
     return TextBookStateBuilder(
       builder: (context, state) {
-        return Column(
-          children: [
-            // שורת הכרטיסיות עם כפתור סגירה
-            LayoutBuilder(
-              builder: (context, constraints) {
-                // מתחת לסף זה - הצג אייקונים בלבד (ללא טקסט)
-                final isCompact = constraints.maxWidth < 270;
-                final firstTabIconData = widget.showSplitView
-                    ? FluentIcons.book_24_regular
-                    : FluentIcons.settings_24_regular;
-                return PanelTabHeader(
-                  controller: _tabController,
-                  onClose: widget.onClosePane,
-                  // במצב "מפרשים למטה" שורת הלחצנים החדשה לא קיימת (הטאב הראשון
-                  // מציג הגדרות מפרשים), לכן משאירים כאן את לחצן הפתיחה בכרטיסייה
-                  // חדשה כפי שהיה במקור.
-                  extraActions: widget.showSplitView
-                      ? const []
-                      : [
-                          IconButton(
-                            iconSize: 18,
-                            padding: EdgeInsets.zero,
-                            constraints: const BoxConstraints(
-                                minWidth: 36, minHeight: 40),
-                            tooltip: 'פתח כרטסיית מפרשים',
-                            icon: const Icon(FluentIcons.open_24_regular),
-                            onPressed: widget.tab == null
-                                ? null
-                                : () => context.read<TabsBloc>().add(
-                                      AddTab(
-                                        CommentatorsTab(
-                                          sourceTab: widget.tab!,
-                                        ),
-                                        insertAdjacent: true,
-                                      ),
-                                    ),
-                          ),
-                        ],
-                  tabs: isCompact
-                      ? [
-                          PanelTab(icon: firstTabIconData),
-                          const PanelTab(icon: FluentIcons.link_24_regular),
-                          const PanelTab(icon: FluentIcons.note_24_regular),
-                        ]
-                      : [
-                          PanelTab(
-                            icon: firstTabIconData,
-                            label: widget.showSplitView
-                                ? 'מפרשים'
-                                : 'סינון מפרשים',
-                          ),
-                          const PanelTab(
-                            icon: FluentIcons.link_24_regular,
-                            label: 'קישורים',
-                          ),
-                          const PanelTab(
-                            icon: FluentIcons.note_24_regular,
-                            label: 'הערות',
-                          ),
-                        ],
-                );
-              },
-            ),
-            // תוכן הכרטיסיות
-            Expanded(
-              child: TabBarView(
+        return SideSheetScaffold(
+          header: LayoutBuilder(
+            builder: (context, constraints) {
+              // מתחת לסף זה - הצג אייקונים בלבד (ללא טקסט)
+              final isCompact = constraints.maxWidth < 270;
+              final firstTabIconData = widget.showSplitView
+                  ? FluentIcons.book_24_regular
+                  : FluentIcons.settings_24_regular;
+              return SideSheetHeader(
                 controller: _tabController,
-                children: [
-                  // כרטיסייה ראשונה: מפרשים (מצב מפוצל) או הגדרות מפרשים (מצב למטה)
-                  if (widget.showSplitView)
-                    BlocBuilder<SettingsBloc, SettingsState>(
-                      builder: (context, settingsState) => CommentaryListBase(
-                        key: const ValueKey('commentary_list_tabbed'),
-                        openBookCallback: widget.openBookCallback,
-                        fontSize: settingsState.commentatorsFontSize,
-                        showSearch: widget.showSearch,
-                        selectionSyncController: widget.selectionSyncController,
-                        openFilterRequest: widget.openFilterRequest,
-                        selectedCommentatorsOverride: state.activeCommentators,
-                        openFilterNotifier:
-                            widget.openCommentatorsFilterNotifier,
-                        closeFilterNotifier:
-                            widget.closeCommentatorsFilterNotifier,
-                        onSelectedCommentatorsOverrideChanged: (commentators) {
-                          context
-                              .read<TextBookBloc>()
-                              .add(UpdateCommentators(commentators));
-                        },
-                        onOpenInNewTab: widget.tab == null
-                            ? null
-                            : () => context.read<TabsBloc>().add(
-                                  AddTab(
-                                    CommentatorsTab(
-                                      sourceTab: widget.tab!,
+                onClose: widget.onClosePane,
+                // במצב "מפרשים למטה" שורת הלחצנים החדשה לא קיימת (הטאב הראשון
+                // מציג הגדרות מפרשים), לכן משאירים כאן את לחצן הפתיחה בכרטיסייה
+                // חדשה כפי שהיה במקור.
+                extraActions: widget.showSplitView
+                    ? const []
+                    : [
+                        IconButton(
+                          iconSize: 18,
+                          padding: EdgeInsets.zero,
+                          constraints: const BoxConstraints(
+                              minWidth: 36, minHeight: 40),
+                          tooltip: 'פתח כרטסיית מפרשים',
+                          icon: const Icon(FluentIcons.open_24_regular),
+                          onPressed: widget.tab == null
+                              ? null
+                              : () => context.read<TabsBloc>().add(
+                                    AddTab(
+                                      CommentatorsTab(
+                                        sourceTab: widget.tab!,
+                                      ),
+                                      insertAdjacent: true,
                                     ),
-                                    insertAdjacent: true,
                                   ),
-                                ),
-                      ),
-                    )
-                  else
-                    const CommentatorsListView(
-                      key: ValueKey('commentators_settings_tabbed'),
-                    ),
-                  // כרטיסיית הקישורים
-                  SelectedLineLinksView(
+                        ),
+                      ],
+                tabs: isCompact
+                    ? [
+                        SideSheetTab(icon: firstTabIconData),
+                        const SideSheetTab(icon: FluentIcons.link_24_regular),
+                        const SideSheetTab(icon: FluentIcons.note_24_regular),
+                      ]
+                    : [
+                        SideSheetTab(
+                          icon: firstTabIconData,
+                          label: widget.showSplitView
+                              ? 'מפרשים'
+                              : 'סינון מפרשים',
+                        ),
+                        const SideSheetTab(
+                          icon: FluentIcons.link_24_regular,
+                          label: 'קישורים',
+                        ),
+                        const SideSheetTab(
+                          icon: FluentIcons.note_24_regular,
+                          label: 'הערות',
+                        ),
+                      ],
+              );
+            },
+          ),
+          body: TabBarView(
+            controller: _tabController,
+            children: [
+              // כרטיסייה ראשונה: מפרשים (מצב מפוצל) או הגדרות מפרשים (מצב למטה)
+              if (widget.showSplitView)
+                BlocBuilder<SettingsBloc, SettingsState>(
+                  builder: (context, settingsState) => CommentaryListBase(
+                    key: const ValueKey('commentary_list_tabbed'),
                     openBookCallback: widget.openBookCallback,
-                    fontSize: widget.fontSize,
+                    fontSize: settingsState.commentatorsFontSize,
+                    showSearch: widget.showSearch,
                     selectionSyncController: widget.selectionSyncController,
-                    showVisibleLinksIfNoSelection:
-                        widget.initialTabIndex == 1, // אם נפתח ישירות לקישורים
+                    openFilterRequest: widget.openFilterRequest,
+                    selectedCommentatorsOverride: state.activeCommentators,
+                    openFilterNotifier: widget.openCommentatorsFilterNotifier,
+                    closeFilterNotifier: widget.closeCommentatorsFilterNotifier,
+                    onSelectedCommentatorsOverrideChanged: (commentators) {
+                      context
+                          .read<TextBookBloc>()
+                          .add(UpdateCommentators(commentators));
+                    },
+                    onOpenInNewTab: widget.tab == null
+                        ? null
+                        : () => context.read<TabsBloc>().add(
+                              AddTab(
+                                CommentatorsTab(
+                                  sourceTab: widget.tab!,
+                                ),
+                                insertAdjacent: true,
+                              ),
+                            ),
                   ),
-                  // כרטיסיית ההערות האישיות
-                  PersonalNotesSidebar(
-                    bookId: state.book.title,
-                    categoryId: state.book.categoryId,
-                    onNavigateToLine: (line) =>
-                        _handleNoteNavigation(context, state, line),
-                  ),
-                ],
+                )
+              else
+                const CommentatorsListView(
+                  key: ValueKey('commentators_settings_tabbed'),
+                ),
+              // כרטיסיית הקישורים
+              SelectedLineLinksView(
+                openBookCallback: widget.openBookCallback,
+                fontSize: widget.fontSize,
+                selectionSyncController: widget.selectionSyncController,
+                showVisibleLinksIfNoSelection:
+                    widget.initialTabIndex == 1, // אם נפתח ישירות לקישורים
               ),
-            ),
-          ],
+              // כרטיסיית ההערות האישיות
+              PersonalNotesSidebar(
+                bookId: state.book.title,
+                categoryId: state.book.categoryId,
+                onNavigateToLine: (line) =>
+                    _handleNoteNavigation(context, state, line),
+              ),
+            ],
+          ),
         );
       },
     );

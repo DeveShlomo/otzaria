@@ -2225,9 +2225,7 @@ class _TextBookViewerBlocState extends State<TextBookViewerBloc>
   }
 
   Widget _buildHTMLViewer(TextBookLoaded state) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(10, 0, 5, 5),
-      child: GestureDetector(
+    return GestureDetector(
         onScaleUpdate: (details) {
           context.read<TextBookBloc>().add(
                 UpdateFontSize((state.fontSize * details.scale).clamp(15, 60)),
@@ -2304,7 +2302,6 @@ class _TextBookViewerBlocState extends State<TextBookViewerBloc>
             ),
           ),
         ),
-      ),
     );
   }
 

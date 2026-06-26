@@ -28,7 +28,7 @@ import 'package:otzaria/models/link_types.dart';
 import 'package:otzaria/utils/text/text_manipulation.dart' as utils;
 import 'package:otzaria/utils/text/ref_helper.dart';
 import 'package:otzaria/widgets/layout/resizable_drag_handle.dart';
-import 'package:otzaria/widgets/layout/adaptive_side_pane.dart';
+import 'package:otzaria/widgets/layout/side_sheet.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:collection/collection.dart';
@@ -170,12 +170,6 @@ class _PageShapeScreenState extends State<PageShapeScreen> {
 
   /// שמירת גדלים
   void _saveSizes() {
-    // סרגל הצד נשמר תמיד גלובלית (אינו חלק מרוחב הטורים).
-    if (_leftSidebarWidth != null) {
-      Settings.setValue<double>(
-          'page_shape_left_sidebar_width', _leftSidebarWidth!);
-    }
-
     // אם הופעלה שמירת הגדרות פר-ספר, רוחבי הטורים נשמרים לספר הנוכחי בלבד.
     if (context.read<SettingsBloc>().state.enablePerBookSettings) {
       _savePerBookSizes();
@@ -741,23 +735,13 @@ class _PageShapeScreenState extends State<PageShapeScreen> {
                     _columnVisibility['bottomRight'] == true &&
                         _bottomRightCommentator != null;
                 return Scaffold(
-                  body: AdaptiveSidePane(
+                  body: SideSheet(
                     isOpen: _isLeftSidebarOpen,
                     alignment: AlignmentDirectional.centerStart,
-                    paneWidth: _leftSidebarWidth ??
+                    width: _leftSidebarWidth ??
                         MediaQuery.of(context).size.width * 0.22,
-                    minPaneWidth: 220,
-                    maxPaneWidth: MediaQuery.of(context).size.width * 0.35,
-                    minMainContentWidth: 300,
-                    isResizable: true,
-                    scrollbarTopMargin: 0,
-                    autoHandleResponsiveVisibility: false,
                     onClose: _toggleLeftSidebar,
-                    onPaneWidthChanged: (width) {
-                      _leftSidebarWidth = width;
-                    },
-                    onPaneResizeEnd: _saveSizes,
-                    paneContent: LinksNotesSidebar(
+                    content: LinksNotesSidebar(
                       bookId: state.book.title,
                       categoryId: state.book.categoryId,
                       openBookCallback: widget.openBookCallback,
