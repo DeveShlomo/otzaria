@@ -34,6 +34,11 @@ class AppSurfaces {
   static Color topBarBackground(BuildContext context) =>
       _cs(context).surfaceContainerHigh;
 
+  /// רקע השורה השניה של AppTopBar (למשל: TabBar של חלונית מפרשים).
+  /// גוון כהה יותר מהסרגל הראשי כדי לסמן הבדל ויזואלי ברור.
+  static Color topBarSecondaryBackground(BuildContext context) =>
+      _cs(context).surfaceContainerHighest;
+
   /// צבע ברירת המחדל לכרטיסי תוכן באפליקציה.
   static Color card(BuildContext context) => _cs(context).isDark
       ? _cs(context).surfaceContainer

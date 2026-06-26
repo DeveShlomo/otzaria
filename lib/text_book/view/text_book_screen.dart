@@ -1103,6 +1103,54 @@ class _TextBookViewerBlocState extends State<TextBookViewerBloc>
                   });
 
                   final wideScreen = MediaQuery.of(context).size.width >= 600;
+                  final appBar = _buildAppBar(context, state, wideScreen);
+
+                  Widget body;
+                  if (state.showPageShapeView) {
+                    // צורת הדף: AppTopBar + AdaptiveSidePane בנפרד
+                    body = Column(
+                      children: [
+                        appBar,
+                        Expanded(child: _buildBody(context, state)),
+                      ],
+                    );
+                  } else {
+                    // מפרשים בצד / מתחת: AppTopBar + AdaptiveSidePane בתוך SideSheet.mainContent
+                    body = _buildHTMLViewer(
+                      state,
+                      appTopBar: appBar,
+                      navPaneWrapper: (child) => AdaptiveSidePane(
+                        isOpen: state.showLeftPane,
+                        alignment: AlignmentDirectional.centerEnd,
+                        paneWidth: _sidebarWidth.value,
+                        minMainContentWidth: 520,
+                        onClose: () => context
+                            .read<TextBookBloc>()
+                            .add(const ToggleLeftPane(false)),
+                        paneContent: widget.enableTourTargets
+                            ? KeyedSubtree(
+                                key: textBookNavPanelTourTargetKey,
+                                child: _buildLeftPaneContent(state),
+                              )
+                            : _buildLeftPaneContent(state),
+                        mainContent: child,
+                        isResizable: true,
+                        minPaneWidth: 200,
+                        maxPaneWidth: 600,
+                        onPaneWidthChanged: (nextWidth) {
+                          _sidebarWidth.value = nextWidth;
+                        },
+                        onPaneResizeEnd: () {
+                          context
+                              .read<SettingsBloc>()
+                              .add(UpdateSidebarWidth(_sidebarWidth.value));
+                        },
+                        autoHandleResponsiveVisibility: false,
+                        scrollbarTopMargin: 0,
+                      ),
+                    );
+                  }
+
                   return KeyboardListener(
                     focusNode: _bookContentFocusNode,
                     autofocus: false,
@@ -1118,14 +1166,7 @@ class _TextBookViewerBlocState extends State<TextBookViewerBloc>
                       selectedLineForNote: _selectedLineForNote,
                       selectedColumnForNote: _selectedColumnForNote,
                     ),
-                    child: Scaffold(
-                      body: Column(
-                        children: [
-                          _buildAppBar(context, state, wideScreen),
-                          Expanded(child: _buildBody(context, state)),
-                        ],
-                      ),
-                    ),
+                    child: Scaffold(body: body),
                   );
                 }
 
@@ -2224,7 +2265,11 @@ class _TextBookViewerBlocState extends State<TextBookViewerBloc>
     );
   }
 
-  Widget _buildHTMLViewer(TextBookLoaded state) {
+  Widget _buildHTMLViewer(
+    TextBookLoaded state, {
+    Widget? appTopBar,
+    Widget Function(Widget child)? navPaneWrapper,
+  }) {
     return GestureDetector(
         onScaleUpdate: (details) {
           context.read<TextBookBloc>().add(
@@ -2299,6 +2344,8 @@ class _TextBookViewerBlocState extends State<TextBookViewerBloc>
               pageShapeSidebarTabNotifier: _pageShapeSidebarTabNotifier,
               pageShapeOpenSettingsNotifier: _pageShapeOpenSettingsNotifier,
               openSearch: _openSearchWithText,
+              appTopBar: appTopBar,
+              navPaneWrapper: navPaneWrapper,
             ),
           ),
         ),

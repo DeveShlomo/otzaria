@@ -21,6 +21,8 @@ class SplitViewStrategyImpl extends TextBookViewStrategy {
       initialTabIndex: config.initialSidebarTabIndex,
       showSplitView: true,
       onSidebarTabChanged: config.onSidebarTabChanged,
+      appTopBar: config.appTopBar,
+      navPaneWrapper: config.navPaneWrapper,
     );
   }
 }

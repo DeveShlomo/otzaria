@@ -21,6 +21,12 @@ class TextBookViewConfig {
   final ValueChanged<String?>? openSearch;
   final ValueChanged<int>? onSidebarTabChanged;
 
+  /// ה-AppTopBar ייכלל ב-mainContent של ה-SideSheet כך שהכפתורים יזוזו כשהחלונית נפתחת.
+  final Widget? appTopBar;
+
+  /// עוטף את תוכן הטקסט ב-AdaptiveSidePane (ניווט).
+  final Widget Function(Widget child)? navPaneWrapper;
+
   const TextBookViewConfig({
     required this.content,
     required this.openBookCallback,
@@ -35,6 +41,8 @@ class TextBookViewConfig {
     this.pageShapeOpenSettingsNotifier,
     this.openSearch,
     this.onSidebarTabChanged,
+    this.appTopBar,
+    this.navPaneWrapper,
   });
 }
 

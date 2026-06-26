@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:otzaria/tabs/models/tab.dart';
 import 'package:otzaria/text_book/bloc/text_book_bloc.dart';
 import 'package:otzaria/text_book/bloc/text_book_state.dart';
@@ -112,66 +112,44 @@ class _TabbedCommentaryPanelState extends State<TabbedCommentaryPanel>
   Widget build(BuildContext context) {
     return TextBookStateBuilder(
       builder: (context, state) {
+        final firstTabIcon = widget.showSplitView
+            ? FluentIcons.book_24_regular
+            : FluentIcons.settings_24_regular;
+        final tabs = [
+          SideSheetTab(
+            icon: firstTabIcon,
+            label: widget.showSplitView ? 'מפרשים' : 'סינון מפרשים',
+          ),
+          const SideSheetTab(
+              icon: FluentIcons.link_24_regular, label: 'קישורים'),
+          const SideSheetTab(
+              icon: FluentIcons.note_24_regular, label: 'הערות'),
+        ];
+        final extraActions = widget.showSplitView
+            ? <Widget>[]
+            : [
+                if (widget.tab != null)
+                  IconButton(
+                    iconSize: 18,
+                    padding: EdgeInsets.zero,
+                    constraints:
+                        const BoxConstraints(minWidth: 36, minHeight: 40),
+                    tooltip: 'פתח כרטסיית מפרשים',
+                    icon: const Icon(FluentIcons.open_24_regular),
+                    onPressed: () => context.read<TabsBloc>().add(
+                          AddTab(
+                            CommentatorsTab(sourceTab: widget.tab!),
+                            insertAdjacent: true,
+                          ),
+                        ),
+                  ),
+              ];
         return SideSheetScaffold(
-          header: LayoutBuilder(
-            builder: (context, constraints) {
-              // מתחת לסף זה - הצג אייקונים בלבד (ללא טקסט)
-              final isCompact = constraints.maxWidth < 270;
-              final firstTabIconData = widget.showSplitView
-                  ? FluentIcons.book_24_regular
-                  : FluentIcons.settings_24_regular;
-              return SideSheetHeader(
-                controller: _tabController,
-                onClose: widget.onClosePane,
-                // במצב "מפרשים למטה" שורת הלחצנים החדשה לא קיימת (הטאב הראשון
-                // מציג הגדרות מפרשים), לכן משאירים כאן את לחצן הפתיחה בכרטיסייה
-                // חדשה כפי שהיה במקור.
-                extraActions: widget.showSplitView
-                    ? const []
-                    : [
-                        IconButton(
-                          iconSize: 18,
-                          padding: EdgeInsets.zero,
-                          constraints: const BoxConstraints(
-                              minWidth: 36, minHeight: 40),
-                          tooltip: 'פתח כרטסיית מפרשים',
-                          icon: const Icon(FluentIcons.open_24_regular),
-                          onPressed: widget.tab == null
-                              ? null
-                              : () => context.read<TabsBloc>().add(
-                                    AddTab(
-                                      CommentatorsTab(
-                                        sourceTab: widget.tab!,
-                                      ),
-                                      insertAdjacent: true,
-                                    ),
-                                  ),
-                        ),
-                      ],
-                tabs: isCompact
-                    ? [
-                        SideSheetTab(icon: firstTabIconData),
-                        const SideSheetTab(icon: FluentIcons.link_24_regular),
-                        const SideSheetTab(icon: FluentIcons.note_24_regular),
-                      ]
-                    : [
-                        SideSheetTab(
-                          icon: firstTabIconData,
-                          label: widget.showSplitView
-                              ? 'מפרשים'
-                              : 'סינון מפרשים',
-                        ),
-                        const SideSheetTab(
-                          icon: FluentIcons.link_24_regular,
-                          label: 'קישורים',
-                        ),
-                        const SideSheetTab(
-                          icon: FluentIcons.note_24_regular,
-                          label: 'הערות',
-                        ),
-                      ],
-              );
-            },
+          header: SideSheetHeader(
+            controller: _tabController,
+            onClose: widget.onClosePane,
+            tabs: tabs,
+            extraActions: extraActions,
           ),
           body: TabBarView(
             controller: _tabController,

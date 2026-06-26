@@ -27,6 +27,12 @@ class TextBookScaffold extends StatelessWidget {
   final ValueChanged<String?>? openSearch;
   final ValueChanged<int>? onSidebarTabChanged;
 
+  /// ה-AppTopBar ייכלל ב-mainContent של ה-SideSheet כך שהכפתורים יזוזו כשהחלונית נפתחת.
+  final Widget? appTopBar;
+
+  /// עוטף את תוכן הטקסט ב-AdaptiveSidePane (ניווט).
+  final Widget Function(Widget child)? navPaneWrapper;
+
   const TextBookScaffold({
     super.key,
     required this.content,
@@ -42,6 +48,8 @@ class TextBookScaffold extends StatelessWidget {
     this.pageShapeOpenSettingsNotifier,
     this.openSearch,
     this.onSidebarTabChanged,
+    this.appTopBar,
+    this.navPaneWrapper,
   });
 
   @override
@@ -66,6 +74,8 @@ class TextBookScaffold extends StatelessWidget {
           pageShapeOpenSettingsNotifier: pageShapeOpenSettingsNotifier,
           openSearch: openSearch,
           onSidebarTabChanged: onSidebarTabChanged,
+          appTopBar: appTopBar,
+          navPaneWrapper: navPaneWrapper,
         );
 
         // Build the view using the selected strategy

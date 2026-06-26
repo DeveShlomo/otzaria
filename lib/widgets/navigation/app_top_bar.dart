@@ -278,6 +278,7 @@ class _AppTopBarState extends State<AppTopBar>
         // שינוי מ-Material ישיר ל-Column גורם ל-Flutter למחוק ולאחזר את mainBar
         // (ולאבד פוקוס מקלדת). עם Column קבוע, mainBar תמיד ב-position 0
         // ו-Flutter שומר על ה-element (ועל הפוקוס) גם כשהשורה השניה מופיעה/נעלמת.
+        final secondaryBarColor = AppSurfaces.topBarSecondaryBackground(context);
         return Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -293,8 +294,8 @@ class _AppTopBarState extends State<AppTopBar>
                     width: double.infinity,
                     child: Material(
                       key: _secondaryRowKey,
-                      color: barColor,
-                      elevation: 1.0,
+                      color: secondaryBarColor,
+                      elevation: 0,
                       shadowColor: cs.shadow.withValues(alpha: 0.08),
                       surfaceTintColor: Colors.transparent,
                       child: widget.secondaryRow!,

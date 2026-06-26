@@ -29,6 +29,8 @@ class SplitedViewScreen extends StatefulWidget {
     this.initialTabIndex,
     required this.showSplitView,
     this.onSidebarTabChanged,
+    this.appTopBar,
+    this.navPaneWrapper,
   });
 
   final List<String> content;
@@ -41,6 +43,12 @@ class SplitedViewScreen extends StatefulWidget {
   final int? initialTabIndex;
   final bool showSplitView;
   final ValueChanged<int>? onSidebarTabChanged;
+
+  /// כשמסופק, ה-SideSheet יעטוף גם את AppTopBar — הפאנל מכסה את מלוא גובה המסך.
+  final Widget? appTopBar;
+
+  /// עוטף את תוכן הטקסט ב-AdaptiveSidePane (ניווט); מסופק ע"י ה-parent.
+  final Widget Function(Widget child)? navPaneWrapper;
 
   @override
   State<SplitedViewScreen> createState() => _SplitedViewScreenState();
@@ -319,6 +327,82 @@ class _SplitedViewScreenState extends State<SplitedViewScreen> {
               final availableWidth = constraints.maxWidth;
               final paneWidths = _calculatePaneWidths(availableWidth);
 
+              // תוכן ראשי: CombinedView + ידית פתיחה
+              Widget mainArea = Stack(
+                children: [
+                  CombinedView(
+                    data: widget.content,
+                    textSize: state.fontSize,
+                    openBookCallback: widget.openBookCallback,
+                    openLeftPaneTab: widget.openLeftPaneTab,
+                    onSelectedTextChanged: widget.onSelectedTextChanged,
+                    selectionSyncController: _selectionSyncController,
+                    showCommentaryAsExpansionTiles: !widget.showSplitView,
+                    tab: widget.tab,
+                    onOpenPersonalNotes: () {
+                      setState(() {
+                        _paneOpen = true;
+                        _currentTabIndex = 2;
+                      });
+                    },
+                    onOpenCommentatorsPane: () {
+                      setState(() {
+                        _paneOpen = true;
+                      });
+                      Future.delayed(const Duration(milliseconds: 280), () {
+                        if (!mounted) return;
+                        _closeCommentatorsFilterNotifier.value++;
+                        setState(() {
+                          _currentTabIndex = 0;
+                        });
+                      });
+                    },
+                    onOpenCommentatorsPaneWithFilter: () {
+                      setState(() {
+                        _paneOpen = true;
+                        _currentTabIndex = 0;
+                      });
+                      _openCommentatorsFilterNotifier.value++;
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        if (!mounted) return;
+                        _openFilterRequest.value++;
+                      });
+                    },
+                    onOpenLinksPane: () {
+                      setState(() {
+                        _paneOpen = true;
+                        _currentTabIndex = _linksTabIndex;
+                      });
+                    },
+                    isCommentatorsTabActive: () =>
+                        _paneOpen && _currentTabIndex == 0,
+                    isLinksTabActive: () =>
+                        _paneOpen && _currentTabIndex == _linksTabIndex,
+                  ),
+                  if (!_paneOpen)
+                    Positioned(
+                      left: 0,
+                      top: MediaQuery.of(context).size.height * 0.10,
+                      child: PanelOpenHandle(onTap: _togglePane),
+                    ),
+                ],
+              );
+
+              // עטוף ב-AdaptiveSidePane אם סופק (לניווט)
+              if (widget.navPaneWrapper != null) {
+                mainArea = widget.navPaneWrapper!(mainArea);
+              }
+
+              // הוסף AppTopBar בראש ה-mainContent של ה-SideSheet אם סופק
+              final Widget sideSheetMainContent = widget.appTopBar != null
+                  ? Column(
+                      children: [
+                        widget.appTopBar!,
+                        Expanded(child: mainArea),
+                      ],
+                    )
+                  : mainArea;
+
               return SideSheet(
                 isOpen: _paneOpen,
                 alignment: AlignmentDirectional.centerStart,
@@ -367,65 +451,7 @@ class _SplitedViewScreenState extends State<SplitedViewScreen> {
                   ),
                   builder: (context, selectedText, child) => child!,
                 ),
-                mainContent: Stack(
-                  children: [
-                    CombinedView(
-                      data: widget.content,
-                      textSize: state.fontSize,
-                      openBookCallback: widget.openBookCallback,
-                      openLeftPaneTab: widget.openLeftPaneTab,
-                      onSelectedTextChanged: widget.onSelectedTextChanged,
-                      selectionSyncController: _selectionSyncController,
-                      showCommentaryAsExpansionTiles: !widget.showSplitView,
-                      tab: widget.tab,
-                      onOpenPersonalNotes: () {
-                        setState(() {
-                          _paneOpen = true;
-                          _currentTabIndex = 2;
-                        });
-                      },
-                      onOpenCommentatorsPane: () {
-                        setState(() {
-                          _paneOpen = true;
-                        });
-                        Future.delayed(const Duration(milliseconds: 280), () {
-                          if (!mounted) return;
-                          _closeCommentatorsFilterNotifier.value++;
-                          setState(() {
-                            _currentTabIndex = 0;
-                          });
-                        });
-                      },
-                      onOpenCommentatorsPaneWithFilter: () {
-                        setState(() {
-                          _paneOpen = true;
-                          _currentTabIndex = 0;
-                        });
-                        _openCommentatorsFilterNotifier.value++;
-                        WidgetsBinding.instance.addPostFrameCallback((_) {
-                          if (!mounted) return;
-                          _openFilterRequest.value++;
-                        });
-                      },
-                      onOpenLinksPane: () {
-                        setState(() {
-                          _paneOpen = true;
-                          _currentTabIndex = _linksTabIndex;
-                        });
-                      },
-                      isCommentatorsTabActive: () =>
-                          _paneOpen && _currentTabIndex == 0,
-                      isLinksTabActive: () =>
-                          _paneOpen && _currentTabIndex == _linksTabIndex,
-                    ),
-                    if (!_paneOpen)
-                      Positioned(
-                        left: 0,
-                        top: MediaQuery.of(context).size.height * 0.10,
-                        child: PanelOpenHandle(onTap: _togglePane),
-                      ),
-                  ],
-                ),
+                mainContent: sideSheetMainContent,
               );
             },
           );
