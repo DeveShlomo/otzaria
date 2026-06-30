@@ -23,7 +23,7 @@ enum LightReaderBackground {
       cs.surfaceContainerHighest.withValues(alpha: 0.475),
       cs.surface,
     ),
-    LightReaderBackground.surfaceDim => cs.surfaceDim,
+    LightReaderBackground.surfaceDim => const Color(0xFFF8F5F0),
   };
 }
 
@@ -39,9 +39,9 @@ enum DarkReaderBackground {
   final String subtitle;
 
   Color color(ColorScheme cs) => switch (this) {
-    DarkReaderBackground.black => Colors.black,
-    DarkReaderBackground.darkScaffold => AppColors.darkScaffold,
-    DarkReaderBackground.surface => cs.surface,
-    DarkReaderBackground.surfaceDim => cs.surfaceDim,
-  };
+        DarkReaderBackground.black => Colors.black,
+        DarkReaderBackground.darkScaffold => AppColors.darkScaffold,
+        DarkReaderBackground.surface => cs.surface,
+        DarkReaderBackground.surfaceDim => const Color(0xFF1A1F29),
+      };
 }
