@@ -13,6 +13,10 @@ extension on ColorScheme {
 class AppSurfaces {
   AppSurfaces._();
 
+  // ══════════════════════════════════════════════════════════════════════
+  //  רקעי מסך העיון — נקודות ה-override לרקע שהמשתמש בוחר בהגדרות
+  // ══════════════════════════════════════════════════════════════════════
+
   /// נקודת ה-override היחידה לרקע מסך העיון (טקסט, PDF, חיפוש).
   static Color readerBackground(BuildContext context) {
     final cs = _cs(context);
@@ -46,6 +50,9 @@ class AppSurfaces {
           {required bool isHovering}) =>
       readerPanelBackground(context)
           .withValues(alpha: isHovering ? 0.95 : 0.8);
+  // ══════════════════════════════════════════════════════════════════════
+  //  רקעי לוח ותוכן כללי — נקודות override לשאר מסכי האפליקציה
+  // ══════════════════════════════════════════════════════════════════════
 
   /// רקע מסכי לוח — הגדרות, ספריה, כלים וכל מסך משני
   static Color panelBackground(BuildContext context) {
@@ -86,6 +93,11 @@ class AppSurfaces {
   /// צבע מפריד פנימי בין שורות בתוך כרטיס תוכן.
   /// משמש בהגדרות עם עץ נפתח
   static Color cardRowDivider(BuildContext context) => panelBackground(context);
+
+  // ══════════════════════════════════════════════════════════════════════
+  //  טוקני אינטראקציה — נוסחאות שקיפות קבועות (לא נקודות בחירה למשתמש),
+  //  מקבלות ColorScheme ישירות ולא BuildContext.
+  // ══════════════════════════════════════════════════════════════════════
 
   /// שכבת בחירה לכרטיסי תוכן.
   ///
