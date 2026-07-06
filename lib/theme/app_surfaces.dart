@@ -22,6 +22,31 @@ class AppSurfaces {
         : state.lightReaderBackground.color(cs);
   }
 
+  /// רקע פאנל צדדי (מפרשים/קישורים/הערות) כשהוא מוצג בתוך מסך הקריאה —
+  /// גוון מוגבה עדין מעל [readerBackground], כדי להישאר קרוב לצבע הנייר
+  /// שנבחר במקום לחזור לצבע הפאנל הכללי התלוי ב-seed.
+  static Color readerPanelBackground(BuildContext context) =>
+      Color.alphaBlend(
+        _cs(context).onSurface.withValues(alpha: 0.04),
+        readerBackground(context),
+      );
+
+  /// רקע הסרגל העליון כשהוא מוצג מעל מסך הקריאה — גוון מוגבה מעט יותר
+  /// מהפאנל, לשמירה על היררכיית עומק (topBar > panel > תוכן).
+  static Color readerTopBarBackground(BuildContext context) =>
+      Color.alphaBlend(
+        _cs(context).onSurface.withValues(alpha: 0.06),
+        readerBackground(context),
+      );
+
+  /// רקע רצועת [PanelOpenHandle] — צף מעל מסך הקריאה בלבד (3 המקומות שבהם
+  /// הווידג' משמש הם כולם מעל תוכן הקריאה), ולכן נגזר מ-[readerBackground]
+  /// ולא מ-seed כללי. מתפוגג מעט במצב רגיל, אטום יותר ב-hover.
+  static Color panelOpenHandle(BuildContext context,
+          {required bool isHovering}) =>
+      readerPanelBackground(context)
+          .withValues(alpha: isHovering ? 0.95 : 0.8);
+
   /// רקע מסכי לוח — הגדרות, ספריה, כלים וכל מסך משני
   static Color panelBackground(BuildContext context) {
     final cs = _cs(context);
@@ -81,10 +106,6 @@ class AppSurfaces {
   /// 8% primary — רמז עדין למקום השחרור מבלי להסתיר את תוכן השורה.
   static Color dragTargetHighlight(ColorScheme cs) =>
       cs.primary.withValues(alpha: 0.08);
-
-  /// רקע רצועת [PanelOpenHandle] — מתפוגג מעט במצב רגיל, אטום יותר ב-hover.
-  static Color panelOpenHandle(ColorScheme cs, {required bool isHovering}) =>
-      cs.surfaceContainerHighest.withValues(alpha: isHovering ? 0.95 : 0.8);
 
   /// אגודל הסקרולבר המותאם — בולט בזמן גרירה, מעומעם במנוחה.
   static Color scrollbarThumb(ColorScheme cs, {required bool isDragging}) =>

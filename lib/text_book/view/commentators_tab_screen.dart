@@ -717,6 +717,8 @@ class _CommentatorsTabScreenState extends State<CommentatorsTabScreen>
                 body: Column(
                   children: [
                     AppTopBar(
+                      backgroundColor:
+                          AppSurfaces.readerTopBarBackground(context),
                       leadingItems: [
                         AppTopBarItem(
                           widget: BarButton.icon(
@@ -1031,6 +1033,7 @@ class _CommentatorsTabScreenState extends State<CommentatorsTabScreen>
     List<TocEntry> chapters,
   ) {
     return AppTopBar(
+      backgroundColor: AppSurfaces.readerTopBarBackground(context),
       leadingItems: [
         AppTopBarItem(
           widget: BarButton.icon(

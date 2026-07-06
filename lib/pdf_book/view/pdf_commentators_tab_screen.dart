@@ -760,6 +760,7 @@ class _PdfCommentatorsTabScreenState extends State<PdfCommentatorsTabScreen>
   Widget _buildAppTopBar(BuildContext context) {
     final isCompact = context.read<SettingsBloc>().state.compactMenuMode;
     return AppTopBar(
+      backgroundColor: AppSurfaces.readerTopBarBackground(context),
       leadingItems: [
         AppTopBarItem(
           widget: BarButton.icon(

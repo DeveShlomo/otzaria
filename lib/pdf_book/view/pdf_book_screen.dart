@@ -3420,6 +3420,7 @@ class _PdfBookScreenState extends State<PdfBookScreen>
         body: Column(
           children: [
             AppTopBar(
+              backgroundColor: AppSurfaces.readerTopBarBackground(context),
               leadingItems: [
                 AppTopBarItem(
                   widget: BarButton.icon(

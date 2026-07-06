@@ -15,6 +15,7 @@ import 'package:otzaria/text_book/view/combined_view/combined_book_screen.dart';
 import 'package:otzaria/text_book/view/selection/selection_sync_controller.dart';
 import 'package:otzaria/text_book/view/tabbed_commentary_panel.dart';
 import 'package:otzaria/text_book/widgets/text_book_state_builder.dart';
+import 'package:otzaria/theme/app_surfaces.dart';
 import 'package:otzaria/utils/ui/commentary_pane_policy.dart';
 import 'package:otzaria/tour/bloc/tour_cubit.dart';
 import 'package:otzaria/tour/models/live_tip.dart';
@@ -369,6 +370,7 @@ class _SplitedViewScreenState extends State<SplitedViewScreen> {
 
               return AdaptiveSidePane(
                 isOpen: _paneOpen,
+                paneColor: AppSurfaces.readerPanelBackground(context),
                 alignment: AlignmentDirectional.centerStart,
                 paneWidth: paneWidths.paneWidth,
                 minMainContentWidth: 200,

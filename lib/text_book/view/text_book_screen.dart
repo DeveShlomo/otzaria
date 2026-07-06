@@ -30,6 +30,7 @@ import 'package:otzaria/text_book/bloc/text_book_bloc.dart';
 import 'package:otzaria/text_book/utils/per_book_display_settings.dart';
 import 'package:otzaria/text_book/utils/text_book_export_utils.dart';
 import 'package:otzaria/text_book/utils/visible_index.dart';
+import 'package:otzaria/theme/app_surfaces.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:otzaria/text_book/bloc/text_book_event.dart';
 import 'package:otzaria/text_book/bloc/text_book_state.dart';
@@ -1224,6 +1225,8 @@ class _TextBookViewerBlocState extends State<TextBookViewerBloc>
                     body: Column(
                       children: [
                         AppTopBar(
+                          backgroundColor:
+                              AppSurfaces.readerTopBarBackground(context),
                           leadingItems: [
                             AppTopBarItem(
                               widget: BarButton.icon(
@@ -1346,6 +1349,7 @@ class _TextBookViewerBlocState extends State<TextBookViewerBloc>
     bool wideScreen,
   ) {
     return AppTopBar(
+      backgroundColor: AppSurfaces.readerTopBarBackground(context),
       leadingItems: [
         AppTopBarItem(widget: _buildMenuButton(context, state)),
         if (state.showPageShapeView)
