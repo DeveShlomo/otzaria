@@ -61,7 +61,7 @@ import 'pdf_thumbnails_screen.dart';
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:otzaria/utils/file/page_converter.dart';
 import 'package:otzaria/utils/ui/reading_left_pane_policy.dart';
-import 'package:otzaria/widgets/controls/action_buttons.dart';
+import 'package:otzaria/widgets/widgets_exports.dart';
 import 'package:otzaria/widgets/layout/dual_adaptive_reader_pane.dart';
 import 'package:otzaria/widgets/layout/split_pane_content_inset.dart';
 import 'package:otzaria/widgets/navigation/responsive_action_bar.dart';
@@ -3422,7 +3422,7 @@ class _PdfBookScreenState extends State<PdfBookScreen>
             AppTopBar(
               leadingItems: [
                 AppTopBarItem(
-                  widget: ToolbarActionButton(
+                  widget: BarButton.icon(
                     key: widget.enableTourTargets
                         ? pdfBookNavigationTourTargetKey
                         : null,
@@ -4205,7 +4205,7 @@ class _PdfBookScreenState extends State<PdfBookScreen>
     return [
       if (widget.isInCombinedView) ...navigationActions,
       ActionButtonData(
-        widget: ToolbarActionButton(
+        widget: BarButton.icon(
           tooltip: 'הצג הערות אישיות',
           icon: FluentIcons.note_24_regular,
           compact: isCompact,
@@ -4223,7 +4223,7 @@ class _PdfBookScreenState extends State<PdfBookScreen>
       ),
       // הצגת סימניות הספר (הוספת סימניה עברה לתפריט ההקשר בעמוד)
       ActionButtonData(
-        widget: ToolbarActionButton(
+        widget: BarButton.icon(
           key: widget.enableTourTargets ? pdfBookBookmarkTourTargetKey : null,
           tooltip: 'סימניות בספר זה',
           icon: FluentIcons.bookmark_multiple_24_regular,
@@ -4315,7 +4315,7 @@ class _PdfBookScreenState extends State<PdfBookScreen>
     final isCompact = context.read<SettingsBloc>().state.compactMenuMode;
     return buildBookViewNavigationActions(
       firstAction: buildBookViewFirstNavigationAction(
-        widget: ToolbarActionButton(
+        widget: BarButton.icon(
           tooltip:
               'תחילת הספר (${ShortcutHelper.formatShortcutForDisplay('ctrl+home')})',
           icon: FluentIcons.arrow_previous_24_filled,
@@ -4327,7 +4327,7 @@ class _PdfBookScreenState extends State<PdfBookScreen>
         onPressed: () => _goToPageWithSpreadLock(1),
       ),
       previousAction: buildBookViewPreviousNavigationAction(
-        widget: ToolbarActionButton(
+        widget: BarButton.icon(
           tooltip: 'הקודם',
           icon: FluentIcons.chevron_left_24_regular,
           compact: isCompact,
@@ -4337,7 +4337,7 @@ class _PdfBookScreenState extends State<PdfBookScreen>
         onPressed: _goPreviousPage,
       ),
       nextAction: buildBookViewNextNavigationAction(
-        widget: ToolbarActionButton(
+        widget: BarButton.icon(
           tooltip: 'הבא',
           icon: FluentIcons.chevron_right_24_regular,
           compact: isCompact,
@@ -4347,7 +4347,7 @@ class _PdfBookScreenState extends State<PdfBookScreen>
         onPressed: _goNextPage,
       ),
       lastAction: buildBookViewLastNavigationAction(
-        widget: ToolbarActionButton(
+        widget: BarButton.icon(
           tooltip:
               'סוף הספר (${ShortcutHelper.formatShortcutForDisplay('ctrl+end')})',
           icon: FluentIcons.arrow_next_24_filled,
@@ -4616,7 +4616,7 @@ class _PdfBookScreenState extends State<PdfBookScreen>
         (library) => library.getCompanionBook(book, TextBook),
       ),
       builder: (context, snapshot) => snapshot.hasData
-          ? ToolbarActionButton(
+          ? BarButton.icon(
               tooltip: 'פתח ספר במהדורת טקסט',
               icon: FluentIcons.document_text_24_regular,
               compact: isCompact,
