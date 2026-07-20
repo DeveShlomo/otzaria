@@ -113,8 +113,9 @@ class _LibrarySettingsTabState extends State<LibrarySettingsTab> {
   static const _hebrewBooksFolderName = 'ספרי היברובוקס';
 
   bool _isRemovingHebrewPath = false;
-  final IndexingRepository _indexingRepository =
-      IndexingRepository(TantivyDataProvider.instance);
+  final IndexingRepository _indexingRepository = IndexingRepository(
+    TantivyDataProvider.instance,
+  );
   bool? _requiresManualReindex;
   String? _defaultLibraryPath;
   String? _indexPath;
@@ -143,7 +144,8 @@ class _LibrarySettingsTabState extends State<LibrarySettingsTab> {
   }
 
   Future<void> _refreshManualReindexRequirement(
-      LibraryState libraryState) async {
+    LibraryState libraryState,
+  ) async {
     final library = libraryState.library;
     if (!mounted || library == null) {
       if (_requiresManualReindex != false) {
@@ -152,8 +154,8 @@ class _LibrarySettingsTabState extends State<LibrarySettingsTab> {
       return;
     }
 
-    final requiresManualReindex =
-        await _indexingRepository.requiresManualReindex(library);
+    final requiresManualReindex = await _indexingRepository
+        .requiresManualReindex(library);
     if (!mounted || _requiresManualReindex == requiresManualReindex) {
       return;
     }
@@ -163,8 +165,11 @@ class _LibrarySettingsTabState extends State<LibrarySettingsTab> {
     });
   }
 
-  Future<void> _showExtractionDialog(BuildContext context, String path,
-      {required bool isLibraryPath}) async {
+  Future<void> _showExtractionDialog(
+    BuildContext context,
+    String path, {
+    required bool isLibraryPath,
+  }) async {
     await ZipExtractionProgressDialog.showAndExtract(
       context: context,
       path: path,
@@ -185,8 +190,11 @@ class _LibrarySettingsTabState extends State<LibrarySettingsTab> {
           context.read<NavigationBloc>().add(const CheckLibrary());
 
           if (extractionResult.successfullyExtracted) {
-            UiSnack.show(SettingsMessages.fileExtracted(
-                extractionResult.extractedFileName));
+            UiSnack.show(
+              SettingsMessages.fileExtracted(
+                extractionResult.extractedFileName,
+              ),
+            );
           }
         }
       },
@@ -233,11 +241,13 @@ class _LibrarySettingsTabState extends State<LibrarySettingsTab> {
   Future<void> _applyLibraryRootChange(String root) async {
     final booksDir = p.join(root, 'books');
     String target;
-    if (await File(p.join(booksDir, DatabaseConstants.databaseFileName))
-        .exists()) {
+    if (await File(
+      p.join(booksDir, DatabaseConstants.databaseFileName),
+    ).exists()) {
       target = booksDir;
-    } else if (await File(p.join(root, DatabaseConstants.databaseFileName))
-        .exists()) {
+    } else if (await File(
+      p.join(root, DatabaseConstants.databaseFileName),
+    ).exists()) {
       target = root;
     } else {
       target = booksDir;
@@ -252,13 +262,15 @@ class _LibrarySettingsTabState extends State<LibrarySettingsTab> {
   /// על תיקייה שמכילה את ה-DB ישירות, והיא עצמה השורש.
   String _libraryRootOf(String libraryPath) =>
       p.basename(libraryPath).toLowerCase() == 'books'
-          ? p.dirname(libraryPath)
-          : libraryPath;
+      ? p.dirname(libraryPath)
+      : libraryPath;
 
   /// פריטי כרטיס "מאגר הספרים": כשלא זוהתה ספרייה — כפתור "הגדרת ספריה"
   /// שפותח את הדיאלוג המאוחד; אחרת שורת המיקום עם תפריט "אפשרויות מיקום".
   List<Widget> _buildRepositoryCardChildren(
-      BuildContext context, bool libraryEmpty) {
+    BuildContext context,
+    bool libraryEmpty,
+  ) {
     if (libraryEmpty) {
       return [
         SettingsActionTile.text(
@@ -284,8 +296,8 @@ class _LibrarySettingsTabState extends State<LibrarySettingsTab> {
     if (!mounted) return;
     final defaultRoot =
         (_defaultLibraryPath == null || _defaultLibraryPath!.isEmpty)
-            ? ''
-            : _libraryRootOf(_defaultLibraryPath!);
+        ? ''
+        : _libraryRootOf(_defaultLibraryPath!);
     final configured = await showLibrarySetupDialog(
       context: context,
       defaultTargetPath: defaultRoot,
@@ -335,8 +347,9 @@ class _LibrarySettingsTabState extends State<LibrarySettingsTab> {
 
   /// שורת מיקום ספרי היברובוקס — עם אפשרות ניקוי הנתיב
   Widget _buildHebrewBooksLocationWidget(BuildContext context) {
-    final pathStr =
-        Settings.getValue<String>(SettingsRepository.keyHebrewBooksPath);
+    final pathStr = Settings.getValue<String>(
+      SettingsRepository.keyHebrewBooksPath,
+    );
     final hasPath = pathStr != null && pathStr.isNotEmpty;
 
     return SettingsActionTile.pathTile(
@@ -359,7 +372,7 @@ class _LibrarySettingsTabState extends State<LibrarySettingsTab> {
         },
         onAfterMove: hasPath
             ? (newPath) =>
-                _afterMoveUpdateBloc(newPath, UpdateHebrewBooksPath.new)
+                  _afterMoveUpdateBloc(newPath, UpdateHebrewBooksPath.new)
             : null,
       ),
       onOpenFolder: () => _openInFileManager(hasPath ? pathStr : ''),
@@ -376,8 +389,9 @@ class _LibrarySettingsTabState extends State<LibrarySettingsTab> {
           if (libraryState.error == null) {
             UiSnack.show(SettingsMessages.hebrewBooksPathRemoved);
           } else {
-            UiSnack.showError(SettingsMessages.hebrewBooksPathRemoveError(
-                libraryState.error!));
+            UiSnack.showError(
+              SettingsMessages.hebrewBooksPathRemoveError(libraryState.error!),
+            );
           }
         }
 
@@ -397,8 +411,9 @@ class _LibrarySettingsTabState extends State<LibrarySettingsTab> {
           builder: (context, state) {
             // זיהוי אמיתי של קיום הספרייה (קובץ seforim.db) — לא רק ערך ההגדרה,
             // כדי שגם הטאב יזהה מצב "אין ספרייה" ויפתח את דיאלוג ההגדרה.
-            final libraryEmpty = context
-                .select<NavigationBloc, bool>((b) => b.state.isLibraryEmpty);
+            final libraryEmpty = context.select<NavigationBloc, bool>(
+              (b) => b.state.isLibraryEmpty,
+            );
             // בניית כפתור בחירת תיקייה רק בדסקטופ והעברה לפאנל
             final hebrewPathWidget = !(Platform.isAndroid || Platform.isIOS)
                 ? _buildHebrewBooksLocationWidget(context)
@@ -425,7 +440,8 @@ class _LibrarySettingsTabState extends State<LibrarySettingsTab> {
 
                     // הפאנל המשותף (תצוגה + ספרים נוספים) - כעת כולל את תיקיית היברובוקס בתוכו!
                     LibrarySettingsPanel(
-                        hebrewBooksPathWidget: hebrewPathWidget),
+                      hebrewBooksPathWidget: hebrewPathWidget,
+                    ),
 
                     // בחירת מיקום אחסון (Android בלבד) — מוצג רק כשקיים
                     // כרטיס SD; הרכיב עצמו מסתיר את עצמו אחרת.
@@ -460,9 +476,9 @@ class _LibrarySettingsTabState extends State<LibrarySettingsTab> {
                             // ה-RefreshLibrary מופעל ב-listener למעלה,
                             // אחרי שהערך החדש נשמר ב-`Settings`. אחרת
                             // הספרייה היתה נבנית עם הערך הישן.
-                            context
-                                .read<SettingsBloc>()
-                                .add(UpdateMergeUserBooksIntoLibrary(value));
+                            context.read<SettingsBloc>().add(
+                              UpdateMergeUserBooksIntoLibrary(value),
+                            );
                           },
                         ),
                       ),
