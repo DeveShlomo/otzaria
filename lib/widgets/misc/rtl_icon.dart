@@ -56,6 +56,8 @@ class RtlIcon extends StatelessWidget {
     FluentIcons.arrow_left_24_regular: FluentIcons.arrow_right_24_regular,
     FluentIcons.arrow_right_24_filled: FluentIcons.arrow_left_24_filled,
     FluentIcons.arrow_left_24_filled: FluentIcons.arrow_right_24_filled,
+    FluentIcons.calendar_24_regular: FluentIcons.calendar_rtl_24_regular,
+    FluentIcons.calendar_24_filled: FluentIcons.calendar_rtl_24_filled,
     FluentIcons.panel_left_24_regular: FluentIcons.panel_right_24_regular,
     FluentIcons.panel_right_24_regular: FluentIcons.panel_left_24_regular,
     FluentIcons.panel_left_24_filled: FluentIcons.panel_right_24_filled,
@@ -74,6 +76,10 @@ class RtlIcon extends StatelessWidget {
     FluentIcons.book_information_24_regular,
     FluentIcons.text_align_distributed_24_regular,
     FluentIcons.list_24_regular,
+    FluentIcons.calendar_week_start_24_regular,
+    FluentIcons.calendar_week_start_24_filled,
+    FluentIcons.calendar_month_24_regular,
+    FluentIcons.calendar_month_24_filled,
   };
 
   @override
